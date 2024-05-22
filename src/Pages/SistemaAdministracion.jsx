@@ -15,11 +15,11 @@ const NavigationBar = () => {
                 </Menu.Item>
 
                 <Menu.Item key="finances" icon={<SolutionOutlined />}>
-                    <Link to="/finances">Personal</Link>
+                    <Link to="/">Personal</Link>
                 </Menu.Item>
 
                 <Menu.Item key="health" icon={<BarChartOutlined />}>
-                    <Link to="/health">Dashboard</Link>
+                    <Link to="/">Dashboard</Link>
                 </Menu.Item>
 
             </Menu>

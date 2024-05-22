@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu } from 'antd';
-import { HomeOutlined, SolutionOutlined, BarChartOutlined } from '@ant-design/icons';
+import { HomeOutlined, InboxOutlined, ReconciliationOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import InicioVentas from './InicioVentas';
 
@@ -14,12 +14,12 @@ const NavigationBar = () => {
                     <Link to="/">Inicio</Link>
                 </Menu.Item>
 
-                <Menu.Item key="finances" icon={<SolutionOutlined />}>
-                    <Link to="/finances">Inventario</Link>
+                <Menu.Item key="finances" icon={<InboxOutlined />}>
+                    <Link to="/">Inventario</Link>
                 </Menu.Item>
 
-                <Menu.Item key="health" icon={<BarChartOutlined />}>
-                    <Link to="/health">Reportes</Link>
+                <Menu.Item key="health" icon={<ReconciliationOutlined />}>
+                    <Link to="/">Reportes</Link>
                 </Menu.Item>
 
             </Menu>

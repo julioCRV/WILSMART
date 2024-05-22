@@ -14,29 +14,29 @@ const HomePage = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
 {/* 
                 <Link to="/sistema-ventas"> */}
-                    <Card title="Personal" style={{ width: 300, marginLeft: '120px', backgroundColor: '#f0f0f0' }}>
+                    <Card title="Repuestos" style={{ width: 300, marginLeft: '120px', backgroundColor: '#f0f0f0' }}>
                         <img src="/src/assets/img.png" alt="Ventas" style={{ width: '100px' }} />
                         <Paragraph>
-                            Registro de empleados
+                            Registro de repuesto
                         </Paragraph>
                     </Card>
                 {/* </Link> */}
 
 
                 {/* <Link to="/sistema-administración"> */}
-                    <Card title="Personal" style={{ width: 300, backgroundColor: '#f0f0f0' }}>
+                    <Card title="Repuestos" style={{ width: 300, backgroundColor: '#f0f0f0' }}>
                         <img src="/src/assets/img.png" alt="Administración" style={{ width: '100px' }} />
                         <Paragraph>
-                            Mostrar empleados
+                            Mostrar repuestos
                         </Paragraph>
                     </Card>
                 {/* </Link> */}
 
                 {/* <Link to="/sistema-servicios"> */}
-                    <Card title="Dashboard" style={{ width: 300, marginRight: '120px', backgroundColor: '#f0f0f0' }}>
+                    <Card title="Clientes" style={{ width: 300, marginRight: '120px', backgroundColor: '#f0f0f0' }}>
                         <img src="./src/assets/img.png" alt="Servicios" style={{ width: '100px' }} />
                         <Paragraph>
-                            Mostrar dashboard
+                            Listar clientes
                         </Paragraph>
                     </Card>
                 {/* </Link> */}
