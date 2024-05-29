@@ -15,7 +15,7 @@ const HomePage = () => {
 {/* 
                 <Link to="/sistema-ventas"> */}
                     <Card title="Repuestos" style={{ width: 300, marginLeft: '120px', backgroundColor: '#f0f0f0' }}>
-                        <img src="/public/assets/img.png" alt="Ventas" style={{ width: '100px' }} />
+                        <img src="/assets/img.png" alt="Ventas" style={{ width: '100px' }} />
                         <Paragraph>
                             Registro de repuesto
                         </Paragraph>
@@ -25,7 +25,7 @@ const HomePage = () => {
 
                 {/* <Link to="/sistema-administración"> */}
                     <Card title="Repuestos" style={{ width: 300, backgroundColor: '#f0f0f0' }}>
-                        <img src="/public/assets/img.png" alt="Administración" style={{ width: '100px' }} />
+                        <img src="/assets/img.png" alt="Administración" style={{ width: '100px' }} />
                         <Paragraph>
                             Mostrar repuestos
                         </Paragraph>
@@ -34,7 +34,7 @@ const HomePage = () => {
 
                 {/* <Link to="/sistema-servicios"> */}
                     <Card title="Clientes" style={{ width: 300, marginRight: '120px', backgroundColor: '#f0f0f0' }}>
-                        <img src="./public/assets/img.png" alt="Servicios" style={{ width: '100px' }} />
+                        <img src="/assets/img.png" alt="Servicios" style={{ width: '100px' }} />
                         <Paragraph>
                             Listar clientes
                         </Paragraph>
