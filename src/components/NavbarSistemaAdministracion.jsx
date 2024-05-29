@@ -2,29 +2,26 @@ import React from 'react';
 import { Menu } from 'antd';
 import { HomeOutlined, SolutionOutlined, BarChartOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import InicioAministracion from './InicioAdministracion';
 
 const NavigationBar = () => {
     return (
         <>
-            <h2 style={{ position: 'absolute', top: 0, width: '100%' }}>Sistema de administración</h2>
+            <h2 style={{ position: 'absolute', top: 0, width: '100%', color: '#black' }}>Sistema de administración</h2>
             <Menu mode="horizontal" style={{ position: 'absolute', top: 50, width: '100%' }}>
 
-                <Menu.Item key="home" icon={<HomeOutlined />}>
+                <Menu.Item key="inicio" icon={<HomeOutlined />}>
                     <Link to="/">Inicio</Link>
                 </Menu.Item>
 
-                <Menu.Item key="finances" icon={<SolutionOutlined />}>
-                    <Link to="/">Personal</Link>
+                <Menu.Item key="personal" icon={<SolutionOutlined />}>
+                    <Link to="/sistema-administración/mostrar-empleado">Personal</Link>
                 </Menu.Item>
 
-                <Menu.Item key="health" icon={<BarChartOutlined />}>
-                    <Link to="/">Dashboard</Link>
+                <Menu.Item key="dashboard" icon={<BarChartOutlined />}>
+                    <Link to="/sistema-administración/mostrar-dashboard">Dashboard</Link>
                 </Menu.Item>
 
             </Menu>
-
-            <InicioAministracion />
         </>
     );
 };
