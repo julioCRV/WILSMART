@@ -1,0 +1,21 @@
+.ant-col {
+    margin-bottom: 10px; /* Ajusta el valor según tus preferencias */
+  }
+  
+  .ant-card {
+    margin-bottom: 20px; 
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+    background-color: #f0f0f0;
+    height: 90%;
+    width: auto;
+  }
+
+  .pru{
+    display: grid;
+    margin-right: 10%;
+    margin-left: 10%;
+    /* height: 100vh; */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+  }

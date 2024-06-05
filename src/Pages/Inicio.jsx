@@ -1,47 +1,54 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Typography } from 'antd';
+import { Card, Typography, Row, Col } from 'antd';
 const { Title, Paragraph } = Typography;
+import './Inicio.css'
 
 const HomePage = () => {
   return (
-    <div style={{ textAlign: 'center', padding: '20px' }}>
+    <div >
       <img src="/assets/logoWilSmart.jpg" alt="Imagen de bienvenida" style={{ width: '80px' }} />
       <Title level={4}>
-        ¡Bienvenido a WilSmart! <br/> Tu plataforma personalizada para impulsar la gestión de nuestra tienda y ofrecer el mejor servicio <br/> a nuestros clientes.
+        ¡Bienvenido a WilSmart! <br /> Tu plataforma personalizada para impulsar la gestión de nuestra tienda y ofrecer el mejor servicio <br /> a nuestros clientes.
       </Title>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div className='pru'>
+        <Row gutter={16}>
+          <Col md={8}>
+            <Link to="/sistema-ventas">
+              <Card title="Sistema de Ventas" >
+                <img src="/assets/logoVentas.png" alt="Ventas" style={{ maxWidth: '80%', height: 'auto' }} />
+                <Paragraph>
+                  Gestiona tus compras y ventas de manera eficiente con nuestro sistema de ventas.
+                </Paragraph>
+              </Card>
+            </Link>
+          </Col>
 
-        <Link to="/sistema-ventas">
-          <Card title="Sistema de Ventas" style={{ width: 300, marginLeft: '120px', backgroundColor: '#f0f0f0' }}>
-            <img src="/assets/logoVentas.png" alt="Ventas" style={{ width: '250px' }} />
-            <Paragraph>
-              Gestiona tus ventas de manera eficiente con nuestro sistema de ventas.
-            </Paragraph>
-          </Card>
-        </Link>
+          <Col md={8}>
+            <Link to="/sistema-administración">
+              <Card title="Sistema de Administración" >
+                <img src="/assets/logoAdministracion.png" alt="Administración" style={{ maxWidth: '80%', height: 'auto' }} />
+                <Paragraph>
+                  Controla y organiza tus procesos administrativos con nuestro sistema especializado.
+                </Paragraph>
+              </Card>
+            </Link>
+          </Col>
 
-
-        <Link to="/sistema-administración">
-          <Card title="Sistema de Administración" style={{ width: 300, backgroundColor: '#f0f0f0' }}>
-            <img src="/assets/logoAdministracion.png" alt="Administración" style={{ width: '250px' }} />
-            <Paragraph>
-              Controla y organiza tus procesos administrativos con nuestro sistema especializado.
-            </Paragraph>
-          </Card>
-        </Link>
-
-        <Link to="/sistema-servicios">
-          <Card title="Sistema de Servicios" style={{ width: 300, marginRight: '120px', backgroundColor: '#f0f0f0' }}>
-            <img src="/assets/logoServicios.png" alt="Servicios" style={{ width: '200px' }} />
-            <Paragraph>
-              Ofrece servicios de alta calidad a tus clientes utilizando nuestro sistema de servicios.
-            </Paragraph>
-          </Card>
-        </Link>
-
+          <Col xs={24} sm={24} md={8}>
+            <Link to="/sistema-servicios">
+              <Card title="Sistema de Servicios" >
+                <img src="/assets/logoServicios.png" alt="Servicios" style={{ maxWidth: '70%', height: 'auto' }} />
+                <Paragraph>
+                  Ofrece servicios de alta calidad a tus clientes utilizando nuestro sistema de servicios.
+                </Paragraph>
+              </Card>
+            </Link>
+          </Col>
+        </Row>
       </div>
+
     </div>
   );
 };
@@ -60,3 +67,4 @@ export default HomePage;
 // </Link>
 
 // ... */}
+

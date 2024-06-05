@@ -6,26 +6,42 @@ import { Navigate, Routes, Route } from "react-router-dom";
 import Inicio from './Pages/Inicio';
 
 import NavbarSisVentas from './components/NavbarSistemaVentas';
-import InicioSisVentas from './components/InicioVentas'
+import InicioSisVentas from './components/InicioVentas';
 import RegistrarProducto from './Pages/Sistema ventas/RegistrarProducto';
 import MostrarProductos from './Pages/Sistema ventas/MostrarProductos';
 import RealizarVenta from './Pages/Sistema ventas/RealizarVenta';
 import ReporteVentas from './Pages/Sistema ventas/ReporteVentas';
 
 import NavbarSisAdministracion from './components/NavbarSistemaAdministracion';
-import InicioSisAdministracion from './components/InicioAdministracion'
-import RegistroEmpleado from './Pages/Sistema administración/RegistroEmpleado'
+import InicioSisAdministracion from './components/InicioAdministracion';
+import RegistroEmpleado from './Pages/Sistema administración/RegistroEmpleado';
+import EditarEmpleado from './Pages/Sistema administración/EditarEmpleado';
 import MostrarEmpleado from './Pages/Sistema administración/MostrarPersonal';
 import MostrarDashboard from './Pages/Sistema administración/MostrarDashboard';
 
-import NavbarSisServicios from './components/NavbarSistemaServicios'
-import InicioSisServicios from './components/InicioServicios'
+import NavbarSisServicios from './components/NavbarSistemaServicios';
+import InicioSisServicios from './components/InicioServicios';
 
+// P R U E B A 
+import Prueba6 from './papelerajsjsjjs/prueba6'
+import Prueba7 from './papelerajsjsjjs/pruebaResponsive'
+import Prueba from './papelerajsjsjjs/prueba2'
+import Prueba3 from './papelerajsjsjjs/prueba3'
+import Prueba4 from './papelerajsjsjjs/prueba4'
+import Prueba5 from './papelerajsjsjjs/prueba5'
 
 function App() {
 
   return (
     <div className='App'>
+       {/* <Prueba/> */}
+      {/* <Prueba3/> */}
+      {/*<Prueba4 id="7gsP6wg9iYVsE9UWjm5h" />
+      <Prueba5/> */}
+
+      {/* <Prueba6 /> */}
+      
+      {/* <Prueba7/> */}
       <Routes>
         <Route path='/' element={<Inicio />}></Route>
 
@@ -65,6 +81,7 @@ function SistemaAdministracion() {
         <Route path='/' element={<InicioSisAdministracion />} />
         <Route path='/registro-empleado' element={<RegistroEmpleado />}></Route>
         <Route path='/mostrar-empleado' element={<MostrarEmpleado />}></Route>
+        <Route path='/editar-empleado' element={<EditarEmpleado />}></Route>
         <Route path='/mostrar-dashboard' element={<MostrarDashboard />}></Route>
         <Route path='*' element={<Navigate to="/" />} />
       </Routes>

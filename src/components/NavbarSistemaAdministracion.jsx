@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 const NavigationBar = () => {
     return (
         <>
-            <h2 style={{ position: 'absolute', top: 0, width: '100%', color: '#black' }}>Sistema de administración</h2>
-            <Menu mode="horizontal" style={{ position: 'absolute', top: 50, width: '100%' }}>
+            <h2 style={{ top: 0, width: '100%', color: '#black' }}>Sistema de administración</h2>
+            <Menu mode="horizontal" style={{ top: 50, width: '100%',   border: '1px solid #000' }}>
 
                 <Menu.Item key="inicio" icon={<HomeOutlined />}>
                     <Link to="/">Inicio</Link>

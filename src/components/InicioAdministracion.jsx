@@ -14,7 +14,7 @@ const HomePage = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Link to="/sistema-administración/registro-empleado">
                     <Card title="Personal" style={{ width: 300, marginLeft: '120px', backgroundColor: '#f0f0f0' }}>
-                    <img src="/assets/img.png" alt="Ventas" style={{ width: '100px' }} />
+                    <img src="/assets/registroEmpleados.jpg" alt="Ventas" style={{ width: '100px' }} />
 
                         <Paragraph>
                             Registro de empleados
@@ -25,7 +25,7 @@ const HomePage = () => {
 
                 <Link to="/sistema-administración/mostrar-empleado">
                 <Card title="Personal" style={{ width: 300, backgroundColor: '#f0f0f0' }}>
-                    <img src="/assets/img.png" alt="Administración" style={{ width: '100px' }} />
+                    <img src="/assets/listaEmpleados.png" alt="Administración" style={{ width: '100px' }} />
                     <Paragraph>
                         Mostrar empleados
                     </Paragraph>
@@ -34,7 +34,7 @@ const HomePage = () => {
 
                 <Link to="/sistema-administración/mostrar-dashboard">
                 <Card title="Dashboard" style={{ width: 300, marginRight: '120px', backgroundColor: '#f0f0f0' }}>
-                    <img src="/assets/img.png" alt="Servicios" style={{ width: '100px' }} />
+                    <img src="/assets/dashboard.png" alt="Servicios" style={{ width: '100px' }} />
                     <Paragraph>
                         Mostrar dashboard
                     </Paragraph>
