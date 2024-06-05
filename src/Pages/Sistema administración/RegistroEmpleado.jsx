@@ -110,6 +110,7 @@ const RegistroEmpleado = () => {
             >
               <Input />
             </Form.Item>
+
             <Form.Item
               name="fechaNacimiento"
               label="Fecha de Nacimiento"
@@ -117,6 +118,7 @@ const RegistroEmpleado = () => {
             >
               <DatePicker className='full-width' />
             </Form.Item>
+
             <Form.Item
               name="ci"
               label="CI"
@@ -124,6 +126,7 @@ const RegistroEmpleado = () => {
             >
               <Input />
             </Form.Item>
+            
             <Form.Item
               name="genero"
               label="Género"
@@ -215,12 +218,6 @@ const RegistroEmpleado = () => {
 
         </div>
       </Form >
-
-      <Form.Item>
-        <Button style={{ width: '150px' }} type="primary" onClick={ModalExito}>
-          Registrar
-        </Button>
-      </Form.Item>
     </div >
   );
 };

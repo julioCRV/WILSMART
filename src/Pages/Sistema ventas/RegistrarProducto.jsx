@@ -1,13 +1,204 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Form, Input, Button, message, DatePicker, Select, Upload, Modal } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { collection, addDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../../FireBase/fireBase';
+import { useNavigate } from 'react-router-dom';
+import './RegistroProducto.css';
 
-const RegistrarProducto = () => {
+const { Option } = Select;
+
+const RegistroProductos = () => {
+
+  const [imageUploaded, setImageUploaded] = useState(false);
+  const navigate = useNavigate();
+
+  const verificarImagen = {
+    beforeUpload: (file) => {
+
+      let extension = file.name.split('.');
+      extension = extension[extension.length - 1].toLowerCase();
+      if (extension != 'jpg' && extension != 'png') {
+        message.error('Solo se permite archivos jpg y png.');
+        return true;
+      } else if (file.size > 6000000) {
+        message.error('El tamaño de la imagen no puede exceder 6MB');
+      } else if (file.size < 1000) {
+        message.error('El tamaño de la imagen no puede ser menor a 1 KB');
+      } else {
+        setImageUploaded(true);
+        message.success(`${file.name} subido correctamente.`);
+        return false;
+      }
+      return true;
+    },
+    onRemove: () => {
+      // Lógica para manejar la eliminación de la imagen
+      setImageUploaded(false);
+      message.warning('Imagen eliminada.');
+    },
+  };
+
+  const onFinish = async (values) => {
+    // console.log('Received values of form: ', values);
+
+    // const imagen = values.foto[0].originFileObj;
+    // try {
+    //   // Sube la imagen a Cloud Storage
+    //   const storageRef = ref(storage, `imagenes/${imagen.name}`);
+    //   await uploadBytes(storageRef, imagen);
+
+    //   // Obtiene la URL de descarga de la imagen
+    //   const url = await getDownloadURL(storageRef);
+
+    //   const docRef = await addDoc(collection(db, "ListaEmpleados"), {
+    //     Nombre: values.nombreCompleto,
+    //     FechaNacimiento: formatearFecha(values.fechaNacimiento.toDate()),
+    //     CI: values.ci,
+    //     Genero: values.genero,
+    //     EstadoCivil: values.estadoCivil,
+    //     NumeroTeléfono: values.telefono,
+    //     FotoEmpleado: url,
+    //     CorreoElectrónico: values.email,
+    //     PuestoOcargo: values.puesto,
+    //     Salario: values.salario,
+    //     DirecciónDeDomicilio: values.direccion
+    //   });
+    //   console.log("Document written with ID: ", docRef.id);
+    //   ModalExito();
+    // } catch (error) {
+    //   console.error("Error adding document: ", error);
+    // }
+  };
+
+  function formatearFecha(fechaString) {
+    const fecha = new Date(fechaString);
+
+    const dia = fecha.getDate().toString().padStart(2, '0');
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
+    const año = fecha.getFullYear();
+
+    return `${año}/${mes}/${dia}`;
+  }
+  const ModalExito = () => {
+    Modal.success({
+      title: 'Registro de Empleado',
+      content: 'Los datos del empleado se han guardado correctamente.',
+      onOk: () => {navigate('/sistema-administración');} // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
+    });
+  }
+
   return (
-    <>
-      <div style={{ marginTop: '8%' }}>
-        <h2>Registro de producto</h2>
-      </div>
-    </>
+    <div >
+      <h2 className="form-title">Registro de Producto</h2>
+
+      <Form
+        name="registro_empleado"
+        layout="horizontal"
+        labelCol={{ span: 9 }}
+        wrapperCol={{ span: 22 }}
+        onFinish={onFinish}
+      // className="form-columns"
+      >
+        <div className='parent2'>
+          <div className="div11">
+            <Form.Item
+              name="nombreCompleto"
+              label="Nombre"
+              rules={[{ required: true, message: 'Por favor ingrese el nombre del producto' }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="salario"
+              label="Cantidad"
+              rules={[{ required: true, message: 'Por favor ingrese una cantidad' }]}
+            >
+              <Input type="number" />
+            </Form.Item>
+
+            <Form.Item
+              name="genero"
+              label="Categoria"
+              rules={[{ required: true, message: 'Por favor seleccione una categoria' }]}
+            >
+              <Select placeholder="Seleccione una categoria">
+                <Option value="Femenino">Celulares</Option>
+                <Option value="Masculino">Accesorios</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="fechaNacimiento"
+              label="Fecha"
+              rules={[{ required: true, message: 'Por favor seleccione la fecha' }]}
+            >
+              <DatePicker className='full-width' />
+            </Form.Item>
+
+
+            <Form.Item
+              name="salario"
+              label="Precio"
+              rules={[{ required: true, message: 'Por favor ingrese el precio' }]}
+            >
+              <Input type="number" />
+            </Form.Item>
+          </div>
+
+          <div className="div22">
+            <Form.Item
+              name="foto"
+              label="Imagen"
+              valuePropName="fileList"
+              getValueFromEvent={(e) => (Array.isArray(e) ? e : e && e.fileList)}
+              rules={[{ required: true, message: 'Por favor suba una imagen' }]}
+            >
+              <Upload  {...verificarImagen} maxCount={1} accept='image/*'>
+                <Button style={{ marginRight: '255px' }} icon={<UploadOutlined />}>Examinar</Button>
+                {imageUploaded}
+              </Upload>
+            </Form.Item>
+
+            <Form.Item
+              name="puesto"
+              label="Marca"
+              rules={[{ required: true, message: 'Por favor ingrese una marca' }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="direccion"
+              label="Descripción"
+              rules={[{ required: true, message: 'Por favor ingrese una descripción' }]}
+            >
+              <Input />
+            </Form.Item>
+          </div>
+
+
+          <div className='div33'>
+            <div className="button-container">
+              <Form.Item>
+                <Button style={{ width: '150px' }} type="primary" htmlType="submit">
+                  Registrar
+                </Button>
+              </Form.Item>
+              <Form.Item>
+                <Button style={{ width: '150px' }} type="default" htmlType="button">
+                  Cancelar
+                </Button>
+              </Form.Item>
+            </div>
+          </div>
+
+        </div>
+      </Form >
+    </div >
   );
 };
 
-export default RegistrarProducto;
+export default RegistroProductos;
