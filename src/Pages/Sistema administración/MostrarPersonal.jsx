@@ -96,6 +96,7 @@ const MostrarEmpleado = () => {
     try {
       await deleteDoc(docRef);
       console.log("Document deleted");
+      actualizarListaEmpleados();
     } catch (e) {
       console.error("Error deleting document: ", e);
     }
@@ -110,8 +111,7 @@ const MostrarEmpleado = () => {
       cancelText: 'Cancelar',
       onOk() {
         console.log('Eliminar:', record);
-        handleDelete(record.id)
-        // Aquí puedes implementar la lógica para eliminar el registro
+        handleDelete(record.id);
       },
       onCancel() { },
     });
@@ -119,6 +119,16 @@ const MostrarEmpleado = () => {
 
   const onChange = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
+  };
+
+  const actualizarListaEmpleados = async () => {
+    const querySnapshot = await getDocs(collection(db, "ListaEmpleados"));
+    const dataList = querySnapshot.docs.map(doc => ({
+      ...doc.data(),
+      id: doc.id
+    }));
+    // console.log(dataList);
+    setDataFirebase(dataList);
   };
 
   useEffect(() => {
@@ -132,7 +142,7 @@ const MostrarEmpleado = () => {
       setDataFirebase(dataList);
     };
     fetchData();
-  }, [handleDelete]);
+  }, []);
 
   return (
     <>

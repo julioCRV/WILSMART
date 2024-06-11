@@ -7,7 +7,7 @@ import './Inicio.css'
 const HomePage = () => {
   return (
     <div >
-      <img src="/assets/logoWilSmart.jpg" alt="Imagen de bienvenida" style={{ width: '80px' }} />
+      <img src="/assets/logoW1.jpg" alt="Imagen de bienvenida" style={{ width: '100px' }} />
       <Title level={4}>
         ¡Bienvenido a WilSmart! <br /> Tu plataforma personalizada para impulsar la gestión de nuestra tienda y ofrecer el mejor servicio <br /> a nuestros clientes.
       </Title>

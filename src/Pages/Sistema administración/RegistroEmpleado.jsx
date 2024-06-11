@@ -85,9 +85,23 @@ const RegistroEmpleado = () => {
     Modal.success({
       title: 'Registro de Empleado',
       content: 'Los datos del empleado se han guardado correctamente.',
-      onOk: () => {navigate('/sistema-administración');} // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
+      onOk: () => { navigate('/sistema-administración'); } // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
     });
   }
+
+  const initialValues = {
+    nombreCompleto: "Javier López",
+    ci: "8765432",
+    genero: "Masculino",
+    estadoCivil: "Casado",
+    telefono: "987654321",
+    email: "javier@example.com",
+    puesto: "Técnico en Reparación de Celulares",
+    salario: "4500",
+    direccion: "Calle de la Reparación, Edificio TechFix, Local 101, Ciudad Digital",
+};
+
+
 
   return (
     <div >
@@ -96,6 +110,7 @@ const RegistroEmpleado = () => {
       <Form
         name="registro_empleado"
         layout="horizontal"
+        initialValues={initialValues}
         labelCol={{ span: 9 }}
         wrapperCol={{ span: 22 }}
         onFinish={onFinish}
@@ -126,7 +141,7 @@ const RegistroEmpleado = () => {
             >
               <Input />
             </Form.Item>
-            
+
             <Form.Item
               name="genero"
               label="Género"
