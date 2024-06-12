@@ -24,7 +24,7 @@ const NavigationBar = () => {
                         <Link to="/sistema-ventas/registrar-producto">Registrar producto</Link>
                     </Menu.Item>
                     <Menu.Item key="mostrar" >
-                        <Link to="/sistema-ventas/mostrar-producto">Mostrar producto</Link>
+                        <Link to="/sistema-ventas/mostrar-productos">Mostrar producto</Link>
                     </Menu.Item>
                     <Menu.Item key="realizar" >
                         <Link to="/sistema-ventas/realizar-venta">Realizar venta</Link>

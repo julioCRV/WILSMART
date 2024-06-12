@@ -108,7 +108,7 @@ const MostrarProducto = () => {
     try {
       await deleteDoc(docRef);
       console.log("Document deleted");
-      actualizarListaEmpleados();
+      actualizarListaProductos();
     } catch (e) {
       console.error("Error deleting document: ", e);
     }
@@ -133,7 +133,7 @@ const MostrarProducto = () => {
     console.log('params', pagination, filters, sorter, extra);
   };
 
-  const actualizarListaEmpleados = async () => {
+  const actualizarListaProductos = async () => {
     const querySnapshot = await getDocs(collection(db, "ListaProductos"));
     const dataList = querySnapshot.docs.map(doc => ({
       ...doc.data(),

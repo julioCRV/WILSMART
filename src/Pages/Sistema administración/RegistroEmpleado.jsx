@@ -46,7 +46,7 @@ const RegistroEmpleado = () => {
     const imagen = values.foto[0].originFileObj;
     try {
       // Sube la imagen a Cloud Storage
-      const storageRef = ref(storage, `imagenes/${imagen.name}`);
+      const storageRef = ref(storage, `imagenes/empleados/${imagen.name}`);
       await uploadBytes(storageRef, imagen);
 
       // Obtiene la URL de descarga de la imagen
@@ -89,17 +89,21 @@ const RegistroEmpleado = () => {
     });
   }
 
-  const initialValues = {
-    nombreCompleto: "Javier López",
-    ci: "8765432",
-    genero: "Masculino",
-    estadoCivil: "Casado",
-    telefono: "987654321",
-    email: "javier@example.com",
-    puesto: "Técnico en Reparación de Celulares",
-    salario: "4500",
-    direccion: "Calle de la Reparación, Edificio TechFix, Local 101, Ciudad Digital",
-};
+  const backHome = () => {
+    navigate('/sistema-administración');
+  }
+
+//   const initialValues = {
+//     nombreCompleto: "Javier López",
+//     ci: "8765432",
+//     genero: "Masculino",
+//     estadoCivil: "Casado",
+//     telefono: "987654321",
+//     email: "javier@example.com",
+//     puesto: "Técnico en Reparación de Celulares",
+//     salario: "4500",
+//     direccion: "Calle de la Reparación, Edificio TechFix, Local 101, Ciudad Digital",
+// };
 
 
 
@@ -110,7 +114,7 @@ const RegistroEmpleado = () => {
       <Form
         name="registro_empleado"
         layout="horizontal"
-        initialValues={initialValues}
+        // initialValues={initialValues}
         labelCol={{ span: 9 }}
         wrapperCol={{ span: 22 }}
         onFinish={onFinish}
@@ -224,7 +228,7 @@ const RegistroEmpleado = () => {
                 </Button>
               </Form.Item>
               <Form.Item>
-                <Button style={{ width: '150px' }} type="default" htmlType="button">
+                <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={backHome}> 
                   Cancelar
                 </Button>
               </Form.Item>

@@ -22,7 +22,7 @@ const HomePage = () => {
                 </Link>
 
 
-                <Link to="/sistema-administración/mostrar-empleado">
+                <Link to="/sistema-administración/mostrar-empleados">
                     <Card title="Personal" style={{ width: 300, backgroundColor: '#f0f0f0' }}>
                         <img src="/assets/listaEmpleados.png" alt="Administración" style={{ height: '150px' }} />
                         <Paragraph>

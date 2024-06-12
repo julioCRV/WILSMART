@@ -15,17 +15,17 @@ const HomePage = () => {
 
                 <Link to="/sistema-ventas/registrar-producto">
                     <Card title="Inventario" style={{ width: 250, marginLeft: '50px', backgroundColor: '#f0f0f0' }}>
-                        <img src="/assets/img.png" alt="Ventas" style={{ width: '100px' }} />
+                        <img src="/assets/agregarProducto.png" alt="Ventas" style={{ width: '100px' }} />
                         <Paragraph>
-                            Registro de productos
+                            Registrar producto
                         </Paragraph>
                     </Card>
                 </Link>
 
 
-                <Link to="/sistema-ventas/mostrar-producto">
+                <Link to="/sistema-ventas/mostrar-productos">
                     <Card title="Inventario" style={{ width: 250, backgroundColor: '#f0f0f0' }}>
-                        <img src="/assets/img.png" alt="Administración" style={{ width: '100px' }} />
+                        <img src="/assets/mostrarProducto.png" alt="Administración" style={{ width: '100px' }} />
                         <Paragraph>
                             Mostrar productos
                         </Paragraph>
@@ -34,7 +34,7 @@ const HomePage = () => {
 
                 <Link to="/sistema-ventas/realizar-venta">
                 <Card title="Inventario" style={{ width: 250, backgroundColor: '#f0f0f0' }}>
-                        <img src="/assets/img.png" alt="Administración" style={{ width: '100px' }} />
+                        <img src="/assets/realizarVenta.png" alt="Administración" style={{ width: '100px' }} />
                         <Paragraph>
                             Realizar venta
                         </Paragraph>
@@ -43,7 +43,7 @@ const HomePage = () => {
 
                 <Link to="/sistema-ventas/mostrar-reportes">
                     <Card title="Reportes" style={{ width: 250, marginRight: '50px', backgroundColor: '#f0f0f0' }}>
-                        <img src="/assets/img.png" alt="Servicios" style={{ width: '100px' }} />
+                        <img src="/assets/reporteVenta.png" alt="Servicios" style={{ width: '100px' }} />
                         <Paragraph>
                             Reporte de ventas
                         </Paragraph>

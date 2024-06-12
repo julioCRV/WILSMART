@@ -46,7 +46,7 @@ const RegistrarProducto = () => {
     const imagen = values.imagen[0].originFileObj;
     try {
       // Sube la imagen a Cloud Storage
-      const storageRef = ref(storage, `imagenes/${imagen.name}`);
+      const storageRef = ref(storage, `imagenes/productos/${imagen.name}`);
       await uploadBytes(storageRef, imagen);
 
       // Obtiene la URL de descarga de la imagen
@@ -78,24 +78,29 @@ const RegistrarProducto = () => {
 
     return `${año}/${mes}/${dia}`;
   }
+
   const ModalExito = () => {
     Modal.success({
       title: 'Registro de Empleado',
       content: 'Los datos del empleado se han guardado correctamente.',
-      onOk: () => { navigate('/sistema-administración'); } // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
+      onOk: () => { navigate('/sistema-ventas'); } 
     });
   }
 
-  const initialValues = {
-    nombreProducto: "Audifonos",
-    cantidad: 22,
-    categoria: "Accesorios",
-    // fecha: "12/05/2024",
-    precio: 111,
-    // imagen:
-    marca: "Samsung",
-    descripcion: "Bonitos audifonos"
-  };
+  const backHome = () => {
+    navigate('/sistema-ventas');
+  }
+
+  // const initialValues = {
+  //   nombreProducto: "Audifonos",
+  //   cantidad: 22,
+  //   categoria: "Accesorios",
+  //   // fecha: "12/05/2024",
+  //   precio: 111,
+  //   // imagen:
+  //   marca: "Samsung",
+  //   descripcion: "Bonitos audifonos"
+  // };
 
   return (
     <div >
@@ -104,7 +109,7 @@ const RegistrarProducto = () => {
       <Form
         name="registro_empleado"
         layout="horizontal"
-        initialValues={initialValues}
+        // initialValues={initialValues}
         labelCol={{ span: 9 }}
         wrapperCol={{ span: 22 }}
         onFinish={onFinish}
@@ -134,8 +139,8 @@ const RegistrarProducto = () => {
               rules={[{ required: true, message: 'Por favor seleccione una categoria' }]}
             >
               <Select placeholder="Seleccione una categoria">
-                <Option value="Femenino">Celulares</Option>
-                <Option value="Masculino">Accesorios</Option>
+                <Option value="Celulares">Celulares</Option>
+                <Option value="Accesorios">Accesorios</Option>
               </Select>
             </Form.Item>
 
@@ -197,7 +202,7 @@ const RegistrarProducto = () => {
                 </Button>
               </Form.Item>
               <Form.Item>
-                <Button style={{ width: '150px' }} type="default" htmlType="button">
+                <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={backHome}>
                   Cancelar
                 </Button>
               </Form.Item>

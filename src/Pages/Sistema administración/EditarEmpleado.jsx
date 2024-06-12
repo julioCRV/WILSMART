@@ -126,13 +126,18 @@ const EditarEmpleado = () => {
 
         return `${año}/${mes}/${dia}`;
     }
+
     const ModalExito = () => {
         Modal.success({
             title: 'Actualizar datos del empleado',
             content: 'Los datos del empleado se han actualizado correctamente.',
-            onOk: () => { navigate('/sistema-administración'); } // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
+            onOk: () => { navigate('/sistema-administración/mostrar-empleados'); } // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
         });
     }
+
+    const backList = () => {
+        navigate('/sistema-administración/mostrar-empleados');
+      }
 
     const initialValues = {
         nombreCompleto: DataEmpleado.Nombre,
@@ -278,7 +283,7 @@ const EditarEmpleado = () => {
                                 </Button>
                             </Form.Item>
                             <Form.Item>
-                                <Button style={{ width: '150px' }} type="default" htmlType="button">
+                                <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={backList}>
                                     Cancelar
                                 </Button>
                             </Form.Item>

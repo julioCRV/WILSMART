@@ -26,7 +26,7 @@ const NavigationBar = () => {
                         <Link to="/sistema-administración/registro-empleado">Registrar empleado</Link>
                     </Menu.Item>
                     <Menu.Item key="mostrar" >
-                        <Link to="/sistema-administración/mostrar-empleado">Mostrar empleados</Link>
+                        <Link to="/sistema-administración/mostrar-empleados">Mostrar empleados</Link>
                     </Menu.Item>
                 </SubMenu>
 

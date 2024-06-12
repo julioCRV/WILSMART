@@ -66,7 +66,7 @@ function SistemaVentas() {
         <Route path='/' element={<InicioSisVentas />} />
         <Route path='/registrar-producto' element={<RegistrarProducto />}></Route>
         <Route path='/editar-producto' element={<EditarProducto />}></Route>
-        <Route path='/mostrar-producto' element={<MostrarProductos />}></Route>
+        <Route path='/mostrar-productos' element={<MostrarProductos />}></Route>
         <Route path='/realizar-venta' element={<RealizarVenta />}></Route>
         <Route path='/mostrar-reportes' element={<ReporteVentas />}></Route>
         <Route path='*' element={<Navigate to="/" />} />
@@ -82,7 +82,7 @@ function SistemaAdministracion() {
       <Routes>
         <Route path='/' element={<InicioSisAdministracion />} />
         <Route path='/registro-empleado' element={<RegistroEmpleado />}></Route>
-        <Route path='/mostrar-empleado' element={<MostrarEmpleado />}></Route>
+        <Route path='/mostrar-empleados' element={<MostrarEmpleado />}></Route>
         <Route path='/editar-empleado' element={<EditarEmpleado />}></Route>
         <Route path='/mostrar-dashboard' element={<MostrarDashboard />}></Route>
         <Route path='*' element={<Navigate to="/" />} />

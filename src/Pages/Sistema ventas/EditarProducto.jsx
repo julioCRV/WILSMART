@@ -82,12 +82,12 @@ const EditarProducto = () => {
             // Declarar url con un valor inicial
             let url = '';
 
-            if (imagen.name === 'imagenEmpleado.jpg') {
+            if (imagen.name === 'imagenProducto.jpg') {
                 // Si el nombre de la imagen es 'imagenEmpleado.jpg', obtén la URL del dataProducto
-                url = dataProducto.FotoEmpleado;
+                url = dataProducto.Imagen;
             } else {
                 // Sube la imagen a Cloud Storage
-                const storageRef = ref(storage, `imagenes/${imagen.name}`);
+                const storageRef = ref(storage, `imagenes/productos/${imagen.name}`);
                 await uploadBytes(storageRef, imagen);
 
                 // Obtiene la URL de descarga de la imagen
@@ -120,16 +120,21 @@ const EditarProducto = () => {
 
         return `${año}/${mes}/${dia}`;
     }
+
     const ModalExito = () => {
         Modal.success({
             title: 'Actualizar datos del producto',
             content: 'Los datos del producto se han actualizado correctamente.',
-            onOk: () => { navigate('/sistema-administración'); } 
+            onOk: () => { navigate('/sistema-ventas/mostrar-productos'); }
         });
     }
 
+    const backList = () => {
+        navigate('/sistema-ventas/mostrar-productos');
+    }
+
     const initialValues = {
-        nombreProducto: dataProducto.Nombre,
+        nombreProducto: dataProducto.NombreProducto,
         cantidad: dataProducto.Cantidad,
         categoria: dataProducto.Categoria,
         fecha: moment(dataProducto.Fecha, 'YYYY-MM-DD'),
@@ -188,8 +193,8 @@ const EditarProducto = () => {
                             rules={[{ required: true, message: 'Por favor seleccione una categoria' }]}
                         >
                             <Select placeholder="Seleccione una categoria">
-                                <Option value="Femenino">Celulares</Option>
-                                <Option value="Masculino">Accesorios</Option>
+                                <Option value="Celulares">Celulares</Option>
+                                <Option value="Accesorios">Accesorios</Option>
                             </Select>
                         </Form.Item>
 
@@ -247,11 +252,11 @@ const EditarProducto = () => {
                         <div className="button-container">
                             <Form.Item>
                                 <Button style={{ width: '150px' }} type="primary" htmlType="submit">
-                                    Registrar
+                                    Actualizar
                                 </Button>
                             </Form.Item>
                             <Form.Item>
-                                <Button style={{ width: '150px' }} type="default" htmlType="button">
+                                <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={backList}>
                                     Cancelar
                                 </Button>
                             </Form.Item>
