@@ -8,6 +8,7 @@ import Inicio from './Pages/Inicio';
 import NavbarSisVentas from './components/NavbarSistemaVentas';
 import InicioSisVentas from './components/InicioVentas';
 import RegistrarProducto from './Pages/Sistema ventas/RegistrarProducto';
+import EditarProducto from './Pages/Sistema ventas/EditarProducto'
 import MostrarProductos from './Pages/Sistema ventas/MostrarProductos';
 import RealizarVenta from './Pages/Sistema ventas/RealizarVenta';
 import ReporteVentas from './Pages/Sistema ventas/ReporteVentas';
@@ -64,6 +65,7 @@ function SistemaVentas() {
       <Routes>
         <Route path='/' element={<InicioSisVentas />} />
         <Route path='/registrar-producto' element={<RegistrarProducto />}></Route>
+        <Route path='/editar-producto' element={<EditarProducto />}></Route>
         <Route path='/mostrar-producto' element={<MostrarProductos />}></Route>
         <Route path='/realizar-venta' element={<RealizarVenta />}></Route>
         <Route path='/mostrar-reportes' element={<ReporteVentas />}></Route>

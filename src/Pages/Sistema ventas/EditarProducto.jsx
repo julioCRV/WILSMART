@@ -6,17 +6,17 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../FireBase/fireBase';
 import { useNavigate, useLocation } from 'react-router-dom';
 import moment from 'moment';
-import './RegistroEmpleado.css';
+import './RegistrarProducto.css';
 
 const { Option } = Select;
 
-const EditarEmpleado = () => {
+const EditarProducto = () => {
     const location = useLocation();
-    const DataEmpleado = location.state && location.state.objetoProp;
+    const dataProducto = location.state && location.state.objetoProp;
     const [imageUploaded, setImageUploaded] = useState(false);
     const navigate = useNavigate();
 
-    // console.log(DataEmpleado.fechaNacimiento);
+    // console.log(dataProducto.fechaNacimiento);
     const verificarImagen = {
         beforeUpload: (file) => {
 
@@ -48,7 +48,7 @@ const EditarEmpleado = () => {
         console.log('Received values of form: ', values);
         // console.log(values.imagen);
 
-        const imagen = values.foto[0].originFileObj;
+        const imagen = values.imagen[0].originFileObj;
         // try {
         //     // Sube la imagen a Cloud Storage
         //     const storageRef = ref(storage, `imagenes/${imagen.name}`);
@@ -57,7 +57,7 @@ const EditarEmpleado = () => {
         //     // Obtiene la URL de descarga de la imagen
         //     const url = await getDownloadURL(storageRef);
 
-        //     const docRef = await addDoc(collection(db, "ListaEmpleados"), {
+        //     const docRef = await addDoc(collection(db, "ListaProductos"), {
         //         Nombre: values.nombreCompleto,
         //         FechaNacimiento: formatearFecha(values.fechaNacimiento.toDate()),
         //         CI: values.ci,
@@ -76,15 +76,15 @@ const EditarEmpleado = () => {
         //     console.error("Error adding document: ", error);
         // }
 
-        const docRef = doc(db, "ListaEmpleados", DataEmpleado.id);
+        const docRef = doc(db, "ListaProductos", dataProducto.id);
         try {
 
             // Declarar url con un valor inicial
             let url = '';
 
             if (imagen.name === 'imagenEmpleado.jpg') {
-                // Si el nombre de la imagen es 'imagenEmpleado.jpg', obtén la URL del DataEmpleado
-                url = DataEmpleado.FotoEmpleado;
+                // Si el nombre de la imagen es 'imagenEmpleado.jpg', obtén la URL del dataProducto
+                url = dataProducto.FotoEmpleado;
             } else {
                 // Sube la imagen a Cloud Storage
                 const storageRef = ref(storage, `imagenes/${imagen.name}`);
@@ -95,20 +95,14 @@ const EditarEmpleado = () => {
             }
 
             // Aquí puedes utilizar la variable url con el valor correspondiente
-
-
             await updateDoc(docRef, {
-                Nombre: values.nombreCompleto,
-                FechaNacimiento: formatearFecha(values.fechaNacimiento.toDate()),
-                CI: values.ci,
-                Genero: values.genero,
-                EstadoCivil: values.estadoCivil,
-                NumeroTeléfono: values.telefono,
-                FotoEmpleado: url,
-                CorreoElectrónico: values.email,
-                PuestoOcargo: values.puesto,
-                Salario: values.salario,
-                DirecciónDeDomicilio: values.direccion
+                Cantidad: values.cantidad,
+                Categoria: values.categoria,
+                Fecha: formatearFecha(values.fecha.toDate()),
+                Precio: values.precio,
+                Imagen: url,
+                Marca: values.marca,
+                Descripcion: values.descripcion,
             });
             console.log("Document updated");
             ModalExito();
@@ -128,44 +122,41 @@ const EditarEmpleado = () => {
     }
     const ModalExito = () => {
         Modal.success({
-            title: 'Actualizar datos del empleado',
-            content: 'Los datos del empleado se han actualizado correctamente.',
-            onOk: () => { navigate('/sistema-administración'); } // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
+            title: 'Actualizar datos del producto',
+            content: 'Los datos del producto se han actualizado correctamente.',
+            onOk: () => { navigate('/sistema-administración'); } 
         });
     }
 
     const initialValues = {
-        nombreCompleto: DataEmpleado.Nombre,
-        fechaNacimiento: moment(DataEmpleado.FechaNacimiento, 'YYYY-MM-DD'),
-        ci: DataEmpleado.CI,
-        genero: DataEmpleado.Genero,
-        estadoCivil: DataEmpleado.EstadoCivil,
-        telefono: DataEmpleado.NumeroTeléfono,
-        foto: [
+        nombreProducto: dataProducto.Nombre,
+        cantidad: dataProducto.Cantidad,
+        categoria: dataProducto.Categoria,
+        fecha: moment(dataProducto.Fecha, 'YYYY-MM-DD'),
+        precio: dataProducto.Precio,
+        imagen: [
             {
                 uid: 'rc-upload-1717606230863-15',
-                name: 'imagenEmpleado.jpg',
+                name: 'imagenProducto.jpg',
                 lastModified: 1717602102812,
                 lastModifiedDate: new Date('Wed Jun 05 2024 11:41:42 GMT-0400 (hora de Bolivia)'),
-                originFileObj: new File([''], 'imagenEmpleado.jpg', { type: 'image/jpeg' }),
+                originFileObj: new File([''], 'imagenProducto.jpg', { type: 'image/jpeg' }),
                 percent: 0,
                 size: 4642,
                 type: 'image/jpeg',
-                url: DataEmpleado.FotoEmpleado
+                url: dataProducto.Imagen
             }
         ],
-        email: DataEmpleado.CorreoElectrónico,
-        puesto: DataEmpleado.PuestoOcargo,
-        salario: DataEmpleado.Salario,
-        direccion: DataEmpleado.DirecciónDeDomicilio,
+        marca: dataProducto.Marca,
+        descripcion: dataProducto.Descripcion
     };
 
     return (
         <div >
-            <h2 className="form-title">Editar de empleado</h2>
+            <h2 className="form-title">Editar Producto</h2>
 
             <Form
-                name="editar_empleado"
+                name="editar_producto"
                 layout="horizontal"
                 initialValues={initialValues}
                 labelCol={{ span: 9 }}
@@ -176,59 +167,57 @@ const EditarEmpleado = () => {
                 <div className='parent2'>
                     <div className="div11">
                         <Form.Item
-                            name="nombreCompleto"
-                            label="Nombre Completo"
-                            rules={[{ required: true, message: 'Por favor ingrese su nombre completo' }]}
+                            name="nombreProducto"
+                            label="Nombre"
+                            rules={[{ required: true, message: 'Por favor ingrese el nombre del producto' }]}
                         >
                             <Input />
                         </Form.Item>
+
                         <Form.Item
-                            name="fechaNacimiento"
-                            label="Fecha de Nacimiento"
-                            rules={[{ required: true, message: 'Por favor seleccione su fecha de nacimiento' }]}
+                            name="cantidad"
+                            label="Cantidad"
+                            rules={[{ required: true, message: 'Por favor ingrese una cantidad' }]}
+                        >
+                            <Input type="number" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="categoria"
+                            label="Categoria"
+                            rules={[{ required: true, message: 'Por favor seleccione una categoria' }]}
+                        >
+                            <Select placeholder="Seleccione una categoria">
+                                <Option value="Femenino">Celulares</Option>
+                                <Option value="Masculino">Accesorios</Option>
+                            </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="fecha"
+                            label="Fecha"
+                            rules={[{ required: true, message: 'Por favor seleccione la fecha' }]}
                         >
                             <DatePicker className='full-width' />
                         </Form.Item>
+
+
                         <Form.Item
-                            name="ci"
-                            label="CI"
-                            rules={[{ required: true, message: 'Por favor ingrese su CI' }]}
+                            name="precio"
+                            label="Precio"
+                            rules={[{ required: true, message: 'Por favor ingrese el precio' }]}
                         >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            name="genero"
-                            label="Género"
-                            rules={[{ required: true, message: 'Por favor seleccione su género' }]}
-                        >
-                            <Select placeholder="Seleccione su género">
-                                <Option value="Femenino">Femenino</Option>
-                                <Option value="Masculino">Masculino</Option>
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
-                            name="estadoCivil"
-                            label="Estado Civil"
-                            rules={[{ required: true, message: 'Por favor ingrese su estado civil' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            name="telefono"
-                            label="Número de Teléfono"
-                            rules={[{ required: true, message: 'Por favor ingrese su número de teléfono' }]}
-                        >
-                            <Input />
+                            <Input type="number" />
                         </Form.Item>
                     </div>
 
                     <div className="div22">
                         <Form.Item
-                            name="foto"
-                            label="Foto de Empleado"
+                            name="imagen"
+                            label="Imagen"
                             valuePropName="fileList"
                             getValueFromEvent={(e) => (Array.isArray(e) ? e : e && e.fileList)}
-                            rules={[{ required: true, message: 'Por favor suba una foto' }]}
+                            rules={[{ required: true, message: 'Por favor suba una imagen' }]}
                         >
                             <Upload  {...verificarImagen} maxCount={1} accept='image/*'>
                                 <Button style={{ marginRight: '255px' }} icon={<UploadOutlined />}>Examinar</Button>
@@ -237,33 +226,17 @@ const EditarEmpleado = () => {
                         </Form.Item>
 
                         <Form.Item
-                            name="email"
-                            label="Correo Electrónico"
-                            rules={[
-                                { type: 'email', message: 'El correo no es válido' },
-                                { required: true, message: 'Por favor ingrese su correo electrónico' },
-                            ]}
+                            name="marca"
+                            label="Marca"
+                            rules={[{ required: true, message: 'Por favor ingrese una marca' }]}
                         >
                             <Input />
                         </Form.Item>
+
                         <Form.Item
-                            name="puesto"
-                            label="Puesto o Cargo"
-                            rules={[{ required: true, message: 'Por favor ingrese su puesto o cargo' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            name="salario"
-                            label="Salario"
-                            rules={[{ required: true, message: 'Por favor ingrese su salario' }]}
-                        >
-                            <Input type="number" />
-                        </Form.Item>
-                        <Form.Item
-                            name="direccion"
-                            label="Dirección de Domicilio"
-                            rules={[{ required: true, message: 'Por favor ingrese su dirección de domicilio' }]}
+                            name="descripcion"
+                            label="Descripción"
+                            rules={[{ required: true, message: 'Por favor ingrese una descripción' }]}
                         >
                             <Input />
                         </Form.Item>
@@ -274,7 +247,7 @@ const EditarEmpleado = () => {
                         <div className="button-container">
                             <Form.Item>
                                 <Button style={{ width: '150px' }} type="primary" htmlType="submit">
-                                    Actualizar
+                                    Registrar
                                 </Button>
                             </Form.Item>
                             <Form.Item>
@@ -291,4 +264,4 @@ const EditarEmpleado = () => {
     );
 };
 
-export default EditarEmpleado;
+export default EditarProducto;

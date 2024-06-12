@@ -5,11 +5,11 @@ import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../FireBase/fireBase';
 import { useNavigate } from 'react-router-dom';
-import './RegistroProducto.css';
+import './RegistrarProducto.css';
 
 const { Option } = Select;
 
-const RegistroProductos = () => {
+const RegistrarProducto = () => {
 
   const [imageUploaded, setImageUploaded] = useState(false);
   const navigate = useNavigate();
@@ -41,35 +41,32 @@ const RegistroProductos = () => {
   };
 
   const onFinish = async (values) => {
-    // console.log('Received values of form: ', values);
+    console.log('Received values of form: ', values);
 
-    // const imagen = values.foto[0].originFileObj;
-    // try {
-    //   // Sube la imagen a Cloud Storage
-    //   const storageRef = ref(storage, `imagenes/${imagen.name}`);
-    //   await uploadBytes(storageRef, imagen);
+    const imagen = values.imagen[0].originFileObj;
+    try {
+      // Sube la imagen a Cloud Storage
+      const storageRef = ref(storage, `imagenes/${imagen.name}`);
+      await uploadBytes(storageRef, imagen);
 
-    //   // Obtiene la URL de descarga de la imagen
-    //   const url = await getDownloadURL(storageRef);
+      // Obtiene la URL de descarga de la imagen
+      const url = await getDownloadURL(storageRef);
 
-    //   const docRef = await addDoc(collection(db, "ListaEmpleados"), {
-    //     Nombre: values.nombreCompleto,
-    //     FechaNacimiento: formatearFecha(values.fechaNacimiento.toDate()),
-    //     CI: values.ci,
-    //     Genero: values.genero,
-    //     EstadoCivil: values.estadoCivil,
-    //     NumeroTeléfono: values.telefono,
-    //     FotoEmpleado: url,
-    //     CorreoElectrónico: values.email,
-    //     PuestoOcargo: values.puesto,
-    //     Salario: values.salario,
-    //     DirecciónDeDomicilio: values.direccion
-    //   });
-    //   console.log("Document written with ID: ", docRef.id);
-    //   ModalExito();
-    // } catch (error) {
-    //   console.error("Error adding document: ", error);
-    // }
+      const docRef = await addDoc(collection(db, "ListaProductos"), {
+        NombreProducto: values.nombreProducto,
+        Cantidad: values.cantidad,
+        Categoria: values.categoria,
+        Fecha: formatearFecha(values.fecha.toDate()),
+        Precio: values.precio,
+        Imagen: url,
+        Marca: values.marca,
+        Descripcion: values.descripcion,
+      });
+      console.log("Document written with ID: ", docRef.id);
+      ModalExito();
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
   };
 
   function formatearFecha(fechaString) {
@@ -85,9 +82,20 @@ const RegistroProductos = () => {
     Modal.success({
       title: 'Registro de Empleado',
       content: 'Los datos del empleado se han guardado correctamente.',
-      onOk: () => {navigate('/sistema-administración');} // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
+      onOk: () => { navigate('/sistema-administración'); } // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
     });
   }
+
+  const initialValues = {
+    nombreProducto: "Audifonos",
+    cantidad: 22,
+    categoria: "Accesorios",
+    // fecha: "12/05/2024",
+    precio: 111,
+    // imagen:
+    marca: "Samsung",
+    descripcion: "Bonitos audifonos"
+  };
 
   return (
     <div >
@@ -96,6 +104,7 @@ const RegistroProductos = () => {
       <Form
         name="registro_empleado"
         layout="horizontal"
+        initialValues={initialValues}
         labelCol={{ span: 9 }}
         wrapperCol={{ span: 22 }}
         onFinish={onFinish}
@@ -104,7 +113,7 @@ const RegistroProductos = () => {
         <div className='parent2'>
           <div className="div11">
             <Form.Item
-              name="nombreCompleto"
+              name="nombreProducto"
               label="Nombre"
               rules={[{ required: true, message: 'Por favor ingrese el nombre del producto' }]}
             >
@@ -112,7 +121,7 @@ const RegistroProductos = () => {
             </Form.Item>
 
             <Form.Item
-              name="salario"
+              name="cantidad"
               label="Cantidad"
               rules={[{ required: true, message: 'Por favor ingrese una cantidad' }]}
             >
@@ -120,7 +129,7 @@ const RegistroProductos = () => {
             </Form.Item>
 
             <Form.Item
-              name="genero"
+              name="categoria"
               label="Categoria"
               rules={[{ required: true, message: 'Por favor seleccione una categoria' }]}
             >
@@ -131,7 +140,7 @@ const RegistroProductos = () => {
             </Form.Item>
 
             <Form.Item
-              name="fechaNacimiento"
+              name="fecha"
               label="Fecha"
               rules={[{ required: true, message: 'Por favor seleccione la fecha' }]}
             >
@@ -140,7 +149,7 @@ const RegistroProductos = () => {
 
 
             <Form.Item
-              name="salario"
+              name="precio"
               label="Precio"
               rules={[{ required: true, message: 'Por favor ingrese el precio' }]}
             >
@@ -150,7 +159,7 @@ const RegistroProductos = () => {
 
           <div className="div22">
             <Form.Item
-              name="foto"
+              name="imagen"
               label="Imagen"
               valuePropName="fileList"
               getValueFromEvent={(e) => (Array.isArray(e) ? e : e && e.fileList)}
@@ -163,7 +172,7 @@ const RegistroProductos = () => {
             </Form.Item>
 
             <Form.Item
-              name="puesto"
+              name="marca"
               label="Marca"
               rules={[{ required: true, message: 'Por favor ingrese una marca' }]}
             >
@@ -171,7 +180,7 @@ const RegistroProductos = () => {
             </Form.Item>
 
             <Form.Item
-              name="direccion"
+              name="descripcion"
               label="Descripción"
               rules={[{ required: true, message: 'Por favor ingrese una descripción' }]}
             >
@@ -201,4 +210,4 @@ const RegistroProductos = () => {
   );
 };
 
-export default RegistroProductos;
+export default RegistrarProducto;

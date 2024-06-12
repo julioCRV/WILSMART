@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu } from 'antd';
-import { HomeOutlined, InboxOutlined, ReconciliationOutlined, LogoutOutlined  } from '@ant-design/icons';
+import { HomeOutlined, InboxOutlined, ReconciliationOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
 const NavigationBar = () => {
@@ -8,10 +8,10 @@ const NavigationBar = () => {
     return (
         <>
             <h2 style={{ top: 0, width: '100%', color: '#black' }}>Sistema de ventas</h2>
-            <Menu mode="horizontal" defaultSelectedKeys={['inicio']} style={{ top: 50, width: '100%', border: '1px solid #000' }}>
+            <Menu mode="horizontal" defaultSelectedKeys={['inicio-actual']} style={{ top: 50, width: '100%', border: '1px solid #000' }}>
 
-                <SubMenu key="inicio1" icon={<HomeOutlined />} title="Inicio">
-                    <Menu.Item key="inicio">
+                <SubMenu key="inicio" icon={<HomeOutlined />} title="Inicio">
+                    <Menu.Item key="inicio-actual">
                         <Link to="/Sistema-ventas">Inicio</Link>
                     </Menu.Item>
                     <Menu.Item key="inicio-general">
@@ -19,9 +19,17 @@ const NavigationBar = () => {
                     </Menu.Item>
                 </SubMenu>
 
-                <Menu.Item key="inventario" icon={<InboxOutlined />}>
-                    <Link to="/sistema-ventas/mostrar-producto">Inventario</Link>
-                </Menu.Item>
+                <SubMenu key="inventario" icon={<InboxOutlined />} title="Inventario">
+                    <Menu.Item key="registrar" >
+                        <Link to="/sistema-ventas/registrar-producto">Registrar producto</Link>
+                    </Menu.Item>
+                    <Menu.Item key="mostrar" >
+                        <Link to="/sistema-ventas/mostrar-producto">Mostrar producto</Link>
+                    </Menu.Item>
+                    <Menu.Item key="realizar" >
+                        <Link to="/sistema-ventas/realizar-venta">Realizar venta</Link>
+                    </Menu.Item>
+                </SubMenu>
 
                 <Menu.Item key="reportes" icon={<ReconciliationOutlined />}>
                     <Link to="/sistema-ventas/mostrar-reportes">Reportes</Link>

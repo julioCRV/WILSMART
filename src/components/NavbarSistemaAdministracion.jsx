@@ -10,10 +10,10 @@ const NavigationBar = () => {
     return (
         <>
             <h2 style={{ top: 0, width: '100%', color: '#black' }}>Sistema de administración</h2>
-            <Menu mode="horizontal" defaultSelectedKeys={['inicio']} style={{ top: 50, width: '100%', border: '1px solid #000' }}>
+            <Menu mode="horizontal" defaultSelectedKeys={['inicio-actual']} style={{ top: 50, width: '100%', border: '1px solid #000' }}>
 
-                <SubMenu key="inicio1" icon={<HomeOutlined />} title="Inicio">
-                    <Menu.Item key="inicio">
+                <SubMenu key="inicio" icon={<HomeOutlined />} title="Inicio">
+                    <Menu.Item key="inicio-actual">
                         <Link to="/Sistema-administración/">Inicio</Link>
                     </Menu.Item>
                     <Menu.Item key="inicio-general">
@@ -22,7 +22,7 @@ const NavigationBar = () => {
                 </SubMenu>
 
                 <SubMenu key="personal" icon={<SolutionOutlined />} title="Personal">
-                    <Menu.Item key="personal" >
+                    <Menu.Item key="registrar" >
                         <Link to="/sistema-administración/registro-empleado">Registrar empleado</Link>
                     </Menu.Item>
                     <Menu.Item key="mostrar" >
