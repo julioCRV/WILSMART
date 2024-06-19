@@ -3,8 +3,22 @@ import { Menu } from 'antd';
 import { HomeOutlined, InboxOutlined, ReconciliationOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
-const NavigationBar = () => {
+const NavigationBar = ({ logout }) => {
     const { SubMenu } = Menu;
+
+    const salir = () => {
+        logout({ rol: "none" });
+        // signInWithEmailAndPassword(auth, email, password)
+        //   .then((userCredential) => {
+        //     // console.log(userCredential.user);
+        //     console.log("Puede ingresar");
+        //     login({rol: "administrador"})
+        //   })
+        //   .catch((error) => {
+        //     console.error(error);
+        //   });
+    };
+
     return (
         <>
             <h2 style={{ top: 0, width: '100%', color: '#black' }}>Sistema de ventas</h2>
@@ -24,7 +38,10 @@ const NavigationBar = () => {
                         <Link to="/sistema-ventas/registrar-producto">Registrar producto</Link>
                     </Menu.Item>
                     <Menu.Item key="mostrar" >
-                        <Link to="/sistema-ventas/mostrar-productos">Mostrar producto</Link>
+                        <Link to="/sistema-ventas/mostrar-productos">Mostrar productos</Link>
+                    </Menu.Item>
+                    <Menu.Item key="incrementar" >
+                        <Link to="/sistema-ventas/incrementar-productos">Incrementar productos</Link>
                     </Menu.Item>
                     <Menu.Item key="realizar" >
                         <Link to="/sistema-ventas/realizar-venta">Realizar venta</Link>
@@ -35,8 +52,9 @@ const NavigationBar = () => {
                     <Link to="/sistema-ventas/mostrar-reportes">Reportes</Link>
                 </Menu.Item>
 
-                <Menu.Item key="cerrar" icon={<LogoutOutlined />} style={{ margin: '0 63%' }}>
-                    <Link to="/">Cerrar sesión</Link>
+                <Menu.Item key="cerrar" icon={<LogoutOutlined />} style={{ margin: '0 63%' }} onClick={salir}>
+                    {/* <Link to="/">Cerrar sesión</Link> */}
+                    Cerrar sesión
                 </Menu.Item>
             </Menu>
         </>

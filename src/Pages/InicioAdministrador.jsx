@@ -15,9 +15,9 @@ const HomePage = () => {
       <div className='pru'>
         <Row gutter={16}>
           <Col md={8}>
-            {/* <Link to="/sistema-ventas"> */}
-            <Link to="/iniciar-sesión/ventas">
-              <Card title="Sistema de Ventas" >
+            <Link to="/sistema-ventas">
+            {/* <Link to="/iniciar-sesion/ventas"> */}
+              <Card title="Sistema de ventas" >
                 <img src="/assets/logoVentas.png" alt="Ventas" style={{ maxWidth: '80%', height: 'auto' }} />
                 <Paragraph>
                   Gestiona tus compras y ventas de manera eficiente con nuestro sistema de ventas.
@@ -27,9 +27,9 @@ const HomePage = () => {
           </Col>
 
           <Col md={8}>
-            {/* <Link to="/sistema-administración"> */}
-            <Link to="/iniciar-sesión/administración">
-              <Card title="Sistema de Administración" >
+            <Link to="/sistema-administración">
+            {/* <Link to="/iniciar-sesion/administración"> */}
+              <Card title="Sistema de administración" >
                 <img src="/assets/logoAdministracion.png" alt="Administración" style={{ maxWidth: '80%', height: 'auto' }} />
                 <Paragraph>
                   Controla y organiza tus procesos administrativos con nuestro sistema especializado.
@@ -39,9 +39,9 @@ const HomePage = () => {
           </Col>
 
           <Col xs={24} sm={24} md={8}>
-            {/* <Link to="/sistema-servicios"> */}
-            <Link to="/iniciar-sesión/servicios">
-              <Card title="Sistema de Servicios" >
+            <Link to="/sistema-servicios">
+            {/* <Link to="/iniciar-sesion/servicios"> */}
+              <Card title="Sistema de servicios" >
                 <img src="/assets/logoServicios.png" alt="Servicios" style={{ maxWidth: '70%', height: 'auto' }} />
                 <Paragraph>
                   Ofrece servicios de alta calidad a tus clientes utilizando nuestro sistema de servicios.

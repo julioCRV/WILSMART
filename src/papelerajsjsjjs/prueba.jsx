@@ -11,14 +11,14 @@ function App() {
   const [newTodo, setNewTodo] = useState('');
 
   // Recupera las tareas de Firestore cuando el componente se monta
-  useEffect(() => {
-    const fetchTodos = async () => {
-      const querySnapshot = await getDocs(collection(db, "ListaEmpleados"));
-      setTodos(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      console.log(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    };
-    fetchTodos();
-  }, []);
+  // useEffect(() => {
+  //   const fetchTodos = async () => {
+  //     const querySnapshot = await getDocs(collection(db, "ListaEmpleados"));
+  //     setTodos(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  //     console.log(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  //   };
+  //   fetchTodos();
+  // }, []);
 
   // Maneja el registro de usuarios
   const signUp = () => {
@@ -35,10 +35,11 @@ function App() {
   const signIn = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log(userCredential.user);
+        // console.log(userCredential.user);
+        console.log("Puede ingresar tiene las credenciales");
       })
       .catch((error) => {
-        console.error(error);
+        console.error("No puede ingresar credenciales: ",error);
       });
   };
 
@@ -57,16 +58,17 @@ function App() {
   }));
   
   return (
-    <div>
-      <h1>Firebase Authentication and Firestore Example</h1>
+    <div className='contenedor'>
+      <h1>Iniciar sesión</h1>
+      <h2>Hola, bienvenido</h2>
       <div>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-        <button onClick={signUp}>Sign Up</button>
-        <button onClick={signIn}>Sign In</button>
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Nombre de usuario" />
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña" />
+        {/* <button onClick={signUp}>Sign Up</button> */}
+        <button onClick={signIn}>Ingresar</button>
       </div>
 
-      <div>
+      {/* <div>
         <input value={newTodo} onChange={(e) => setNewTodo(e.target.value)} placeholder="New Todo" />
         <button onClick={addTodo}>Add Todo</button>
         <ul>
@@ -78,7 +80,7 @@ function App() {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
     </div>
   );
 }

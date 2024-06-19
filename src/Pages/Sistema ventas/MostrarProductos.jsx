@@ -40,6 +40,7 @@ const MostrarProducto = () => {
       title: 'Precio',
       dataIndex: 'Precio',
       defaultSortOrder: 'descend',
+      render: (text) => `Bs   ${text}`, 
       // sorter: (a, b) => a.age - b.age,
     },
     {
@@ -159,7 +160,7 @@ const MostrarProducto = () => {
   return (
     <>
       <div>
-        <h2 className="form-title">Mostrar empleados</h2>
+        <h2 className="form-title">Mostrar productos</h2>
         <div className='parentMostrar'>
           <Table
             columns={columns}

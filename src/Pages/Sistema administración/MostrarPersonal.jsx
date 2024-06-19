@@ -1,6 +1,6 @@
 import { Table, Button, Space, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs,  doc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import { useNavigate } from 'react-router-dom';
 import './MostrarPersonal.css'
@@ -70,15 +70,14 @@ const MostrarEmpleado = () => {
           <img src={record.FotoEmpleado} alt="Empleado" style={{ width: '200px', marginLeft: '15%' }} />
           <p>{record.Nombre}</p>
           <p>{record.PuestoOcargo}</p>
-          <p>Salario: {record.Salario}</p>
-
-          <p>Fecha nacimiento: {record.FechaNacimiento}</p>
-          <p>C.I.: {record.CI}</p>
-          <p>Género: {record.Genero}</p>
-          <p>Estado civil: {record.EstadoCivil}</p>
-          <p>Número de teléfono{record.NumeroTeléfono}</p>
-          <p>Correo electrónico{record.CorreoElectrónico}</p>
-          <p>Dirección de domicilio: {record.DirecciónDeDomicilio}</p>
+          <p><strong>Salario:</strong> {record.Salario}</p>
+          <p><strong>Fecha nacimiento:</strong> {record.FechaNacimiento}</p>
+          <p><strong> C.I.:</strong> {record.CI}</p>
+          <p><strong>Género:</strong> {record.Genero}</p>
+          <p><strong>Estado civil:</strong> {record.EstadoCivil}</p>
+          <p><strong>Número de teléfono:</strong> {record.NumeroTeléfono}</p>
+          <p><strong>Correo electrónico:</strong> {record.CorreoElectrónico}</p>
+          <p><strong>Dirección de domicilio:</strong> {record.DirecciónDeDomicilio}</p>
         </div>
       ),
       onOk() { },

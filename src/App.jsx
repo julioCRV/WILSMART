@@ -1,18 +1,25 @@
-import { Button } from 'antd';
+import React, { useState, useEffect } from 'react';
 import './App.css'
 import { Navigate, Routes, Route } from "react-router-dom";
 
-//rutas
+//  R U T A S     P R I N C I P A L E S
 import Inicio from './Pages/Inicio';
+import InicioAdmi from './Pages/InicioAdministrador'
+import IniciarSesionA from './Pages/Sistema administración/IniciarSesionAdministración';
+import IniciarSesionV from './Pages/Sistema ventas/IniciarSesionVentas';
+import IniciarSesionS from './Pages/Sistema servicios/IniciarSesionServicios';
 
+//  V  E  N  T  A  S
 import NavbarSisVentas from './components/NavbarSistemaVentas';
 import InicioSisVentas from './components/InicioVentas';
 import RegistrarProducto from './Pages/Sistema ventas/RegistrarProducto';
 import EditarProducto from './Pages/Sistema ventas/EditarProducto'
 import MostrarProductos from './Pages/Sistema ventas/MostrarProductos';
+import IncrementarProductos from './Pages/Sistema ventas/IncrementarProductos'
 import RealizarVenta from './Pages/Sistema ventas/RealizarVenta';
 import ReporteVentas from './Pages/Sistema ventas/ReporteVentas';
 
+//  A  D  M  I  N  I  S  T  R  A  C  I  Ó  N 
 import NavbarSisAdministracion from './components/NavbarSistemaAdministracion';
 import InicioSisAdministracion from './components/InicioAdministracion';
 import RegistroEmpleado from './Pages/Sistema administración/RegistroEmpleado';
@@ -20,53 +27,133 @@ import EditarEmpleado from './Pages/Sistema administración/EditarEmpleado';
 import MostrarEmpleado from './Pages/Sistema administración/MostrarPersonal';
 import MostrarDashboard from './Pages/Sistema administración/MostrarDashboard';
 
+//  V  E  N  T  A  S
 import NavbarSisServicios from './components/NavbarSistemaServicios';
 import InicioSisServicios from './components/InicioServicios';
 
 // P R U E B A 
 import Prueba6 from './papelerajsjsjjs/prueba6'
 import Prueba7 from './papelerajsjsjjs/pruebaResponsive'
-import Prueba from './papelerajsjsjjs/prueba2'
+import Prueba from './papelerajsjsjjs/prueba'
 import Prueba3 from './papelerajsjsjjs/prueba3'
 import Prueba4 from './papelerajsjsjjs/prueba4'
 import Prueba5 from './papelerajsjsjjs/prueba5'
 
 function App() {
+  const [rol, setRol] = useState(sessionStorage.getItem('saveRol'));
+
+  useEffect(() => {
+    setRol(sessionStorage.getItem('saveRol'));
+  }, [rol]);
+
+  const handleLogin = (userData) => {
+    // console.log(userData);
+    setRol(userData.rol);
+    // if (sessionStorage.getItem('saveRol') == null) {
+    //   sessionStorage.setItem('saveRol', userData.rol)
+    // }
+  };
+
+  const handleLogout = (userData) => {
+    // console.log(userData);
+    // console.log('lo logro señor');
+    setRol(null);
+    sessionStorage.removeItem('saveRol');
+    // if (sessionStorage.getItem('saveRol') == null) {
+    //   sessionStorage.setItem('saveRol', userData.rol)
+    // }
+  };
 
   return (
     <div className='App'>
-       {/* <Prueba/> */}
+      {/* <Prueba /> */}
       {/* <Prueba3/> */}
       {/*<Prueba4 id="7gsP6wg9iYVsE9UWjm5h" />
       <Prueba5/> */}
 
       {/* <Prueba6 /> */}
-      
+
       {/* <Prueba7/> */}
-      <Routes>
-        <Route path='/' element={<Inicio />}></Route>
 
-        <Route path='/sistema-ventas/*' element={<SistemaVentas />}></Route>
-
-        <Route path='/sistema-administración/*' element={<SistemaAdministracion />}></Route>
-
-        <Route path='/sistema-servicios' element={<SistemaServicios />}></Route>
-
-        <Route path='*' element={<Navigate to="/"></Navigate>}></Route>
-      </Routes>
+      {rol === null ? (
+        <>
+          <Routes>
+            <Route path='/' element={<Inicio />}></Route>
+            <Route path="/iniciar-sesión/administración" element={<IniciarSesionA login={handleLogin} />} />
+            <Route path="/iniciar-sesión/ventas" element={<IniciarSesionV login={handleLogin} />} />
+            <Route path="/iniciar-sesión/servicios" element={<IniciarSesionS login={handleLogin} />} />
+            <Route path='*' element={<Navigate to="/"></Navigate>}></Route>
+          </Routes>
+        </>
+      ) : (
+        <>
+          {rol === 'administrador@gmail.com' ? (
+            <>
+              <Routes>
+                <Route path='/' element={<InicioAdmi />}></Route>
+                <Route path='/sistema-ventas/*' element={<SistemaVentas logout={handleLogout} />}></Route>
+                <Route path='/sistema-administración/*' element={<SistemaAdministracion logout={handleLogout} />}></Route>
+                <Route path='/sistema-servicios/*' element={<SistemaServicios logout={handleLogout} />}></Route>
+                <Route path='*' element={<Navigate to="/"></Navigate>}></Route>
+              </Routes>
+            </>
+          ) : (
+            <>
+              {rol === 'userventa@gmail.com' ? (
+                <>
+                  <Routes>
+                    <Route path='/' element={<InicioAdmi />}></Route>
+                    <Route path='/sistema-ventas/*' element={<SistemaVentas logout={handleLogout} />}></Route>
+                    <Route path='*' element={<Navigate to="/"></Navigate>}></Route>
+                  </Routes>
+                </>
+              ) : (
+                <>
+                  {rol === 'userservicio@gmail.com' ? (
+                    <>
+                      <Routes>
+                        <Route path='/' element={<InicioAdmi />}></Route>
+                        <Route path='/sistema-servicios' element={<SistemaServicios logout={handleLogout} />}></Route>
+                        <Route path='*' element={<Navigate to="/"></Navigate>}></Route>
+                      </Routes>
+                    </>
+                  ) : (
+                    <>
+                      <Routes>
+                        <Route path='/' element={<Inicio />}></Route>
+                        <Route path="/iniciar-sesión" element={<IniciarSesionA login={handleLogin} />} />
+                        <Route path='*' element={<Navigate to="/iniciar-sesión"></Navigate>}></Route>
+                      </Routes>
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 }
 
-function SistemaVentas() {
+function SistemaVentas({ logout }) {
+  const handleLogout = (userData) => {
+    // console.log(userData);
+    logout(userData.rol);
+    // if (sessionStorage.getItem('saveRol') == null) {
+    //   sessionStorage.setItem('saveRol', userData.rol)
+    // }
+  };
+
   return (
     <div>
-      <NavbarSisVentas />
+      <NavbarSisVentas logout={handleLogout} />
       <Routes>
         <Route path='/' element={<InicioSisVentas />} />
         <Route path='/registrar-producto' element={<RegistrarProducto />}></Route>
         <Route path='/editar-producto' element={<EditarProducto />}></Route>
         <Route path='/mostrar-productos' element={<MostrarProductos />}></Route>
+        <Route path='/incrementar-productos' element={<IncrementarProductos />}></Route>
         <Route path='/realizar-venta' element={<RealizarVenta />}></Route>
         <Route path='/mostrar-reportes' element={<ReporteVentas />}></Route>
         <Route path='*' element={<Navigate to="/" />} />
@@ -75,10 +162,17 @@ function SistemaVentas() {
   );
 }
 
-function SistemaAdministracion() {
+function SistemaAdministracion({ logout }) {
+  const handleLogout = (userData) => {
+    // console.log(userData);
+    logout(userData.rol);
+    // if (sessionStorage.getItem('saveRol') == null) {
+    //   sessionStorage.setItem('saveRol', userData.rol)
+    // }
+  };
   return (
     <div>
-      <NavbarSisAdministracion />
+      <NavbarSisAdministracion logout={handleLogout} />
       <Routes>
         <Route path='/' element={<InicioSisAdministracion />} />
         <Route path='/registro-empleado' element={<RegistroEmpleado />}></Route>
@@ -91,10 +185,17 @@ function SistemaAdministracion() {
   );
 }
 
-function SistemaServicios() {
+function SistemaServicios({ logout }) {
+  const handleLogout = (userData) => {
+    // console.log(userData);
+    logout(userData.rol);
+    // if (sessionStorage.getItem('saveRol') == null) {
+    //   sessionStorage.setItem('saveRol', userData.rol)
+    // }
+  };
   return (
     <div>
-      <NavbarSisServicios />
+      <NavbarSisServicios logout={handleLogout} />
       <Routes>
         <Route path='/' element={<InicioSisServicios />} />
         <Route path='*' element={<Navigate to="/" />} />

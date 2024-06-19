@@ -4,8 +4,21 @@ import { HomeOutlined, SolutionOutlined, BarChartOutlined, LogoutOutlined } from
 import { Link } from 'react-router-dom';
 import './NavbarSistemaAdministracion.css'
 
-const NavigationBar = () => {
+const NavigationBar = ({logout}) => {
     const { SubMenu } = Menu;
+
+    const salir = () => {
+        logout({rol: "none"});
+        // signInWithEmailAndPassword(auth, email, password)
+        //   .then((userCredential) => {
+        //     // console.log(userCredential.user);
+        //     console.log("Puede ingresar");
+        //     login({rol: "administrador"})
+        //   })
+        //   .catch((error) => {
+        //     console.error(error);
+        //   });
+      };
 
     return (
         <>
@@ -34,7 +47,7 @@ const NavigationBar = () => {
                     <Link to="/sistema-administración/mostrar-dashboard">Dashboard</Link>
                 </Menu.Item>
 
-                <Menu.Item key="cerrar" icon={<LogoutOutlined />} style={{ margin: '0 63%' }}>
+                <Menu.Item key="cerrar" icon={<LogoutOutlined />} style={{ margin: '0 63%' }} onClick={salir}>
                     <Link to="/">Cerrar sesión</Link>
                 </Menu.Item>
 

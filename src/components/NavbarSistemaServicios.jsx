@@ -3,8 +3,21 @@ import { Menu } from 'antd';
 import { HomeOutlined, SignatureOutlined, TeamOutlined, LogoutOutlined  } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
-const NavigationBar = () => {
+const NavigationBar = ({logout}) => {
     const { SubMenu } = Menu;
+
+    const salir = () => {
+        logout({rol: "none"});
+        // signInWithEmailAndPassword(auth, email, password)
+        //   .then((userCredential) => {
+        //     // console.log(userCredential.user);
+        //     console.log("Puede ingresar");
+        //     login({rol: "administrador"})
+        //   })
+        //   .catch((error) => {
+        //     console.error(error);
+        //   });
+      };
     return (
         <>
             <h2 style={{ top: 0, width: '100%' }}>Sistema de servicios</h2>
@@ -27,7 +40,7 @@ const NavigationBar = () => {
                     <Link to="/">Clientes</Link>
                 </Menu.Item>
 
-                <Menu.Item key="cerrar" icon={<LogoutOutlined />} style={{ margin: '0 63%' }}>
+                <Menu.Item key="cerrar" icon={<LogoutOutlined />} style={{ margin: '0 63%' }} onClick={salir}>
                     <Link to="/">Cerrar sesión</Link>
                 </Menu.Item>
             </Menu>

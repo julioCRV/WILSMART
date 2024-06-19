@@ -83,7 +83,7 @@ const RegistrarProducto = () => {
     Modal.success({
       title: 'Registro de Empleado',
       content: 'Los datos del empleado se han guardado correctamente.',
-      onOk: () => { navigate('/sistema-ventas'); } 
+      onOk: () => { navigate('/sistema-ventas/mostrar-productos'); } 
     });
   }
 
