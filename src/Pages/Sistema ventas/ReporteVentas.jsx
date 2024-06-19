@@ -27,7 +27,7 @@ const ReporteVentas = () => {
         ...doc.data(),
         id: doc.id
       }));
-      dataList.reverse();
+      dataList.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
       setReportes(dataList);
     };
     fetchData();
