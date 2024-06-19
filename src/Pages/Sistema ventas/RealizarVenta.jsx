@@ -1,6 +1,6 @@
 import { Table, Button, InputNumber, Badge, Modal, message } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCartOutlined } from '@ant-design/icons';
@@ -10,7 +10,7 @@ const MostrarProducto = () => {
   const { confirm } = Modal;
   const navigate = useNavigate();
   const [dataFirebase, setDataFirebase] = useState([]);
-  const [productosActualizados, setProductosActualizados] = useState(0);
+  const [valorCarrito, setValorCarrito] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [reporte, setReporte] = useState('');
 
@@ -92,9 +92,9 @@ const MostrarProducto = () => {
   const handleQuitar = (key) => {
     const updatedProductos = dataFirebase.map((producto) => {
       if (producto.id === key) {
-        if (productosActualizados > 0) {
+        if (valorCarrito > 0) {
           if (producto.cantidadCarrito > 0) {
-            setProductosActualizados((prevCount) => prevCount - 1);
+            setValorCarrito((prevCount) => prevCount - 1);
           }
         }
         return { ...producto, Cantidad: parseInt(producto.cantidadRespaldo), cantidadIncrementada: 0, cantidadCarrito: 0 };
@@ -109,11 +109,11 @@ const MostrarProducto = () => {
       if (producto.id === key) {
         if (producto.cantidadIncrementada === 0) {
           if (producto.cantidadCarrito === 0) {
-            if (productosActualizados === 0) {
-              setProductosActualizados(0)
+            if (valorCarrito === 0) {
+              setValorCarrito(0)
             }
           } else {
-            setProductosActualizados((prevCount) => prevCount - 1);
+            setValorCarrito((prevCount) => prevCount - 1);
           }
           return {
             ...producto, Cantidad: parseInt(producto.cantidadRespaldo) - producto.cantidadIncrementada,
@@ -121,7 +121,7 @@ const MostrarProducto = () => {
           };
         } else {
           if (producto.cantidadCarrito === 0) {
-            setProductosActualizados((prevCount) => prevCount + 1);
+            setValorCarrito((prevCount) => prevCount + 1);
           }
           return {
             ...producto, Cantidad: parseInt(producto.cantidadRespaldo) - producto.cantidadIncrementada,
@@ -167,8 +167,34 @@ const MostrarProducto = () => {
     }
   };
 
+  const guardarReporteVentas = async () => {
+    // Filtrar productos que fueron añadidos al carrito
+    const productosVendidos = dataFirebase.filter(producto => producto.cantidadCarrito > 0);
+
+    // Crear el reporte de ventas
+    const reporte = {
+      fecha: new Date().toISOString(), // Fecha y hora actuales
+      productos: productosVendidos.map(producto => ({
+        NombreProducto: producto.NombreProducto,
+        CantidadInicial: producto.cantidadRespaldo,
+        CantidadVendida: producto.cantidadIncrementada,
+        PrecioUnitario: producto.Precio,
+        total: producto.cantidadIncrementada * producto.Precio
+      }))
+    };
+
+    try {
+      // Guardar el reporte en Firebase
+      await addDoc(collection(db, "ReportesVentas"), reporte);
+      console.log("Reporte de ventas guardado con éxito.");
+    } catch (error) {
+      console.error("Error al guardar el reporte de ventas:", error);
+    }
+  };
+
   const confirmRegistrarVenta = () => {
     handleSaveAll();
+    guardarReporteVentas();
     message.success('Se ha registrado la venta de los productos correctamente.');
     navigate('/sistema-ventas/mostrar-productos');
 
@@ -199,7 +225,7 @@ const MostrarProducto = () => {
       }));
       // console.log(dataList);
       setDataFirebase(dataList);
-      setProductosActualizados(0)
+      setValorCarrito(0)
     };
     fetchData();
   }, []);
@@ -216,22 +242,39 @@ const MostrarProducto = () => {
   };
 
   const generarReporte = () => {
-    let contenidoReporte = 'Factura de Venta\n\n';
+    let contenidoReporte = 'Factura de venta\n\nProducto | Precio unitario | Cantidad | Subtotal\n\n';
     dataFirebase.forEach((producto) => {
       if (producto.cantidadIncrementada > 0 && producto.cantidadCarrito > 0) {
-        contenidoReporte += `${producto.NombreProducto}: ${producto.Precio} Bs x ${producto.cantidadIncrementada} = ${producto.Precio * producto.cantidadIncrementada} Bs\n`;
+        contenidoReporte += `${producto.NombreProducto}: ${producto.Precio} Bs x ${producto.cantidadIncrementada} unidades = ${producto.Precio * producto.cantidadIncrementada} Bs\n`;
       }
     });
     contenidoReporte += `\nTotal: ${calcularTotal()} Bs`;
     setReporte(contenidoReporte);
   };
+  console.log(dataFirebase);
+  const accionRegistrarVenta = () => {
+    if (valorCarrito > 0) {
+      generarReporte();
+      setModalVisible(true);
+    } else {
+      confirm({
+        title: 'Carrito de compras vacío',
+        content: 'No ha añadido ningún producto al carrito de compras.',
+        okText: 'Aceptar',
+        okType: 'warning',
+        onOk() {
+          message.warning('No se realizo un registro de compra.');
+        },
+      });
+    }
+  }
 
   return (
     <>
       <div>
         <h2 className="form-titleIncr">Realizar ventas</h2>
         <div className='TituloForm'>
-          <Badge count={productosActualizados} showZero>
+          <Badge count={valorCarrito} showZero>
             <ShoppingCartOutlined style={{ fontSize: '45px' }} />
           </Badge>
         </div>
@@ -249,13 +292,13 @@ const MostrarProducto = () => {
           />
         </div>
         <div className='BotIncrementar'>
-          <Button onClick={() => { generarReporte(); setModalVisible(true); }}>Registrar venta</Button>
+          <Button onClick={accionRegistrarVenta}>Registrar venta</Button>
         </div>
       </div>
 
 
       <Modal
-        title="Reporte de Venta"
+        title="Reporte de venta"
         visible={modalVisible}
         onOk={() => confirmRegistrarVenta()}
         onCancel={() => setModalVisible(false)}
