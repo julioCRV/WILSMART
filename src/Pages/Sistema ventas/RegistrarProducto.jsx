@@ -41,7 +41,7 @@ const RegistrarProducto = () => {
   };
 
   const onFinish = async (values) => {
-    console.log('Received values of form: ', values);
+    //console.log('Received values of form: ', values);
 
     const imagen = values.imagen[0].originFileObj;
     try {
@@ -62,7 +62,7 @@ const RegistrarProducto = () => {
         Marca: values.marca,
         Descripcion: values.descripcion,
       });
-      console.log("Document written with ID: ", docRef.id);
+      //console.log("Document written with ID: ", docRef.id);
       ModalExito();
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -83,7 +83,7 @@ const RegistrarProducto = () => {
     Modal.success({
       title: 'Registro de Empleado',
       content: 'Los datos del empleado se han guardado correctamente.',
-      onOk: () => { navigate('/sistema-ventas/mostrar-productos'); } 
+      onOk: () => { navigate('/sistema-ventas/mostrar-productos'); }
     });
   }
 
@@ -189,7 +189,7 @@ const RegistrarProducto = () => {
               label="Descripción"
               rules={[{ required: true, message: 'Por favor ingrese una descripción' }]}
             >
-              <Input />
+              <Input.TextArea rows={4} />
             </Form.Item>
           </div>
 
@@ -197,13 +197,13 @@ const RegistrarProducto = () => {
           <div className='div33'>
             <div className="button-container">
               <Form.Item>
-                <Button style={{ width: '150px' }} type="primary" htmlType="submit">
-                  Registrar
+                <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={backHome}>
+                  Cancelar
                 </Button>
               </Form.Item>
               <Form.Item>
-                <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={backHome}>
-                  Cancelar
+                <Button style={{ width: '150px' }} type="primary" htmlType="submit">
+                  Registrar
                 </Button>
               </Form.Item>
             </div>

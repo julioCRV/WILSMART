@@ -5,7 +5,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../FireBase/fireBase';
 import { useNavigate, useLocation } from 'react-router-dom';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import './RegistroEmpleado.css';
 
 const { Option } = Select;
@@ -16,7 +16,7 @@ const EditarEmpleado = () => {
     const [imageUploaded, setImageUploaded] = useState(false);
     const navigate = useNavigate();
 
-    // console.log(DataEmpleado.fechaNacimiento);
+    //console.log(DataEmpleado.fechaNacimiento);
     const verificarImagen = {
         beforeUpload: (file) => {
 
@@ -45,7 +45,7 @@ const EditarEmpleado = () => {
 
 
     const onFinish = async (values) => {
-        console.log('Received values of form: ', values);
+        //console.log('Received values of form: ', values);
         // console.log(values.imagen);
 
         const imagen = values.foto[0].originFileObj;
@@ -110,7 +110,7 @@ const EditarEmpleado = () => {
                 Salario: values.salario,
                 DirecciónDeDomicilio: values.direccion
             });
-            console.log("Document updated");
+            //console.log("Document updated");
             ModalExito();
         } catch (e) {
             console.error("Error updating document: ", e);
@@ -137,11 +137,11 @@ const EditarEmpleado = () => {
 
     const backList = () => {
         navigate('/sistema-administración/mostrar-empleados');
-      }
+    }
 
     const initialValues = {
         nombreCompleto: DataEmpleado.Nombre,
-        fechaNacimiento: moment(DataEmpleado.FechaNacimiento, 'YYYY-MM-DD'),
+        fechaNacimiento: dayjs(DataEmpleado.FechaNacimiento),
         ci: DataEmpleado.CI,
         genero: DataEmpleado.Genero,
         estadoCivil: DataEmpleado.EstadoCivil,
@@ -270,7 +270,7 @@ const EditarEmpleado = () => {
                             label="Dirección de Domicilio"
                             rules={[{ required: true, message: 'Por favor ingrese su dirección de domicilio' }]}
                         >
-                            <Input />
+                            <Input.TextArea rows={4} />
                         </Form.Item>
                     </div>
 
@@ -278,13 +278,13 @@ const EditarEmpleado = () => {
                     <div className='div33'>
                         <div className="button-container">
                             <Form.Item>
-                                <Button style={{ width: '150px' }} type="primary" htmlType="submit">
-                                    Actualizar
+                                <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={backList}>
+                                    Cancelar
                                 </Button>
                             </Form.Item>
                             <Form.Item>
-                                <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={backList}>
-                                    Cancelar
+                                <Button style={{ width: '150px' }} type="primary" htmlType="submit">
+                                    Actualizar
                                 </Button>
                             </Form.Item>
                         </div>

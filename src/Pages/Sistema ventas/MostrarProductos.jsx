@@ -1,6 +1,6 @@
 import { Table, Button, Space, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs,  doc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import { useNavigate } from 'react-router-dom';
 import './MostrarProducto.css'
@@ -10,7 +10,7 @@ const MostrarProducto = () => {
   const navigate = useNavigate();
   const [dataFirebase, setDataFirebase] = useState([]);
 
-  const columns = [ 
+  const columns = [
     {
       title: 'Nombre',
       dataIndex: 'NombreProducto',
@@ -40,7 +40,7 @@ const MostrarProducto = () => {
       title: 'Precio',
       dataIndex: 'Precio',
       defaultSortOrder: 'descend',
-      render: (text) => `Bs   ${text}`, 
+      render: (text) => `Bs   ${text}`,
       // sorter: (a, b) => a.age - b.age,
     },
     {
@@ -99,7 +99,7 @@ const MostrarProducto = () => {
   };
 
   const editRecord = (record) => {
-    console.log('Editar:', record);
+    //console.log('Editar:', record);
     navigate('/sistema-ventas/editar-producto', { state: { objetoProp: record } });
     // Aquí puedes implementar la lógica para editar el registro
   };
@@ -108,7 +108,7 @@ const MostrarProducto = () => {
     const docRef = doc(db, "ListaProductos", id);
     try {
       await deleteDoc(docRef);
-      console.log("Document deleted");
+      //console.log("Document deleted");
       actualizarListaProductos();
     } catch (e) {
       console.error("Error deleting document: ", e);
@@ -123,7 +123,7 @@ const MostrarProducto = () => {
       okType: 'danger',
       cancelText: 'Cancelar',
       onOk() {
-        console.log('Eliminar:', record);
+        //console.log('Eliminar:', record);
         handleDelete(record.id);
       },
       onCancel() { },
@@ -131,7 +131,7 @@ const MostrarProducto = () => {
   };
 
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra);
+    //console.log('params', pagination, filters, sorter, extra);
   };
 
   const actualizarListaProductos = async () => {

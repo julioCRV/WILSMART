@@ -12,34 +12,33 @@ const HomePage = () => {
             </Title>
 
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-{/* 
-                <Link to="/sistema-ventas"> */}
+                <Link to="/sistema-servicios/registro-repuesto">
                     <Card title="Repuestos" style={{ width: 300, marginLeft: '120px', backgroundColor: '#f0f0f0' }}>
                         <img src="/assets/agregarRepuesto.png" alt="Ventas" style={{ width: '100px' }} />
                         <Paragraph>
                             Registro de repuesto
                         </Paragraph>
                     </Card>
-                {/* </Link> */}
+                </Link>
 
 
-                {/* <Link to="/sistema-administración"> */}
+                <Link to="/sistema-servicios/mostrar-repuestos">
                     <Card title="Repuestos" style={{ width: 300, backgroundColor: '#f0f0f0' }}>
                         <img src="/assets/mostrarRepuestos.png" alt="Administración" style={{ width: '100px' }} />
                         <Paragraph>
                             Mostrar repuestos
                         </Paragraph>
                     </Card>
-                {/* </Link> */}
+                </Link>
 
-                {/* <Link to="/sistema-servicios"> */}
+                <Link to="/sistema-servicios/mostrar-clientes">
                     <Card title="Clientes" style={{ width: 300, marginRight: '120px', backgroundColor: '#f0f0f0' }}>
                         <img src="/assets/listarClientes.png" alt="Servicios" style={{ width: '100px' }} />
                         <Paragraph>
                             Listar clientes
                         </Paragraph>
                     </Card>
-                {/* </Link> */}
+                </Link>
 
             </div>
         </div>
@@ -60,4 +59,3 @@ export default HomePage;
 // </Link>
 
 // ... */}
-    

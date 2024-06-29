@@ -27,9 +27,19 @@ import EditarEmpleado from './Pages/Sistema administración/EditarEmpleado';
 import MostrarEmpleado from './Pages/Sistema administración/MostrarPersonal';
 import MostrarDashboard from './Pages/Sistema administración/MostrarDashboard';
 
-//  V  E  N  T  A  S
+//  S  E  R  V  I  C  I  O  S
 import NavbarSisServicios from './components/NavbarSistemaServicios';
 import InicioSisServicios from './components/InicioServicios';
+import RegistrarRepuesto from './Pages/Sistema servicios/RegistrarRepuesto';
+import EditarRepuesto from './Pages/Sistema servicios/EditarRepuestos';
+import MostrarRepuestos from './Pages/Sistema servicios/MostrarRepuestos';
+import RegistrarTicketAtencion from './Pages/Sistema servicios/RegistrarTicketAtencion';
+import MostrarTicketsAtencion from './Pages/Sistema servicios/MostrarTickets';
+import RegistrarCliente from './Pages/Sistema servicios/RegistrarCliente';
+import MostrarClientes from './Pages/Sistema servicios/MostrarClientes';
+import EditarClientes from './Pages/Sistema servicios/EditarClientes';
+import RegistrarClientePerdido from './Pages/Sistema servicios/RegistrarClientePerdido';
+import MostrarClientesPerdidos from './Pages/Sistema servicios/MostrarClientesPerdidos';
 
 // P R U E B A 
 import Prueba6 from './papelerajsjsjjs/prueba6'
@@ -190,7 +200,6 @@ function SistemaServicios({ logout }) {
     // console.log(userData);
     logout(userData.rol);
     // if (sessionStorage.getItem('saveRol') == null) {
-    //   sessionStorage.setItem('saveRol', userData.rol)
     // }
   };
   return (
@@ -198,6 +207,17 @@ function SistemaServicios({ logout }) {
       <NavbarSisServicios logout={handleLogout} />
       <Routes>
         <Route path='/' element={<InicioSisServicios />} />
+        <Route path='/registro-repuesto' element={<RegistrarRepuesto />}></Route>
+        <Route path='/mostrar-repuestos' element={<MostrarRepuestos />}></Route>
+        <Route path='/editar-repuesto' element={<EditarRepuesto />}></Route>
+        <Route path='/registrar-ticket' element={<RegistrarTicketAtencion />}></Route>
+        <Route path='/mostrar-tickets' element={<MostrarTicketsAtencion />}></Route>
+        <Route path='/registrar-cliente' element={<RegistrarCliente />}></Route>
+        <Route path='/registrar-cliente' element={<RegistrarCliente />}></Route>
+        <Route path='/mostrar-clientes' element={<MostrarClientes />}></Route>
+        <Route path='/editar-cliente' element={<EditarClientes />}></Route>
+        <Route path='/registrar-clientePerdido' element={<RegistrarClientePerdido />}></Route>
+        <Route path='/mostrar-clientesPerdidos' element={<MostrarClientesPerdidos />}></Route>
         <Route path='*' element={<Navigate to="/" />} />
       </Routes>
     </div>

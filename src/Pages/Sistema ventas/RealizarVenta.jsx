@@ -137,7 +137,7 @@ const MostrarProducto = () => {
   };
 
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra);
+    //console.log('params', pagination, filters, sorter, extra);
   };
 
   // const handleSaveAll = async () => {
@@ -161,7 +161,7 @@ const MostrarProducto = () => {
 
     try {
       await Promise.all(promises); // Espera a que todas las actualizaciones se completen
-      console.log('Todos los productos han sido actualizados en Firebase.');
+      //console.log('Todos los productos han sido actualizados en Firebase.');
     } catch (error) {
       console.error('Error al actualizar los productos:', error);
     }
@@ -186,7 +186,7 @@ const MostrarProducto = () => {
     try {
       // Guardar el reporte en Firebase
       await addDoc(collection(db, "ReportesVentas"), reporte);
-      console.log("Reporte de ventas guardado con éxito.");
+      //console.log("Reporte de ventas guardado con éxito.");
     } catch (error) {
       console.error("Error al guardar el reporte de ventas:", error);
     }
@@ -251,7 +251,7 @@ const MostrarProducto = () => {
     contenidoReporte += `\nTotal: ${calcularTotal()} Bs`;
     setReporte(contenidoReporte);
   };
-  console.log(dataFirebase);
+  //console.log(dataFirebase);
   const accionRegistrarVenta = () => {
     if (valorCarrito > 0) {
       generarReporte();

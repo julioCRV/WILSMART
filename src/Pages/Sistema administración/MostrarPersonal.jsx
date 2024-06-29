@@ -85,7 +85,7 @@ const MostrarEmpleado = () => {
   };
 
   const editRecord = (record) => {
-    console.log('Editar:', record);
+    //console.log('Editar:', record);
     navigate('/sistema-administración/editar-empleado', { state: { objetoProp: record } });
     // Aquí puedes implementar la lógica para editar el registro
   };
@@ -94,7 +94,7 @@ const MostrarEmpleado = () => {
     const docRef = doc(db, "ListaEmpleados", id);
     try {
       await deleteDoc(docRef);
-      console.log("Document deleted");
+      //console.log("Document deleted");
       actualizarListaEmpleados();
     } catch (e) {
       console.error("Error deleting document: ", e);
@@ -109,7 +109,7 @@ const MostrarEmpleado = () => {
       okType: 'danger',
       cancelText: 'Cancelar',
       onOk() {
-        console.log('Eliminar:', record);
+        //console.log('Eliminar:', record);
         handleDelete(record.id);
       },
       onCancel() { },
@@ -117,7 +117,7 @@ const MostrarEmpleado = () => {
   };
 
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra);
+    //console.log('params', pagination, filters, sorter, extra);
   };
 
   const actualizarListaEmpleados = async () => {

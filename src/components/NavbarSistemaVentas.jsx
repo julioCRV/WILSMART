@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu } from 'antd';
 import { HomeOutlined, InboxOutlined, ReconciliationOutlined, LogoutOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const NavigationBar = ({ logout }) => {
     const { SubMenu } = Menu;
+    const location = useLocation();
+    const [selectedKey, setSelectedKey] = useState('');
+
+    useEffect(() => {
+        setSelectedKey(location.pathname);
+    }, [location]);
 
     const salir = () => {
         logout({ rol: "none" });
@@ -22,11 +28,11 @@ const NavigationBar = ({ logout }) => {
     return (
         <>
             <h2 style={{ top: 0, width: '100%', color: '#black' }}>Sistema de ventas</h2>
-            <Menu mode="horizontal" defaultSelectedKeys={['inicio-actual']} style={{ top: 50, width: '100%', border: '1px solid #000' }}>
+            <Menu mode="horizontal" selectedKeys={[selectedKey]} style={{ top: 50, width: '100%', border: '1px solid #000' }}>
 
                 <SubMenu key="inicio" icon={<HomeOutlined />} title="Inicio">
-                    <Menu.Item key="inicio-actual">
-                        <Link to="/Sistema-ventas">Inicio</Link>
+                    <Menu.Item key="/sistema-ventas">
+                        <Link to="/sistema-ventas">Inicio</Link>
                     </Menu.Item>
                     <Menu.Item key="inicio-general">
                         <Link to="/">Pagina principal</Link>
@@ -34,21 +40,21 @@ const NavigationBar = ({ logout }) => {
                 </SubMenu>
 
                 <SubMenu key="inventario" icon={<InboxOutlined />} title="Inventario">
-                    <Menu.Item key="registrar" >
+                    <Menu.Item key="/sistema-ventas/registrar-producto" >
                         <Link to="/sistema-ventas/registrar-producto">Registrar producto</Link>
                     </Menu.Item>
-                    <Menu.Item key="mostrar" >
+                    <Menu.Item key="/sistema-ventas/mostrar-productos" >
                         <Link to="/sistema-ventas/mostrar-productos">Mostrar productos</Link>
                     </Menu.Item>
-                    <Menu.Item key="incrementar" >
+                    <Menu.Item key="/sistema-ventas/incrementar-productos" >
                         <Link to="/sistema-ventas/incrementar-productos">Incrementar productos</Link>
                     </Menu.Item>
-                    <Menu.Item key="realizar" >
+                    <Menu.Item key="/sistema-ventas/realizar-venta" >
                         <Link to="/sistema-ventas/realizar-venta">Realizar venta</Link>
                     </Menu.Item>
                 </SubMenu>
 
-                <Menu.Item key="reportes" icon={<ReconciliationOutlined />}>
+                <Menu.Item key="/sistema-ventas/mostrar-reportes" icon={<ReconciliationOutlined />}>
                     <Link to="/sistema-ventas/mostrar-reportes">Reportes</Link>
                 </Menu.Item>
 

@@ -5,7 +5,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../FireBase/fireBase';
 import { useNavigate, useLocation } from 'react-router-dom';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import './RegistrarProducto.css';
 
 const { Option } = Select;
@@ -45,7 +45,7 @@ const EditarProducto = () => {
 
 
     const onFinish = async (values) => {
-        console.log('Received values of form: ', values);
+        //console.log('Received values of form: ', values);
         // console.log(values.imagen);
 
         const imagen = values.imagen[0].originFileObj;
@@ -137,7 +137,7 @@ const EditarProducto = () => {
         nombreProducto: dataProducto.NombreProducto,
         cantidad: dataProducto.Cantidad,
         categoria: dataProducto.Categoria,
-        fecha: moment(dataProducto.Fecha, 'YYYY-MM-DD'),
+        fecha: dayjs(dataProducto.Fecha),
         precio: dataProducto.Precio,
         imagen: [
             {
@@ -158,7 +158,7 @@ const EditarProducto = () => {
 
     return (
         <div >
-            <h2 className="form-title">Editar Producto</h2>
+            <h2 className="form-title">Editar producto</h2>
 
             <Form
                 name="editar_producto"
@@ -243,7 +243,7 @@ const EditarProducto = () => {
                             label="Descripción"
                             rules={[{ required: true, message: 'Por favor ingrese una descripción' }]}
                         >
-                            <Input />
+                            <Input.TextArea rows={4} />
                         </Form.Item>
                     </div>
 
@@ -251,14 +251,15 @@ const EditarProducto = () => {
                     <div className='div33'>
                         <div className="button-container">
                             <Form.Item>
-                                <Button style={{ width: '150px' }} type="primary" htmlType="submit">
-                                    Actualizar
-                                </Button>
-                            </Form.Item>
-                            <Form.Item>
                                 <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={backList}>
                                     Cancelar
                                 </Button>
+                            </Form.Item>
+                            <Form.Item>
+                                <Button style={{ width: '150px' }} type="primary" htmlType="submit">
+                                    Actualizar
+                                </Button>
+
                             </Form.Item>
                         </div>
                     </div>

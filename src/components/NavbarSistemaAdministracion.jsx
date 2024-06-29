@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu } from 'antd';
 import { HomeOutlined, SolutionOutlined, BarChartOutlined, LogoutOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './NavbarSistemaAdministracion.css'
 
-const NavigationBar = ({logout}) => {
+const NavigationBar = ({ logout }) => {
     const { SubMenu } = Menu;
+    const location = useLocation();
+    const [selectedKey, setSelectedKey] = useState('');
+
+    useEffect(() => {
+        setSelectedKey(decodeURIComponent(location.pathname));
+    }, [location]);
 
     const salir = () => {
-        logout({rol: "none"});
+        logout({ rol: "none" });
         // signInWithEmailAndPassword(auth, email, password)
         //   .then((userCredential) => {
         //     // console.log(userCredential.user);
@@ -18,16 +24,16 @@ const NavigationBar = ({logout}) => {
         //   .catch((error) => {
         //     console.error(error);
         //   });
-      };
+    };
 
     return (
         <>
             <h2 style={{ top: 0, width: '100%', color: '#black' }}>Sistema de administración</h2>
-            <Menu mode="horizontal" defaultSelectedKeys={['inicio-actual']} style={{ top: 50, width: '100%', border: '1px solid #000' }}>
+            <Menu mode="horizontal" selectedKeys={[selectedKey]} style={{ top: 50, width: '100%', border: '1px solid #000' }}>
 
                 <SubMenu key="inicio" icon={<HomeOutlined />} title="Inicio">
-                    <Menu.Item key="inicio-actual">
-                        <Link to="/Sistema-administración/">Inicio</Link>
+                    <Menu.Item key="/sistema-administración">
+                        <Link to="/sistema-administración">Inicio</Link>
                     </Menu.Item>
                     <Menu.Item key="inicio-general">
                         <Link to="/">Pagina principal</Link>
@@ -35,15 +41,15 @@ const NavigationBar = ({logout}) => {
                 </SubMenu>
 
                 <SubMenu key="personal" icon={<SolutionOutlined />} title="Personal">
-                    <Menu.Item key="registrar" >
+                    <Menu.Item key="/sistema-administración/registro-empleado" >
                         <Link to="/sistema-administración/registro-empleado">Registrar empleado</Link>
                     </Menu.Item>
-                    <Menu.Item key="mostrar" >
+                    <Menu.Item key="/sistema-administración/mostrar-empleados" >
                         <Link to="/sistema-administración/mostrar-empleados">Mostrar empleados</Link>
                     </Menu.Item>
                 </SubMenu>
 
-                <Menu.Item key="dashboard" icon={<BarChartOutlined />}>
+                <Menu.Item key="/sistema-administración/mostrar-dashboard" icon={<BarChartOutlined />}>
                     <Link to="/sistema-administración/mostrar-dashboard">Dashboard</Link>
                 </Menu.Item>
 

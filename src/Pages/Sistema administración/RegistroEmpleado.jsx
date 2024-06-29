@@ -41,7 +41,7 @@ const RegistroEmpleado = () => {
   };
 
   const onFinish = async (values) => {
-    // console.log('Received values of form: ', values);
+    //console.log('Received values of form: ', values);
 
     const imagen = values.foto[0].originFileObj;
     try {
@@ -65,7 +65,7 @@ const RegistroEmpleado = () => {
         Salario: values.salario,
         DirecciónDeDomicilio: values.direccion
       });
-      console.log("Document written with ID: ", docRef.id);
+      //console.log("Document written with ID: ", docRef.id);
       ModalExito();
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -93,17 +93,17 @@ const RegistroEmpleado = () => {
     navigate('/sistema-administración');
   }
 
-//   const initialValues = {
-//     nombreCompleto: "Javier López",
-//     ci: "8765432",
-//     genero: "Masculino",
-//     estadoCivil: "Casado",
-//     telefono: "987654321",
-//     email: "javier@example.com",
-//     puesto: "Técnico en Reparación de Celulares",
-//     salario: "4500",
-//     direccion: "Calle de la Reparación, Edificio TechFix, Local 101, Ciudad Digital",
-// };
+  //   const initialValues = {
+  //     nombreCompleto: "Javier López",
+  //     ci: "8765432",
+  //     genero: "Masculino",
+  //     estadoCivil: "Casado",
+  //     telefono: "987654321",
+  //     email: "javier@example.com",
+  //     puesto: "Técnico en Reparación de Celulares",
+  //     salario: "4500",
+  //     direccion: "Calle de la Reparación, Edificio TechFix, Local 101, Ciudad Digital",
+  // };
 
 
 
@@ -215,7 +215,7 @@ const RegistroEmpleado = () => {
               label="Dirección de Domicilio"
               rules={[{ required: true, message: 'Por favor ingrese su dirección de domicilio' }]}
             >
-              <Input />
+              <Input.TextArea rows={4} />
             </Form.Item>
           </div>
 
@@ -223,13 +223,13 @@ const RegistroEmpleado = () => {
           <div className='div33'>
             <div className="button-container">
               <Form.Item>
-                <Button style={{ width: '150px' }} type="primary" htmlType="submit">
-                  Registrar
+                <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={backHome}>
+                  Cancelar
                 </Button>
               </Form.Item>
               <Form.Item>
-                <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={backHome}> 
-                  Cancelar
+                <Button style={{ width: '150px' }} type="primary" htmlType="submit">
+                  Registrar
                 </Button>
               </Form.Item>
             </div>

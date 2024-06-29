@@ -78,7 +78,7 @@ const MostrarProducto = () => {
     };
 
     const onChange = (pagination, filters, sorter, extra) => {
-        console.log('params', pagination, filters, sorter, extra);
+        //console.log('params', pagination, filters, sorter, extra);
     };
 
     // const handleSaveAll = async () => {
@@ -105,7 +105,7 @@ const MostrarProducto = () => {
 
         try {
             await Promise.all(promises); // Espera a que todas las actualizaciones se completen
-            console.log('Todos los productos han sido actualizados en Firebase.');
+            //console.log('Todos los productos han sido actualizados en Firebase.');
         } catch (error) {
             console.error('Error al actualizar los productos:', error);
         }
