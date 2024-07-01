@@ -1,62 +1,116 @@
-import React, { useState } from 'react';
-import { Modal } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Modal, Form, Input, Button, DatePicker, message } from 'antd';
+import { collection, addDoc } from "firebase/firestore";
+import { db } from '../FireBase/fireBase';
 
-const Factura = () => {
-  const [productos, setProductos] = useState([
-    { id: 1, nombre: 'Producto A', precio: 10, cantidad: 2 },
-    { id: 2, nombre: 'Producto B', precio: 15, cantidad: 3 },
-    // Otros productos...
-  ]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [reporte, setReporte] = useState('');
+const ModalAperturaCaja = () => {
+    const [form] = Form.useForm();
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
+    const [montoInicial, setMontoInicial] = useState(0);
 
-  const calcularTotal = () => {
-    let total = 0;
-    productos.forEach((producto) => {
-      total += producto.precio * producto.cantidad;
-    });
-    return total;
-  };
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
 
-  const generarReporte = () => {
-    let contenidoReporte = 'Factura de Venta\n\n';
-    productos.forEach((producto) => {
-      contenidoReporte += `${producto.nombre}: ${producto.cantidad} x ${producto.precio} = ${producto.precio * producto.cantidad}\n`;
-    });
-    contenidoReporte += `\nTotal: ${calcularTotal()}`;
-    setReporte(contenidoReporte);
-  };
+    const handleOk = () => {
+        form.validateFields()
+            .then((values) => {
+                setMontoInicial(values.montoInicial);
+                setIsConfirmModalVisible(true);
+            })
+            .catch((info) => {
+                message.error('Por favor complete el formulario correctamente.');
+            });
+    };
 
-  return (
-    <div>
-      <h1>Factura de Venta</h1>
-      <table>
-        <tbody>
-          {productos.map((producto) => (
-            <tr key={producto.id}>
-              <td>{producto.nombre}</td>
-              <td>{producto.precio}</td>
-              <td>{producto.cantidad}</td>
-              <td>{producto.precio * producto.cantidad}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <h2>Total: {calcularTotal()}</h2>
-      <button onClick={() => {
-        generarReporte();
-        setModalVisible(true);
-      }}>Registrar Venta</button>
-      <Modal
-        title="Reporte de Venta"
-        visible={modalVisible}
-        onOk={() => setModalVisible(false)}
-        onCancel={() => setModalVisible(false)}
-      >
-        <pre>{reporte}</pre>
-      </Modal>
-    </div>
-  );
+    const handleConfirmOk = async () => {
+        setIsConfirmModalVisible(false);
+        setIsModalVisible(false);
+        const tiempoActual = obtenerFechaHoraActual();
+
+        try {
+            const docRef = await addDoc(collection(db, "HistorialAperturaCaja"), {
+                NombreEmpleado: "En proceso tengo que crear credenciales primero",
+                MontoInicialCaja: montoInicial,
+                Fecha: tiempoActual.fecha,
+                Hora: tiempoActual.hora,
+
+            });
+            console.log("Document written with ID: ", docRef.id);
+            message.success('Caja abierta exitosamente.');
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
+    };
+
+    const handleConfirmCancel = () => {
+        setIsConfirmModalVisible(false);
+    };
+
+    // useEffect(() => {
+    //     showModal();
+    // }, []);
+
+    const obtenerFechaHoraActual = () => {
+        const ahora = new Date();
+
+        const dia = ahora.getDate().toString().padStart(2, '0');
+        const mes = (ahora.getMonth() + 1).toString().padStart(2, '0');
+        const año = ahora.getFullYear();
+        const hora = ahora.getHours().toString().padStart(2, '0');
+        const minutos = ahora.getMinutes().toString().padStart(2, '0');
+        const segundos = ahora.getSeconds().toString().padStart(2, '0');
+
+        const tiempo = {
+            fecha: `${dia}-${mes}-${año}`,
+            hora: `${hora}:${minutos}:${segundos}`
+        };
+
+        return tiempo;
+    };
+
+    return (
+        <>
+            <Modal
+                title="Apertura de caja"
+                visible={isModalVisible}
+                // onOk={handleOk}
+                closable={false}
+                onCancel={() => { }}
+                footer={[
+                    <Button key="ok" type="primary" onClick={handleOk}>
+                        Confirmar
+                    </Button>,
+                ]}
+            >
+                <Form form={form} layout="horizontal">
+                    <Form.Item
+                        name="montoInicial"
+                        label="Monto de caja inicial"
+                        rules={[{ required: true, message: 'Por favor ingrese el monto inicial' }]}
+                    >
+                        <Input prefix='Bs. ' type="number" />
+                    </Form.Item>
+                    {/* <Form.Item
+                        name="fecha"
+                        label="Fecha"
+                        rules={[{ required: true, message: 'Por favor seleccione la fecha' }]}
+                    >
+                        <DatePicker style={{ width: '100%' }} />
+                    </Form.Item> */}
+                </Form>
+            </Modal>
+            <Modal
+                title="Confirmación"
+                visible={isConfirmModalVisible}
+                onOk={handleConfirmOk}
+                onCancel={handleConfirmCancel}
+            >
+                <p>Está inicializando la caja con un monto de {montoInicial}. ¿Está seguro de continuar?</p>
+            </Modal>
+        </>
+    );
 };
 
-export default Factura;
+export default ModalAperturaCaja;

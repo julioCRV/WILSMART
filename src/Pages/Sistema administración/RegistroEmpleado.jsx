@@ -156,13 +156,18 @@ const RegistroEmpleado = () => {
                 <Option value="Masculino">Masculino</Option>
               </Select>
             </Form.Item>
+
             <Form.Item
               name="estadoCivil"
               label="Estado Civil"
               rules={[{ required: true, message: 'Por favor ingrese su estado civil' }]}
             >
-              <Input />
+              <Select placeholder="Seleccione su estado">
+                <Option value="Casado">Casado</Option>
+                <Option value="Soltero">Soltero</Option>
+              </Select>
             </Form.Item>
+
             <Form.Item
               name="telefono"
               label="Número de Teléfono"

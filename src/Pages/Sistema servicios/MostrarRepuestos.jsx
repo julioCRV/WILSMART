@@ -15,51 +15,51 @@ const MostrarRepuestos = () => {
             title: 'Código',
             dataIndex: 'CodRepuesto',
             defaultSortOrder: 'descend',
-            width: '50px'
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            width: '50px',
+            sorter: (a, b) => a.CodRepuesto.localeCompare(b.CodRepuesto),
         },
         {
             title: 'Nombre',
             dataIndex: 'NombreRepuesto',
             defaultSortOrder: 'descend',
-            width: '150px'
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            width: '150px',
+            sorter: (a, b) => a.NombreRepuesto.localeCompare(b.NombreRepuesto),
         },
         {
             title: 'Categoria',
             dataIndex: 'Categoria',
             defaultSortOrder: 'descend',
-            width: '200px'
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            width: '200px',
+            sorter: (a, b) => a.Categoria.localeCompare(b.Categoria),
         },
         {
             title: 'Cantidad',
             dataIndex: 'Cantidad',
             defaultSortOrder: 'descend',
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            sorter: (a, b) => a.Cantidad - b.Cantidad,
         },
         {
             title: 'Costo unitario',
             dataIndex: 'CostoUnitario',
             defaultSortOrder: 'descend',
             render: (text) => `Bs.   ${text}`,
-            width: '50px'
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            width: '50px',
+            sorter: (a, b) => a.CostoUnitario - b.CostoUnitario,
         },
         {
             title: 'Precio de repuesto',
             dataIndex: 'PrecioRepuesto',
             defaultSortOrder: 'descend',
             render: (text) => `Bs.  ${text}`,
-            width: '50px'
-            // sorter: (a, b) => a.age - b.age,
+            width: '50px',
+            sorter: (a, b) => a.PrecioRepuesto - b.PrecioRepuesto,
         },
         {
             title: 'Proveedor',
             dataIndex: 'Proveedor',
             defaultSortOrder: 'descend',
-            width: '150px'
-            // sorter: (a, b) => a.age - b.age,
+            width: '150px',
+            sorter: (a, b) => a.Proveedor.localeCompare(b.Proveedor),
         },
         {
             title: 'Acciones',

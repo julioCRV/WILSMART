@@ -1,7 +1,8 @@
 // src/InicarSesion.jsx
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../../FireBase/fireBase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { collection, getDocs } from "firebase/firestore";
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { Card, Typography, Row, Col } from 'antd';
 const { Title, Paragraph } = Typography;
@@ -12,7 +13,7 @@ import '../IniciarSesion.css';
 
 function InicarSesion({ login }) {
   const navigate = useNavigate();
-
+  const [dataFirebase, setDataFirebase] = useState([]);
   const [showError, setShowError] = useState(false);
 
   const onFinish = (values) => {
@@ -21,15 +22,25 @@ function InicarSesion({ login }) {
       ...values,
       username: values.username.includes('@') ? values.username : `${values.username}@gmail.com`,
     };
-  
+
     signInWithEmailAndPassword(auth, username, password)
       .then((userCredential) => {
-    
-        login({ rol: userCredential.user.email});
-        sessionStorage.setItem('saveRol', userCredential.user.email);
-        navigate('/sistema-ventas');
-        message.success('Inicio de sesión exitoso, ¡bienvenido!');
-        setShowError(false);
+        const dataCredencialUnica = dataFirebase.filter((item) =>
+          item.Correo.trim().toLowerCase() === userCredential.user.email.trim().toLowerCase()
+        );
+        if (dataCredencialUnica.length > 0) {
+          if (dataCredencialUnica[0].SistemaAsignado === "Ninguno" || dataCredencialUnica[0].SistemaAsignado === "Sistema de servicios") {
+            message.info("No cuenta con credenciales para este sistema.");
+          } else {
+            login({ rol: userCredential.user.email, sistemaAsignado: dataCredencialUnica[0].SistemaAsignado });
+            sessionStorage.setItem('saveRol', dataCredencialUnica[0].SistemaAsignado);
+            navigate('/sistema-ventas');
+            message.success(`Inicio de sesión exitoso, ¡bienvenido ${dataCredencialUnica[0].Nombre}!`);
+            setShowError(false);
+          }
+        } else {
+          message.info("No cuenta con credenciales para este sistema.");
+        }
       })
       .catch((error) => {
         setShowError(true);
@@ -41,6 +52,19 @@ function InicarSesion({ login }) {
     navigate('/')
   }
 
+  // const tieneCredenciales = (email) => {
+  //   const dataCredencialUnica = dataFirebase.filter((item) =>
+  //     item.Correo.trim().toLowerCase() === email.trim().toLowerCase()
+  //   );
+  //   if (dataCredencialUnica[0].SistemaAsignado === "Ninguno") {
+  //     return false;
+  //   } else {
+  //     setDataActual(dataCredencialUnica);
+  //     return true;
+  //   }
+  // }
+
+
   useEffect(() => {
     if (showError) {
       const timer = setTimeout(() => {
@@ -50,6 +74,19 @@ function InicarSesion({ login }) {
       return () => clearTimeout(timer); // Limpia el temporizador si el componente se desmonta
     }
   }, [showError]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(collection(db, "ListaCredenciales"));
+      const dataList = querySnapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id
+      }));
+      // console.log(dataList);
+      setDataFirebase(dataList);
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className='parent-login'>
@@ -83,8 +120,8 @@ function InicarSesion({ login }) {
             <Input.Password prefix={<LockOutlined className="filled-icon" />} placeholder="Contraseña" />
           </Form.Item>
 
-          {showError && <Alert style={{width: 300}} message="Credenciales incorrectas" type="error" showIcon />}
-         
+          {showError && <Alert style={{ width: 300 }} message="Credenciales incorrectas" type="error" showIcon />}
+
           <Form.Item>
             <button style={{ marginTop: 20, width: 150 }} type="primary" htmlType="submit" block>Ingresar</button>
             {/* <Button type="primary" htmlType="submit" block on>

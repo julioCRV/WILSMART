@@ -5,7 +5,7 @@
     width: 90.1%;
 }
 
-.parentMostrarIncr {
+.parentMostrarIncre {
     display: grid;
     grid-column-gap: 10px;
     grid-row-gap: 10px;
@@ -25,9 +25,51 @@
     margin-left: 10%;
 }
 
-.TituloForm{
+.TituloForm {
     text-align: right;
     width: 90.1%;
     margin-top: -55px;
     margin-bottom: 15px;
+}
+
+.parentMostrarProductos {
+    display: grid;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+
+    /* width: 95%; */
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #f0f2f5;
+    border: 1px solid #000;
+}
+
+.form-titleProductos {
+    margin-top: 2%;
+    margin-bottom: 20px;
+    display: grid;
+    justify-content: left;
+    /* margin-left: 2.5%; */
+}
+
+.btn-agregar {
+    background-color: #5cd320;
+    border-color: #5cd320;
+    color: #fff;
+}
+
+.btn-quitar {
+    margin-top: 5px;
+    background-color: #f84c54;
+    border-color: #f84c54;
+    color: #fff;
+}
+
+.btn-realizar-venta {
+    background-color: #4ca4f7;
+    /* Azul */
+    border-color: #0566c0;
+    /* Misma tonalidad para el borde */
+    color: #fff;
+    /* Texto blanco para resaltar sobre el fondo */
 }

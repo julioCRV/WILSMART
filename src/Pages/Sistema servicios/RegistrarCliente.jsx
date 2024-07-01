@@ -53,6 +53,10 @@ const RegistrarCliente = () => {
         }
     };
 
+    const onFinishFailed = () => {
+        message.error('Por favor complete el formulario correctamente.');
+    };
+
     const columns = [
         {
             title: 'Codigo',
@@ -316,6 +320,7 @@ const RegistrarCliente = () => {
                 labelCol={{ span: 11 }}
                 wrapperCol={{ span: 16 }}
                 onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
             // className="form-columns"
             >
                 <div className='parentRC'>

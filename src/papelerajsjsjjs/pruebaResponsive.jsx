@@ -1,90 +1,58 @@
 import React from 'react';
-import { Table, Button, Space, Modal } from 'antd';
+import { getAuth, deleteUser, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
+import { Button, Input, Form, message } from 'antd';
 
-const { confirm } = Modal;
+const EliminarCuenta = () => {
+    const [form] = Form.useForm();
 
-const App = () => {
-  const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.name.localeCompare(b.name),
-    },
-    {
-      title: 'Age',
-      dataIndex: 'age',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.age - b.age,
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (text, record) => (
-        <Space size="middle">
-          <Button onClick={() => showDetails(record)}>Mostrar</Button>
-          <Button onClick={() => editRecord(record)}>Editar</Button>
-          <Button onClick={() => confirmDelete(record)}>Eliminar</Button>
-        </Space>
-      ),
-    },
-  ];
+    const handleDeleteAccount = (values) => {
+        const auth = getAuth();
+        const user = auth.currentUser;
 
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-    },
-  ];
+        if (user) {
+            const credential = EmailAuthProvider.credential(values.email, values.password);
 
-  const showDetails = (record) => {
-    Modal.info({
-      title: 'Detalles del Registro',
-      content: (
-        <div>
-          <p>Name: {record.name}</p>
-          <p>Age: {record.age}</p>
-        </div>
-      ),
-      onOk() {},
-    });
-  };
+            reauthenticateWithCredential(user, credential)
+                .then(() => {
+                    deleteUser(user)
+                        .then(() => {
+                            message.success("Cuenta eliminada exitosamente.");
+                        })
+                        .catch((error) => {
+                            message.error("Error al eliminar la cuenta: " + error.message);
+                        });
+                })
+                .catch((error) => {
+                    message.error("Error al re-autenticar al usuario: " + error.message);
+                });
+        } else {
+            message.error("No hay ningún usuario autenticado.");
+        }
+    };
 
-  const editRecord = (record) => {
-    console.log('Editar:', record);
-    // Aquí puedes implementar la lógica para editar el registro
-  };
-
-  const confirmDelete = (record) => {
-    confirm({
-      title: '¿Estás seguro de eliminar este registro?',
-      content: 'Esta acción no se puede deshacer.',
-      okText: 'Eliminar',
-      okType: 'danger',
-      cancelText: 'Cancelar',
-      onOk() {
-        console.log('Eliminar:', record);
-        // Aquí puedes implementar la lógica para eliminar el registro
-      },
-      onCancel() {},
-    });
-  };
-
-  return (
-    <Table
-      columns={columns}
-      dataSource={data}
-      showSorterTooltip={{
-        target: 'sorter-icon',
-      }}
-    />
-  );
+    return (
+        <Form form={form} onFinish={handleDeleteAccount} layout="vertical">
+            <Form.Item
+                name="email"
+                label="Correo Electrónico"
+                rules={[{ required: true, message: 'Por favor ingrese su correo electrónico' }]}
+            >
+                <Input />
+            </Form.Item>
+            <Form.Item
+                name="password"
+                label="Contraseña"
+                rules={[{ required: true, message: 'Por favor ingrese su contraseña' }]}
+            >
+                <Input.Password />
+            </Form.Item>
+            <Form.Item>
+                <Button type="primary" htmlType="submit">
+                    Eliminar Cuenta
+                </Button>
+            </Form.Item>
+        </Form>
+    );
 };
 
-export default App;
+export default EliminarCuenta;

@@ -25,7 +25,7 @@ function InicarSesion({ login }) {
       .then((userCredential) => {
         // console.log(userCredential.user);
         // console.log("Puede ingresar");
-        login({ rol: userCredential.user.email});
+        login({ sistemaAsignado: userCredential.user.email});
         sessionStorage.setItem('saveRol', userCredential.user.email);
         navigate('/sistema-administración');
         message.success('Inicio de sesión exitoso, ¡bienvenido!');

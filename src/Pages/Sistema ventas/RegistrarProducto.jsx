@@ -41,7 +41,7 @@ const RegistrarProducto = () => {
   };
 
   const onFinish = async (values) => {
-    //console.log('Received values of form: ', values);
+    console.log('Received values of form: ', values);
 
     const imagen = values.imagen[0].originFileObj;
     try {
@@ -67,6 +67,10 @@ const RegistrarProducto = () => {
     } catch (error) {
       console.error("Error adding document: ", error);
     }
+  };
+
+  const onFinishFailed = () => {
+    message.error('Por favor complete el formulario correctamente.');
   };
 
   function formatearFecha(fechaString) {
@@ -113,6 +117,7 @@ const RegistrarProducto = () => {
         labelCol={{ span: 9 }}
         wrapperCol={{ span: 22 }}
         onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
       // className="form-columns"
       >
         <div className='parent2'>

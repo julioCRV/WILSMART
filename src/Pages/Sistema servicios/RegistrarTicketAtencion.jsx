@@ -40,6 +40,10 @@ const RegistrarTicketAtencion = () => {
         }
     };
 
+    const onFinishFailed = () => {
+        message.error('Por favor complete el formulario correctamente.');
+    };
+
     function formatearFecha(fechaString) {
         const fecha = new Date(fechaString);
 
@@ -192,6 +196,7 @@ const RegistrarTicketAtencion = () => {
                 wrapperCol={{ span: 22 }}
                 form={form}
                 onFinish={(values) => onFinish(values, 'save')}
+                onFinishFailed={onFinishFailed}
             // className="form-columns"
             >
                 <div className='parentTicket'>

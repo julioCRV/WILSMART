@@ -1,4 +1,4 @@
-import { Table, Button, InputNumber, Badge, Modal, message } from 'antd';
+import { Table, Button, InputNumber, Badge, Modal, message, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { collection, addDoc, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
@@ -18,9 +18,9 @@ const MostrarProducto = () => {
     {
       title: 'Nombre',
       dataIndex: 'NombreProducto',
-      defaultSortOrder: 'descend',
-      width: '250px'
-      // sorter: (a, b) => a.name.localeCompare(b.name),
+      defaultSortOrder: 'ascend',
+      width: '200px',
+      sorter: (a, b) => a.NombreProducto.localeCompare(b.NombreProducto),
     },
     {
       title: 'Imagen',
@@ -30,17 +30,24 @@ const MostrarProducto = () => {
       // sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
+      title: 'Marca',
+      dataIndex: 'Marca',
+      // defaultSortOrder: 'ascend',
+      width: '150px',
+      // sorter: (a, b) => a.NombreProducto.localeCompare(b.NombreProducto),
+    },
+    {
       title: 'Precio',
       dataIndex: 'Precio',
-      defaultSortOrder: 'descend',
+      // defaultSortOrder: 'descend',
       render: (text) => `Bs   ${text}`,
-      // sorter: (a, b) => a.age - b.age,
+      sorter: (a, b) => a.Precio - b.Precio,
     },
     {
       title: 'Cantidad',
       dataIndex: 'Cantidad',
-      defaultSortOrder: 'descend',
-      // sorter: (a, b) => a.age - b.age,
+      // defaultSortOrder: 'descend',
+      sorter: (a, b) => a.Cantidad - b.Cantidad,
     },
     // {
     //     title: 'Nueva cantidad',
@@ -53,7 +60,7 @@ const MostrarProducto = () => {
       dataIndex: 'cantidadIncrementada',
       key: 'incrementar',
       render: (_, record) => (
-        <div>
+        <Space>
           <Button onClick={() => handleIncrement(record.id, -1)}>-</Button>
           <InputNumber
             min={0}
@@ -61,7 +68,7 @@ const MostrarProducto = () => {
             onChange={(value) => handleIncrement(record.id, value - record.cantidadIncrementada)}
           />
           <Button onClick={() => handleIncrement(record.id, 1)}>+</Button>
-        </div>
+        </Space>
       ),
     },
     {
@@ -70,8 +77,8 @@ const MostrarProducto = () => {
       key: 'accion',
       render: (_, record) => (
         <>
-          <Button onClick={() => handleActualizar(record.id)}>Agregar</Button>
-          <Button onClick={() => handleQuitar(record.id)}>Quitar</Button>
+          <Button className="btn-agregar" onClick={() => handleActualizar(record.id)}>Agregar</Button>
+          <Button className="btn-quitar" onClick={() => handleQuitar(record.id)}>Quitar</Button>
         </>
       ),
     },
@@ -279,7 +286,7 @@ const MostrarProducto = () => {
           </Badge>
         </div>
 
-        <div className='parentMostrarIncr'>
+        <div className='parentMostrarIncre'>
           <Table
             columns={columns}
             dataSource={dataFirebase}
@@ -292,7 +299,7 @@ const MostrarProducto = () => {
           />
         </div>
         <div className='BotIncrementar'>
-          <Button onClick={accionRegistrarVenta}>Registrar venta</Button>
+          <Button className='btn-realizar-venta' onClick={accionRegistrarVenta}>Realizar venta</Button>
         </div>
       </div>
 

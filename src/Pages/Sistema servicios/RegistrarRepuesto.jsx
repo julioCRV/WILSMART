@@ -15,7 +15,6 @@ const RegistrarRepuesto = () => {
 
     const onFinish = async (values) => {
         //console.log('Received values of form: ', values);
-
         try {
             const docRef = await addDoc(collection(db, "ListaRepuestos"), {
                 CodRepuesto: values.codRepuesto,
@@ -36,6 +35,10 @@ const RegistrarRepuesto = () => {
             console.error("Error adding document: ", error);
         }
     };
+
+    const onFinishFailed = () => {
+        message.error('Por favor complete el formulario correctamente.');
+      };
 
     function formatearFecha(fechaString) {
         const fecha = new Date(fechaString);
@@ -83,6 +86,7 @@ const RegistrarRepuesto = () => {
                 labelCol={{ span: 9 }}
                 wrapperCol={{ span: 22 }}
                 onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
             // className="form-columns"
             >
                 <div className='parent2'>

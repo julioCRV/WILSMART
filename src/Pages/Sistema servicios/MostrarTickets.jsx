@@ -66,9 +66,7 @@ const MostrarTicketsAtencion = () => {
             key: 'actions',
             render: (text, record) => (
                 <Space>
-                    {/* <Button onClick={() => showDetails(record)}>Mostrar</Button> */}
-                    <Button onClick={() => navegarRegistrarCliente(record)}>Registrar</Button>
-                    <Button onClick={() => generarTicket(record)}>Generar</Button>
+                    <Button onClick={() => generarTicket(record)}>Generar ticket</Button>
                     {/* <Button onClick={() => editRecord(record)}>Editar</Button> */}
                     <Button onClick={() => confirmDelete(record)}>Eliminar</Button>
                 </Space>

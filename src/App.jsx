@@ -26,6 +26,7 @@ import RegistroEmpleado from './Pages/Sistema administración/RegistroEmpleado';
 import EditarEmpleado from './Pages/Sistema administración/EditarEmpleado';
 import MostrarEmpleado from './Pages/Sistema administración/MostrarPersonal';
 import MostrarDashboard from './Pages/Sistema administración/MostrarDashboard';
+import GenerarCredenciales from './Pages/Sistema administración/GenerarCredenciales';
 
 //  S  E  R  V  I  C  I  O  S
 import NavbarSisServicios from './components/NavbarSistemaServicios';
@@ -40,6 +41,7 @@ import MostrarClientes from './Pages/Sistema servicios/MostrarClientes';
 import EditarClientes from './Pages/Sistema servicios/EditarClientes';
 import RegistrarClientePerdido from './Pages/Sistema servicios/RegistrarClientePerdido';
 import MostrarClientesPerdidos from './Pages/Sistema servicios/MostrarClientesPerdidos';
+import MostrarRegistrarClientes from './Pages/Sistema servicios/MostrarRegistrarClientes';
 
 // P R U E B A 
 import Prueba6 from './papelerajsjsjjs/prueba6'
@@ -57,8 +59,7 @@ function App() {
   }, [rol]);
 
   const handleLogin = (userData) => {
-    // console.log(userData);
-    setRol(userData.rol);
+    setRol(userData.sistemaAsignado);
     // if (sessionStorage.getItem('saveRol') == null) {
     //   sessionStorage.setItem('saveRol', userData.rol)
     // }
@@ -80,9 +81,7 @@ function App() {
       {/* <Prueba3/> */}
       {/*<Prueba4 id="7gsP6wg9iYVsE9UWjm5h" />
       <Prueba5/> */}
-
       {/* <Prueba6 /> */}
-
       {/* <Prueba7/> */}
 
       {rol === null ? (
@@ -109,7 +108,7 @@ function App() {
             </>
           ) : (
             <>
-              {rol === 'userventa@gmail.com' ? (
+              {rol === 'Sistema de ventas' ? (
                 <>
                   <Routes>
                     <Route path='/' element={<InicioAdmi />}></Route>
@@ -119,7 +118,7 @@ function App() {
                 </>
               ) : (
                 <>
-                  {rol === 'userservicio@gmail.com' ? (
+                  {rol === 'Sistema de servicios' ? (
                     <>
                       <Routes>
                         <Route path='/' element={<InicioAdmi />}></Route>
@@ -189,6 +188,7 @@ function SistemaAdministracion({ logout }) {
         <Route path='/mostrar-empleados' element={<MostrarEmpleado />}></Route>
         <Route path='/editar-empleado' element={<EditarEmpleado />}></Route>
         <Route path='/mostrar-dashboard' element={<MostrarDashboard />}></Route>
+        <Route path='/generar-credenciales' element={<GenerarCredenciales />}></Route>
         <Route path='*' element={<Navigate to="/" />} />
       </Routes>
     </div>
@@ -218,6 +218,7 @@ function SistemaServicios({ logout }) {
         <Route path='/editar-cliente' element={<EditarClientes />}></Route>
         <Route path='/registrar-clientePerdido' element={<RegistrarClientePerdido />}></Route>
         <Route path='/mostrar-clientesPerdidos' element={<MostrarClientesPerdidos />}></Route>
+        <Route path='/mostrar-registrarClientes' element={<MostrarRegistrarClientes />}></Route>
         <Route path='*' element={<Navigate to="/" />} />
       </Routes>
     </div>

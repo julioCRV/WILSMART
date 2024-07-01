@@ -47,6 +47,9 @@ const NavigationBar = ({ logout }) => {
                     <Menu.Item key="/sistema-administración/mostrar-empleados" >
                         <Link to="/sistema-administración/mostrar-empleados">Mostrar empleados</Link>
                     </Menu.Item>
+                    <Menu.Item key="/sistema-administración/generar-credenciales" >
+                        <Link to="/sistema-administración/generar-credenciales">Generar credenciales</Link>
+                    </Menu.Item>
                 </SubMenu>
 
                 <Menu.Item key="/sistema-administración/mostrar-dashboard" icon={<BarChartOutlined />}>

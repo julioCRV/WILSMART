@@ -51,6 +51,9 @@ const NavigationBar = ({ logout }) => {
                     <Menu.Item key="/sistema-servicios/registrar-ticket" >
                         <Link to="/sistema-servicios/registrar-ticket">Registrar ticket de atención</Link>
                     </Menu.Item>
+                    <Menu.Item key="/sistema-servicios/mostrar-registrarClientes" >
+                        <Link to="/sistema-servicios/mostrar-registrarClientes">Registrar cliente</Link>
+                    </Menu.Item>
                     <Menu.Item key="/sistema-servicios/registrar-clientePerdido" >
                         <Link to="/sistema-servicios/registrar-clientePerdido">Registrar cliente perdido</Link>
                     </Menu.Item>

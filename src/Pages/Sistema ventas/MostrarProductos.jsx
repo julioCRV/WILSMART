@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 import './MostrarProducto.css'
 
 const MostrarProducto = () => {
@@ -14,59 +15,62 @@ const MostrarProducto = () => {
     {
       title: 'Nombre',
       dataIndex: 'NombreProducto',
-      defaultSortOrder: 'descend',
-      width: '250px'
-      // sorter: (a, b) => a.name.localeCompare(b.name),
+      defaultSortOrder: 'ascend',
+      width: '100px',
+      sorter: (a, b) => a.NombreProducto.localeCompare(b.NombreProducto),
     },
     {
       title: 'Descripción',
       dataIndex: 'Descripcion',
-      defaultSortOrder: 'descend',
-      // sorter: (a, b) => a.name.localeCompare(b.name),
+      // defaultSortOrder: 'descend',
+      // sorter: (a, b) => a.Descripcion.localeCompare(b.Descripcion),
     },
     {
       title: 'Marca',
       dataIndex: 'Marca',
-      defaultSortOrder: 'descend',
-      // sorter: (a, b) => a.name.localeCompare(b.name),
+      // defaultSortOrder: 'descend',
+      width: '150px',
+      // sorter: (a, b) => a.Marca.localeCompare(b.Marca),
     },
     {
       title: 'Categoria',
       dataIndex: 'Categoria',
-      defaultSortOrder: 'descend',
-      // sorter: (a, b) => a.name.localeCompare(b.name),
+      // defaultSortOrder: 'descend',
+      sorter: (a, b) => a.Categoria.localeCompare(b.Categoria),
     },
     {
       title: 'Precio',
       dataIndex: 'Precio',
-      defaultSortOrder: 'descend',
+      // defaultSortOrder: 'descend',
       render: (text) => `Bs   ${text}`,
-      // sorter: (a, b) => a.age - b.age,
+      width: '80px',
+      sorter: (a, b) => a.Precio - b.Precio,
     },
     {
       title: 'Cantidad',
       dataIndex: 'Cantidad',
-      defaultSortOrder: 'descend',
-      // sorter: (a, b) => a.age - b.age,
+      // defaultSortOrder: 'descend',
+      width: '80px',
+      sorter: (a, b) => a.Cantidad - b.Cantidad,
     },
     {
       title: 'Fecha',
       dataIndex: 'Fecha',
-      defaultSortOrder: 'descend',
-      // sorter: (a, b) => a.age - b.age,
+      // defaultSortOrder: 'descend',
+      sorter: (a, b) => dayjs(a.Fecha).unix() - dayjs(b.Fecha).unix(),
     },
     {
       title: 'Imagen',
       dataIndex: 'Imagen',
       render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '100px' }} />,
-      defaultSortOrder: 'descend',
+      // defaultSortOrder: 'descend',
       // sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: 'Acciones',
       key: 'actions',
       render: (text, record) => (
-        <Space size="middle">
+        <Space>
           {/* <Button onClick={() => showDetails(record)}>Mostrar</Button> */}
           <Button onClick={() => editRecord(record)}>Editar</Button>
           <Button onClick={() => confirmDelete(record)}>Eliminar</Button>
@@ -160,8 +164,8 @@ const MostrarProducto = () => {
   return (
     <>
       <div>
-        <h2 className="form-title">Mostrar productos</h2>
-        <div className='parentMostrar'>
+        <h2 className="form-titleProductos">Mostrar productos</h2>
+        <div className='parentMostrarProductos'>
           <Table
             columns={columns}
             dataSource={dataFirebase}

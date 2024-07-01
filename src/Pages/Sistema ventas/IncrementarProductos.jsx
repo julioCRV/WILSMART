@@ -14,21 +14,21 @@ const MostrarProducto = () => {
         {
             title: 'Nombre',
             dataIndex: 'NombreProducto',
-            defaultSortOrder: 'descend',
-            width: '250px'
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            defaultSortOrder: 'ascend',
+            width: '200px',
+            sorter: (a, b) => a.NombreProducto.localeCompare(b.NombreProducto),
         },
         {
             title: 'Cantidad',
             dataIndex: 'Cantidad',
-            defaultSortOrder: 'descend',
-            // sorter: (a, b) => a.age - b.age,
+            // defaultSortOrder: 'descend',
+            sorter: (a, b) => a.Cantidad - b.Cantidad,
         },
         {
             title: 'Nueva cantidad',
             dataIndex: 'nuevaCantidad',
-            defaultSortOrder: 'descend',
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            // defaultSortOrder: 'descend',
+            sorter: (a, b) => a.nuevaCantidad - b.nuevaCantidad,
         },
         {
             title: 'Incrementar',
@@ -146,7 +146,7 @@ const MostrarProducto = () => {
     return (
         <div>
             <h2 className="form-titleIncr">Incrementar productos</h2>
-            <div className='parentMostrarIncr'>
+            <div className='parentMostrarIncre'>
                 <Table
                     columns={columns}
                     dataSource={dataFirebase}
@@ -159,7 +159,7 @@ const MostrarProducto = () => {
                 />
             </div>
             <div className='BotIncrementar'>
-                <Button onClick={confirmDelete} >Guardar modificaciones</Button>
+                <Button type='primary' onClick={confirmDelete} >Guardar modificaciones</Button>
             </div>
         </div>
     );

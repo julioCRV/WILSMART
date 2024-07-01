@@ -62,6 +62,9 @@ const RegistrarOrdenServicio = ({ record, disabled }) => {
 
     };
 
+    const onFinishFailed = () => {
+        message.error('Por favor complete el formulario correctamente.');
+    };
 
     function formatearFecha(fechaString) {
         const fecha = new Date(fechaString);
@@ -153,6 +156,7 @@ const RegistrarOrdenServicio = ({ record, disabled }) => {
                     labelCol={{ span: 5 }}
                     wrapperCol={{ span: 16 }}
                     onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
                     initialValues={initialValues}
                 >
                     <div className='parentOS'>
