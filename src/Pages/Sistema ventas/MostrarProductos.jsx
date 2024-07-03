@@ -81,7 +81,7 @@ const MostrarProducto = () => {
         <Space>
           {/* <Button onClick={() => showDetails(record)}>Mostrar</Button> */}
           <Button onClick={() => editRecord(record)}>Editar</Button>
-          <Button onClick={() => confirmDelete(record)}>Eliminar</Button>
+          <Button   style={{ border: '1px solid red', color: 'red' }} onClick={() => confirmDelete(record)}>Eliminar</Button>
         </Space>
       ),
     },

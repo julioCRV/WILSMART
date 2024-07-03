@@ -310,6 +310,10 @@ const MostrarProducto = () => {
 
 
   useEffect(() => {
+    const idCajaActual = sessionStorage.getItem('id');
+    if(idCajaActual === null){
+      window.location.reload();
+    }
     const fetchData = async () => {
       const dataListaProductos = await getDocs(collection(db, "ListaProductos"));
       const dataList = dataListaProductos.docs.map(doc => ({
@@ -326,7 +330,7 @@ const MostrarProducto = () => {
     fetchData();
 
     const fetchData2 = async () => {
-      const docRef = doc(db, "HistorialAperturaCaja", idCaja);
+      const docRef = doc(db, "HistorialAperturaCaja", idCajaActual);
       const dataCajaActual = await getDoc(docRef);
 
       if (dataCajaActual.exists()) {

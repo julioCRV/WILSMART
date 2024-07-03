@@ -19,6 +19,7 @@ const RegistrarCliente = () => {
     const [confimarcion, setConfirmacion] = useState("");
 
     const onFinish = async (values) => {
+        const hide = message.loading('Registrando producto...', 0);
         //console.log(values);
         try {
             const docRef = await addDoc(collection(db, "ListaClientes"), {
@@ -47,6 +48,7 @@ const RegistrarCliente = () => {
                 PendienteOtro: values.pendienteOtro,
             });
             //console.log("Document written with ID: ", docRef.id);
+            hide();
             ModalExito();
         } catch (error) {
             console.error("Error adding document: ", error);

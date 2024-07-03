@@ -45,6 +45,7 @@ const RegistrarProducto = () => {
 
     const imagen = values.imagen[0].originFileObj;
     try {
+      const hide = message.loading('Registrando producto...', 0);
       // Sube la imagen a Cloud Storage
       const storageRef = ref(storage, `imagenes/productos/${imagen.name}`);
       await uploadBytes(storageRef, imagen);
@@ -64,8 +65,10 @@ const RegistrarProducto = () => {
         Descripcion: values.descripcion,
       });
       //console.log("Document written with ID: ", docRef.id);
+      hide();
       ModalExito();
     } catch (error) {
+      hide();
       console.error("Error adding document: ", error);
     }
   };
@@ -97,14 +100,16 @@ const RegistrarProducto = () => {
   }
 
   // const initialValues = {
-  //   nombreProducto: "Audifonos",
-  //   cantidad: 22,
-  //   categoria: "Accesorios",
-  //   // fecha: "12/05/2024",
-  //   precio: 111,
-  //   // imagen:
-  //   marca: "Samsung",
-  //   descripcion: "Bonitos audifonos"
+    // nombreProducto: "Smartwatch",
+    // cantidad: 15,
+    // categoria: "Wearables",
+    // precio: 199,
+    // marca: "Apple",
+    // descripcion: "Smartwatch de última generación con múltiples funciones",
+    // precioCompra: 188
+
+    // fecha: "12/05/2024",
+    // imagen:
   // };
 
   return (

@@ -4,7 +4,8 @@ import { DollarOutlined, ShoppingCartOutlined, UserOutlined, BarChartOutlined, R
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
-import ButtonGenerador from './GeneradorCVS'
+import ButtonGenerador from './GeneradorCVS';
+import dayjs from 'dayjs';
 import './MostrarDashboard.css';
 
 const { Header, Content, Footer } = Layout;
@@ -28,8 +29,59 @@ const columns = [
   },
 ];
 
+const columnsCaja = [
+  {
+    title: 'Numero caja',
+    dataIndex: 'id',
+    key: 'name',
+    render: (text, record, index) => `${index + 1}`,
+  },
+  {
+    title: 'Nombre encargado',
+    dataIndex: 'NombreEmpleado',
+    key: 'category',
+  },
+  {
+    title: 'Fecha',
+    dataIndex: 'Fecha',
+    key: 'category',
+    defaultSortOrder: 'descend',
+    sorter: (a, b) => dayjs(a.Fecha).unix() - dayjs(b.Fecha).unix(),
+  },
+  {
+    title: 'Hora',
+    dataIndex: 'Hora',
+    key: 'category',
+  },
+  {
+    title: 'Monto caja inicial',
+    dataIndex: 'MontoInicialCaja',
+    render: (text) => `Bs   ${text}`,
+    key: 'sales',
+  },
+  {
+    title: 'Monto caja final',
+    dataIndex: 'MontoActualCaja',
+    render: (text) => `Bs   ${text}`,
+    key: 'sales',
+  },
+  {
+    title: 'Total retiros',
+    dataIndex: 'TotalRetiroCaja',
+    render: (text) => `Bs   ${text}`,
+    key: 'sales',
+  },
+  {
+    title: 'Total ingresos',
+    dataIndex: 'TotalIngresoCaja',
+    render: (text) => `Bs   ${text}`,
+    key: 'sales',
+  },
+];
+
 const MostrarDashboard = () => {
   const [dataCaja, setDataCaja] = useState([]);
+  const [dataCajaControl, setDataCajaControl] = useState([]);
   const [dataRankingProductos, setDataRankingProductos] = useState([]);
   const [dataUsuarios, setDataUsuario] = useState([]);
   const [data, setData] = useState([]);
@@ -47,6 +99,7 @@ const MostrarDashboard = () => {
         TotalVentas: dataList.reduce((total, item) => total + item.TotalVentas, 0),
         TotalGanancias: dataList.reduce((total, item) => total + item.TotalGanancias, 0)
       };
+      setDataCajaControl(dataList)
       setDataCaja(cajaDinero);
     };
 
@@ -109,15 +162,35 @@ const MostrarDashboard = () => {
         }
         return acc;
       }, { usuariosActivos: 0, usuariosInactivos: 0 });
-      console.log(usuariosClasificados);
+      // console.log(usuariosClasificados);
       setDataUsuario(usuariosClasificados);
     };
+
+    // const fetchCajas = async () => {
+    //   const querySnapshot = await getDocs(collection(db, "ListaClientes"));
+    //   const dataList = querySnapshot.docs.map(doc => ({
+    //     ...doc.data(),
+    //     id: doc.id
+    //   }));
+
+    //   const usuariosClasificados = dataList.reduce((acc, item) => {
+    //     if (item.Estado === "Activo") {
+    //       acc.usuariosActivos += 1;
+    //     } else if (item.Estado === "Inactivo") {
+    //       acc.usuariosInactivos += 1;
+    //     }
+    //     return acc;
+    //   }, { usuariosActivos: 0, usuariosInactivos: 0 });
+    //   // console.log(usuariosClasificados);
+    //   setDataUsuario(usuariosClasificados);
+    // };
 
     fetchUsuarios();
     fetchCaja();
     fetchReportesVentas();
   }, []);
 
+  // console.log(dataCajaControl);
 
   // Procesar los datos para el gráfico de línea
   const lineData = data.reduce((acc, producto) => {
@@ -133,17 +206,25 @@ const MostrarDashboard = () => {
     return acc;
   }, []);
 
-
+  lineData.sort((a, b) => new Date(a.Fecha) - new Date(b.Fecha));
+  
   const config = {
     data: lineData,
     xField: 'Fecha',
     yField: 'CantidadVendida',
-    xAxis: {
-      type: 'timeCat',
-    },
     smooth: true,
+    meta: {
+      CantidadVendida: {
+        alias: 'Cantidad Vendida', // Nombre personalizado para el eje Y
+      },
+    },
+    // Configuración de responsividad
+    responsive: true,
+    // Opciones para ajustar el tamaño del gráfico en diferentes dispositivos
+    autoFit: true,
+    height: 400, // Altura inicial del gráfico
+    padding: 'auto', // Espaciado automático para el gráfico
   };
-
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ padding: '0 50px', marginTop: '10px' }}>
@@ -156,7 +237,7 @@ const MostrarDashboard = () => {
 
         <div className="site-layout-content">
           <Row gutter={16}>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} lg={6}>
               <Card>
                 <Statistic
                   title="Ventas totales"
@@ -168,7 +249,7 @@ const MostrarDashboard = () => {
                 />
               </Card>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} lg={6}>
               <Card>
                 <Statistic
                   title="Ganancias totales"
@@ -180,7 +261,7 @@ const MostrarDashboard = () => {
                 />
               </Card>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} lg={6}>
               <Card>
                 <Statistic
                   title="Ventas realizadas"
@@ -190,7 +271,7 @@ const MostrarDashboard = () => {
                 />
               </Card>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} lg={6}>
               <Card>
                 <Statistic
                   title="Productos vendidos"
@@ -200,7 +281,7 @@ const MostrarDashboard = () => {
                 />
               </Card>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} lg={6}>
               <Card>
                 <Statistic
                   title="Clientes activos"
@@ -210,7 +291,7 @@ const MostrarDashboard = () => {
                 />
               </Card>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} lg={6}>
               <Card>
                 <Statistic
                   title="Clientes perdidos"
@@ -220,7 +301,7 @@ const MostrarDashboard = () => {
                 />
               </Card>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} lg={6}>
               <Card>
                 <Statistic
                   title="Producto más vendido"
@@ -236,23 +317,29 @@ const MostrarDashboard = () => {
           </Row>
 
 
-          <Row gutter={16} style={{ marginTop: '16px' }}>
-            <Col span={24}>
-              <Card title="Tendencias de ventas">
-                <Line {...config} />
-              </Card>
-            </Col>
-          </Row>
+          {/* <Row gutter={16}> */}
+          <Col xs={24} sm={24} md={24} lg={24}>
+            <Card title="Tendencias de ventas">
+              <Line {...config} />
+            </Card>
+          </Col>
+          {/* </Row> */}
 
-          <Row gutter={16} style={{ marginTop: '16px' }}>
-            <Col span={24}>
-              <Card title="Ventas por producto">
-                <Table columns={columns} dataSource={dataRankingProductos} pagination={false} />
-              </Card>
-            </Col>
-          </Row>
+          {/* <Row gutter={16}> */}
+          <Col xs={24} sm={24} md={24} lg={24}>
+            <Card title="Ventas por producto">
+              <Table columns={columns} dataSource={dataRankingProductos} pagination={false} scroll={{ x: 'max-content' }} />
+            </Card>
+          </Col>
+          {/* </Row> */}
+          <Col xs={24} sm={24} md={24} lg={24}>
+            <Card title="Estados de caja">
+              <Table columns={columnsCaja} dataSource={dataCajaControl} pagination={false} scroll={{ x: 'max-content' }} />
+            </Card>
+          </Col>
         </div>
       </Content>
+      <Footer></Footer>
     </Layout>
   );
 };
