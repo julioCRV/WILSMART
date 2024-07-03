@@ -48,14 +48,6 @@ import RegistrarClientePerdido from './Pages/Sistema servicios/RegistrarClienteP
 import MostrarClientesPerdidos from './Pages/Sistema servicios/MostrarClientesPerdidos';
 import MostrarRegistrarClientes from './Pages/Sistema servicios/MostrarRegistrarClientes';
 
-// P R U E B A 
-import Prueba6 from './papelerajsjsjjs/prueba6'
-import Prueba7 from './papelerajsjsjjs/pruebaResponsive'
-import Prueba from './papelerajsjsjjs/prueba'
-import Prueba3 from './papelerajsjsjjs/prueba3'
-import Prueba4 from './papelerajsjsjjs/prueba4'
-import Prueba5 from './papelerajsjsjjs/prueba5'
-
 function App() {
   const [rol, setRol] = useState(sessionStorage.getItem('saveRol'));
   const [nombre, setNombre] = useState("");
@@ -82,7 +74,7 @@ function App() {
   //   // }
   // };
 
-
+// console.log(rol);
 
   const handleLogout = (userData) => {
     // console.log(userData);
@@ -132,12 +124,6 @@ function App() {
 
   return (
     <div className='App'>
-      {/* <Prueba /> */}
-      {/* <Prueba3/> */}
-      {/* <Prueba4 id="7gsP6wg9iYVsE9UWjm5h" /> */}
-      {/* <Prueba5/> */}
-      {/* <Prueba6 /> */}
-      {/* <Prueba7/> */}
 
       {rol === null ? (
         <>
@@ -180,7 +166,7 @@ function App() {
                     <>
                       <Routes>
                         <Route path='/' element={<InicioAdmi />}></Route>
-                        <Route path='/sistema-servicios' element={<SistemaServicios logout={handleLogout} />}></Route>
+                        <Route path='/sistema-servicios/*' element={<SistemaServicios logout={handleLogout} />}></Route>
                         <Route path='*' element={<Navigate to="/"></Navigate>}></Route>
                       </Routes>
                     </>
@@ -256,6 +242,7 @@ function SistemaAdministracion({ logout }) {
 }
 
 function SistemaServicios({ logout }) {
+  // console.log("hhhhhhhhhhhhhhhhhhhhhh");
   const handleLogout = (userData) => {
     // console.log(userData);
     logout(userData.rol);

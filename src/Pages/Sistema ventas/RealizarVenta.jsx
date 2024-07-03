@@ -194,7 +194,7 @@ const MostrarProducto = () => {
     const reporte = {
       Fecha: tiempoActual.fecha,
       Hora: tiempoActual.hora,
-      NombreEmpleado: dataCaja.NombreEmpleado,
+      NombreEmpleado: dataCaja.NombreEmpleado || 'Administrador',
       IdCaja: dataCaja.id,
       // se hace uso de la funcion calcularTotalVentas() y calcularTotalGanancias() para tener ese 
       // valor especificos en el reporte
@@ -225,7 +225,6 @@ const MostrarProducto = () => {
       console.error("Error al guardar el reporte de ventas:", error);
     }
   };
-
 
   const actualizarCaja = async (id, pagoCliente) => {
     try {
@@ -311,7 +310,8 @@ const MostrarProducto = () => {
 
   useEffect(() => {
     const idCajaActual = sessionStorage.getItem('id');
-    if(idCajaActual === null){
+    if (sessionStorage.getItem('saveRol') === 'administrador@gmail.com') {
+    } else if (idCajaActual === null) {
       window.location.reload();
     }
     const fetchData = async () => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Table, Input, Button, Checkbox, DatePicker, Select, Space, Modal } from 'antd';
+import { Form, Table, Input, Button, Checkbox, DatePicker, Select, Space, Modal, message } from 'antd';
 import { doc, addDoc, getDocs, deleteDoc, collection } from "firebase/firestore";
 import { db, storage } from '../../FireBase/fireBase';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -14,12 +14,13 @@ const RegistrarCliente = () => {
     const { confirm } = Modal;
     const location = useLocation();
     const dataTicket = location.state && location.state.objetoProp;
+    const numeroCli = location.state && location.state.numeroCliente;
     const navigate = useNavigate();
     const [dataFirebase, setDataFirebase] = useState([]);
     const [confimarcion, setConfirmacion] = useState("");
 
     const onFinish = async (values) => {
-        const hide = message.loading('Registrando producto...', 0);
+        const hide = message.loading('Registrando cliente...', 0);
         //console.log(values);
         try {
             const docRef = await addDoc(collection(db, "ListaClientes"), {
@@ -245,12 +246,42 @@ const RegistrarCliente = () => {
         fetchData();
     }
 
+    const recibirRespuesta = (mensaje) => {
+        setConfirmacion(mensaje);
+    };
+
+    const calcularTotal = () => {
+        return dataFirebase.reduce((acc, item) => {
+            const montoRepuesto = item.MontoRepuestos || 0; // Asignar 0 si es undefined o null
+            const montoServicio = item.MontoServicio || 0; // Asignar 0 si es undefined o null
+            return acc + montoRepuesto + montoServicio;
+        }, 0);
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const querySnapshot = await getDocs(collection(db, "ListaOrdenServicio"));
+            const dataList = querySnapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }));
+            const filteredDataList = dataList.filter(item => item.NombreCliente === dataTicket.NombreCliente);
+
+            setDataFirebase(filteredDataList);
+
+        };
+
+        fetchData();
+        // console.log("control");
+        setConfirmacion("");
+    }, [confimarcion]);
+
     const initialValues = {
-        // codCliente: 12345,
+        codCliente: numeroCli,
         // nombreCliente: 'Juan Pérez',
         // ci: '12345678',
         // telefono: '0987654321',
-        // correo: 'juan.perez@example.com',
+        correo: '',
         estado: 'Activo',
         // domicilio: 'Calle Falsa 123',
 
@@ -283,34 +314,6 @@ const RegistrarCliente = () => {
         telefono: dataTicket.TelefonoCelular,
     };
 
-    const recibirRespuesta = (mensaje) => {
-        setConfirmacion(mensaje);
-    };
-
-    const calcularTotal = () => {
-        return dataFirebase.reduce((acc, item) => {
-            const montoRepuesto = item.MontoRepuestos || 0; // Asignar 0 si es undefined o null
-            const montoServicio = item.MontoServicio || 0; // Asignar 0 si es undefined o null
-            return acc + montoRepuesto + montoServicio;
-        }, 0);
-    };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const querySnapshot = await getDocs(collection(db, "ListaOrdenServicio"));
-            const dataList = querySnapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id
-            }));
-            const filteredDataList = dataList.filter(item => item.NombreCliente === dataTicket.NombreCliente);
-
-            setDataFirebase(filteredDataList);
-        };
-        fetchData();
-        // console.log("control");
-        setConfirmacion("");
-    }, [confimarcion]);
-
     return (
         <div >
             <h2 className="form-title">Registrar cliente</h2>
@@ -337,7 +340,7 @@ const RegistrarCliente = () => {
                             label="Código"
                             rules={[{ required: true, message: 'Por favor ingrese un código' }]}
                         >
-                            <Input type="number" />
+                            <Input />
                         </Form.Item>
 
                         <Form.Item
@@ -370,10 +373,10 @@ const RegistrarCliente = () => {
                         <Form.Item
                             name="correo"
                             label="Correo"
-                            rules={[
-                                { required: true, message: 'Por favor ingrese el correo electrónico' },
-                                { type: 'email', message: 'El correo no es válido' }
-                            ]}
+                        // rules={[
+                        //     { required: true, message: 'Por favor ingrese el correo electrónico' },
+                        //     { type: 'email', message: 'El correo no es válido' }
+                        // ]}
                         >
                             <Input />
                         </Form.Item>

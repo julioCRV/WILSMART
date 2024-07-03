@@ -33,7 +33,7 @@ const ModalAperturaCaja = ({ confirmacion, nombre }) => {
                 Estado: true,
                 Fecha: tiempoActual.fecha,
                 Hora: tiempoActual.hora,
-                NombreEmpleado: nombre,
+                NombreEmpleado: nombre || 'administrador',
                 MontoInicialCaja: parseInt(montoInicial),
                 MontoActualCaja: parseInt(montoInicial),
                 MontoFinalCaja: parseInt(montoInicial),

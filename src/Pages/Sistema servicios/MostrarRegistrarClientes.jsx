@@ -9,6 +9,7 @@ const MostrarRegistrarClientes = () => {
     const { confirm } = Modal;
     const navigate = useNavigate();
     const [dataFirebase, setDataFirebase] = useState([]);
+    const [numeroCliente, setNumeroClientes] = useState([]);
 
     const columns = [
         {
@@ -73,7 +74,7 @@ const MostrarRegistrarClientes = () => {
 
     const navegarRegistrarCliente = (record) => {
         // console.log('Editar:', record);
-        navigate('/sistema-servicios/registrar-cliente', { state: { objetoProp: record } });
+        navigate('/sistema-servicios/registrar-cliente', { state: { objetoProp: record, numeroCliente: numeroCliente } });
         // Aquí puedes implementar la lógica para editar el registro
     };
 
@@ -90,6 +91,13 @@ const MostrarRegistrarClientes = () => {
             }));
             // console.log(dataList);
             setDataFirebase(dataList);
+            
+            const querySnapshot2 = await getDocs(collection(db, "ListaClientes"));
+            const dataList2 = querySnapshot2.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }));
+            setNumeroClientes(`2024-${dataList2.length+1}`);
         };
         fetchData();
     }, []);

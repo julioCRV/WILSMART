@@ -352,10 +352,10 @@ const EditarCliente = () => {
                         <Form.Item
                             name="correo"
                             label="Correo"
-                            rules={[
-                                { required: true, message: 'Por favor ingrese el correo electrónico' },
-                                { type: 'email', message: 'El correo no es válido' }
-                            ]}
+                            // rules={[
+                            //     { required: true, message: 'Por favor ingrese el correo electrónico' },
+                            //     { type: 'email', message: 'El correo no es válido' }
+                            // ]}
                         >
                             <Input />
                         </Form.Item>

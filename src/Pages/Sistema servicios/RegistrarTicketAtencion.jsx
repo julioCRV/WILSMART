@@ -67,6 +67,7 @@ const RegistrarTicketAtencion = () => {
     }
 
     const generarDocumentoWord = (values) => {
+        // console.log(values);
         // se crea una variable doc que almacenara el ticket del formulario de Registro de ticket de atención
         const doc = new Document({
             // al parte de seccions es donde va el titulo del ticket y cada input del formulario
@@ -130,7 +131,7 @@ const RegistrarTicketAtencion = () => {
                             spacing: { after: 200 },
                         }),
                         new Paragraph({
-                            text: `Costo del servicio: Bs ${values.costoServicio.toFixed(2)}`,
+                            text: `Costo del servicio: Bs ${parseInt(values.costoServicio).toFixed(2)}`,
                             spacing: { after: 200 },
                         }),
                         new Paragraph({
@@ -163,7 +164,7 @@ const RegistrarTicketAtencion = () => {
             .then((blob) => {
                 // se utiliza la función "saveAs" para guardar el blob como un archivo .docx, que lleva de nombre 
                 // el cliente actual que se esta registrando en el formulario
-                saveAs(blob, `ticket_servicio_${values.NombreCliente}.docx`);
+                saveAs(blob, `ticket_servicio_${values.nombreCliente}.docx`);
             });
     };
 
