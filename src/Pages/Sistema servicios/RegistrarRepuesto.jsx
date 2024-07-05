@@ -14,24 +14,27 @@ const RegistrarRepuesto = () => {
     const navigate = useNavigate();
 
     const onFinish = async (values) => {
+        const hide = message.loading('Registrando repuesto...', 0);
         //console.log('Received values of form: ', values);
         try {
             const docRef = await addDoc(collection(db, "ListaRepuestos"), {
                 CodRepuesto: values.codRepuesto,
                 NombreRepuesto: values.nombreRepuesto,
-                Cantidad: values.cantidad,
+                Cantidad: parseInt(values.cantidad),
                 Fecha: formatearFecha(values.fecha.toDate()),
                 Categoria: values.categoria,
                 Proveedor: values.proveedor,
                 Estado: values.estado,
                 Descripcion: values.descripcion,
-                CostoUnitario: values.costo,
+                PrecioCompra: values.costo,
                 PrecioRepuesto: values.precio,
                 UbicacionAlmacen: values.ubicacion,
             });
             //console.log("Document written with ID: ", docRef.id);
             ModalExito();
+            hide()
         } catch (error) {
+            hide()
             console.error("Error adding document: ", error);
         }
     };
@@ -168,8 +171,8 @@ const RegistrarRepuesto = () => {
 
                         <Form.Item
                             name="costo"
-                            label="Costo unitario"
-                            rules={[{ required: true, message: 'Por favor ingrese el costo unitario' }]}
+                            label="Precio de compra"
+                            rules={[{ required: true, message: 'Por favor ingrese el precio de compra' }]}
                         >
                             <Input type="number" />
                         </Form.Item>

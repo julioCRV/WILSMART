@@ -41,6 +41,7 @@ const RegistroEmpleado = () => {
   };
 
   const onFinish = async (values) => {
+    const hide = message.loading('Registrando empleado...', 0);
     // se guarda en una variable la imagen del array de foto con el objeto del archivo original
     const imagen = values.foto[0].originFileObj;
     try {
@@ -61,11 +62,13 @@ const RegistroEmpleado = () => {
         CorreoElectrónico: values.email, // Correo electrónico del empleado
         PuestoOcargo: values.puesto, // Puesto o cargo del empleado
         Salario: values.salario, // Salario del empleado
-        DirecciónDeDomicilio: values.direccion // Dirección de domicilio del empleado
+        DirecciónDeDomicilio: values.direccion, // Dirección de domicilio del empleado
       });
       // se muestro un modal de éxito si el documento se agrega correctamente
+      hide();
       ModalExito();
     } catch (error) {
+      hide();
       // si ocurre un error al agregar el documento, lo imprimo en la consola
       console.error("Error adding document: ", error);
     }
@@ -85,7 +88,7 @@ const RegistroEmpleado = () => {
     Modal.success({
       title: 'Registro de Empleado',
       content: 'Los datos del empleado se han guardado correctamente.',
-      onOk: () => { navigate('/sistema-administración'); } // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
+      onOk: () => { navigate('/sistema-administración/mostrar-empleados'); } // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
     });
   }
 

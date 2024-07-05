@@ -173,7 +173,8 @@ const MostrarClientes = () => {
             id: doc.id
         }));
         // console.log(dataList);
-        setDataFirebase(dataList);
+        const filteredDataList = dataList.filter(item => item.Estado === "Activo");
+        setDataFirebase(filteredDataList);
     };
 
     useEffect(() => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Select, DatePicker, Button, Table, InputNumber, AutoComplete } from 'antd';
+import { Modal, Form, Input, Select, DatePicker, Button, Table, InputNumber, AutoComplete, message } from 'antd';
 import { collection, getDocs, addDoc, doc, updateDoc, writeBatch } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import './RegistrarOrdenServicio.css'
@@ -65,6 +65,7 @@ const EditarOrdenServicio = ({ nombre, actualizar, record }) => {
     };
 
     const handleFinish = async (values) => {
+        const hide = message.loading('Actualizando orden de servicio...', 0);
         const id = record.id;
         try {
             const docRef = doc(db, "ListaOrdenServicio", id); // Referencia al documento que deseas actualizar
@@ -99,9 +100,10 @@ const EditarOrdenServicio = ({ nombre, actualizar, record }) => {
                     await addDoc(subcollectionRef, repuesto);
                 })
             );
-
+            hide();
             ModalExito();
         } catch (error) {
+            hide();
             console.error("Error updating document: ", error);
         }
     };
@@ -306,7 +308,7 @@ const EditarOrdenServicio = ({ nombre, actualizar, record }) => {
                                 label="Código de orden de servicio"
                                 rules={[{ required: true, message: 'Por favor ingrese un código de orden de servicio' }]}
                             >
-                                <Input type="number" />
+                                <Input />
                             </Form.Item>
 
                             <Form.Item

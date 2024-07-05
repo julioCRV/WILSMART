@@ -19,24 +19,27 @@ const EditarRepuesto = () => {
 
 
     const onFinish = async (values) => {
+        const hide = message.loading('Actualizando repuesto...', 0);
         const docRef = doc(db, "ListaRepuestos", dataRepuesto.id);
         try {
             await updateDoc(docRef, {
                 CodRepuesto: values.codRepuesto,
                 NombreRepuesto: values.nombreRepuesto,
-                Cantidad: values.cantidad,
+                Cantidad: parseInt(values.cantidad),
                 Fecha: formatearFecha(values.fecha.toDate()),
                 Categoria: values.categoria,
                 Proveedor: values.proveedor,
                 Estado: values.estado,
                 Descripcion: values.descripcion,
-                CostoUnitario: values.costo,
+                PrecioCompra: values.costo,
                 PrecioRepuesto: values.precio,
                 UbicacionAlmacen: values.ubicacion,
             });
             //console.log("Document updated");
+            hide();
             ModalExito();
         } catch (e) {
+            hide();
             console.error("Error updating document: ", e);
         }
     };
@@ -48,7 +51,7 @@ const EditarRepuesto = () => {
         const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
         const año = fecha.getFullYear();
 
-        return `${año}/${mes}/${dia}`;
+        return `${año}-${mes}-${dia}`;
     }
 
     const ModalExito = () => {
@@ -60,7 +63,7 @@ const EditarRepuesto = () => {
     }
 
     const backList = () => {
-        navigate('/sistema-servicios/mostra-repuestos');
+        navigate('/sistema-servicios/mostrar-repuestos');
     }
 
     //console.log(dataRepuesto);
@@ -74,7 +77,7 @@ const EditarRepuesto = () => {
 
         estado: dataRepuesto.Estado,
         descripcion: dataRepuesto.Descripcion,
-        costo: dataRepuesto.CostoUnitario,
+        costo: dataRepuesto.PrecioCompra,
         precio: dataRepuesto.PrecioRepuesto,
         ubicacion: dataRepuesto.UbicacionAlmacen,
     };
@@ -168,8 +171,8 @@ const EditarRepuesto = () => {
 
                         <Form.Item
                             name="costo"
-                            label="Costo unitario"
-                            rules={[{ required: true, message: 'Por favor ingrese el costo unitario' }]}
+                            label="Precio de compra"
+                            rules={[{ required: true, message: 'Por favor ingrese el precio de compra' }]}
                         >
                             <Input type="number" />
                         </Form.Item>

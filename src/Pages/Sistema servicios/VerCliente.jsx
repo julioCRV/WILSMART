@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, Select, DatePicker, Button, Table, Checkbox, Space } from 'antd';
-import { collection, getDocs, addDoc, doc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc, doc, deleteDoc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import './RegistrarCliente.css'
 
@@ -196,7 +196,7 @@ const RegistrarOrdenServicio = ({ record }) => {
                             </div>
                         ))}
                     </div>
-                    <p> --------------------------------------------------------------- </p>
+                    <p> .................................................. TOTAL ................................................ </p>
                     <p><strong>Costo de repustos: </strong> {record.MontoRepuestos} Bs.</p>
                     <p><strong>Costo del servicio: </strong> {record.MontoServicio} Bs.</p>
                 </div>
@@ -224,6 +224,10 @@ const RegistrarOrdenServicio = ({ record }) => {
         try {
             const subcollectionRef = collection(db, `ListaOrdenServicio/${id}/ListaRepuestos`);
             const subcollectionSnapshot = await getDocs(subcollectionRef);
+            const dataList = subcollectionSnapshot.docs.map(doc => ({
+                ...doc.data(),
+            }));
+            actualizarRepuestos(dataList);
 
             subcollectionSnapshot.forEach(async (doc) => {
                 await deleteDoc(doc.ref);
@@ -243,6 +247,33 @@ const RegistrarOrdenServicio = ({ record }) => {
 
     const onChange = (pagination, filters, sorter, extra) => {
         //console.log('params', pagination, filters, sorter, extra);
+    };
+
+    const actualizarRepuestos = async (data) => {
+        const promises = data.map(async (item) => {
+            const productRef = doc(db, "ListaRepuestos", item.id);
+
+            try {
+                const productSnap = await getDoc(productRef);
+
+                if (productSnap.exists()) {
+                    const currentCantidad = productSnap.data().Cantidad || 0;
+                    const newCantidad = currentCantidad + item.cantidadSeleccionada;
+
+                    await updateDoc(productRef, { Cantidad: newCantidad });
+                } else {
+                    console.log(`Producto con ID ${item.id} no encontrado.`);
+                }
+            } catch (error) {
+                console.error(`Error al actualizar el producto con ID ${item.id}:`, error);
+            }
+        });
+        try {
+            await Promise.all(promises);
+            console.log('Todos los repuestos han sido actualizados.');
+        } catch (error) {
+            console.error('Error al actualizar los repuestos:', error);
+        }
     };
 
     const actualizarListaOrdeServicio = () => {

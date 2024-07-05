@@ -11,13 +11,11 @@ import BotonEditarOrden from './EditarOrdenServicio.jsx'
 
 const { Option } = Select;
 
-const RegistrarOrdenServicio = ({ record, disabled }) => {
+const RegistrarOrdenServicio = ({ record, disabled, confirmacion }) => {
     const navigate = useNavigate();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
     const { confirm } = Modal;
-
-    const [confimarcion, setConfirmacion] = useState("");
 
     const showModal = () => {
         form.resetFields();
@@ -51,7 +49,9 @@ const RegistrarOrdenServicio = ({ record, disabled }) => {
                     Estado: "Inactivo",
                 });
                 //console.log("Document updated");
+                confirmacion("Si")
                 ModalExito();
+
             } catch (e) {
                 console.error("Error updating document: ", e);
             }
@@ -73,7 +73,7 @@ const RegistrarOrdenServicio = ({ record, disabled }) => {
         const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
         const año = fecha.getFullYear();
 
-        return `${año}/${mes}/${dia}`;
+        return `${año}-${mes}-${dia}`;
     }
 
     const ModalExito = () => {

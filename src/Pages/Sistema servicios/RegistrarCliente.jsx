@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Table, Input, Button, Checkbox, DatePicker, Select, Space, Modal, message } from 'antd';
-import { doc, addDoc, getDocs, deleteDoc, collection } from "firebase/firestore";
+import { doc, addDoc, getDocs, deleteDoc, collection, updateDoc,getDoc } from "firebase/firestore";
 import { db, storage } from '../../FireBase/fireBase';
 import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -47,6 +47,8 @@ const RegistrarCliente = () => {
                 PendienteEntrega: values.pendienteEntrega,
                 PendientePagar: values.pendientePagar,
                 PendienteOtro: values.pendienteOtro,
+
+                IdCliente: dataTicket.id
             });
             //console.log("Document written with ID: ", docRef.id);
             hide();
@@ -124,7 +126,7 @@ const RegistrarCliente = () => {
         const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
         const año = fecha.getFullYear();
 
-        return `${año}/${mes}/${dia}`;
+        return `${año}-${mes}-${dia}`;
     }
 
     const ModalExito = () => {
@@ -183,6 +185,7 @@ const RegistrarCliente = () => {
                             </div>
                         ))}
                     </div>
+                    <p></p>
                     <p> --------------------------------------------------------------- </p>
                     <p><strong>Costo de repustos: </strong> {record.MontoRepuestos} Bs.</p>
                     <p><strong>Costo del servicio: </strong> {record.MontoServicio} Bs.</p>
@@ -211,7 +214,10 @@ const RegistrarCliente = () => {
         try {
             const subcollectionRef = collection(db, `ListaOrdenServicio/${id}/ListaRepuestos`);
             const subcollectionSnapshot = await getDocs(subcollectionRef);
-
+            const dataList = subcollectionSnapshot.docs.map(doc => ({
+                ...doc.data(),
+            }));
+            actualizarRepuestos(dataList);
             subcollectionSnapshot.forEach(async (doc) => {
                 await deleteDoc(doc.ref);
                 //console.log("Document deleted from subcollection ListaRepuestos");
@@ -230,6 +236,33 @@ const RegistrarCliente = () => {
 
     const onChange = (pagination, filters, sorter, extra) => {
         //console.log('params', pagination, filters, sorter, extra);
+    };
+
+    const actualizarRepuestos = async (data) => {
+        const promises = data.map(async (item) => {
+            const productRef = doc(db, "ListaRepuestos", item.id);
+
+            try {
+                const productSnap = await getDoc(productRef);
+
+                if (productSnap.exists()) {
+                    const currentCantidad = productSnap.data().Cantidad || 0;
+                    const newCantidad = currentCantidad + item.cantidadSeleccionada;
+
+                    await updateDoc(productRef, { Cantidad: newCantidad });
+                } else {
+                    console.log(`Producto con ID ${item.id} no encontrado.`);
+                }
+            } catch (error) {
+                console.error(`Error al actualizar el producto con ID ${item.id}:`, error);
+            }
+        });
+        try {
+            await Promise.all(promises);
+            console.log('Todos los repuestos han sido actualizados.');
+        } catch (error) {
+            console.error('Error al actualizar los repuestos:', error);
+        }
     };
 
     const actualizarListaOrdeServicio = () => {

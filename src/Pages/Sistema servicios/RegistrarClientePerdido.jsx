@@ -10,6 +10,7 @@ const RegistrarClientePerdido = () => {
     const { confirm } = Modal;
     const navigate = useNavigate();
     const [dataFirebase, setDataFirebase] = useState([]);
+    const [confimarcion, setConfirmacion] = useState("");
 
     const columns = [
         {
@@ -49,26 +50,20 @@ const RegistrarClientePerdido = () => {
             key: 'actions',
             render: (text, record) => (
                 <Space size="middle">
-                   <BotonRegistro record={record} disabled={record.Estado === "Inactivo"} />
+                    <BotonRegistro record={record} disabled={record.Estado === "Inactivo"} confirmacion={confirmarRecarga} />
                 </Space>
             ),
         },
     ];
 
-
+    const confirmarRecarga = (value) => {
+        setConfirmacion(value);
+    }
     const onChange = (pagination, filters, sorter, extra) => {
         //console.log('params', pagination, filters, sorter, extra);
     };
 
-    const actualizarClientes = async () => {
-        const querySnapshot = await getDocs(collection(db, "ListaClientes"));
-        const dataList = querySnapshot.docs.map(doc => ({
-            ...doc.data(),
-            id: doc.id
-        }));
-        // console.log(dataList);
-        setDataFirebase(dataList);
-    };
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -83,6 +78,19 @@ const RegistrarClientePerdido = () => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const actualizarClientes = async () => {
+            const querySnapshot = await getDocs(collection(db, "ListaClientes"));
+            const dataList = querySnapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }));
+            // console.log(dataList);
+            setDataFirebase(dataList);
+        };
+        actualizarClientes();
+        setConfirmacion("");
+    }, [confimarcion]);
     return (
         <>
             <div>

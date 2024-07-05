@@ -39,8 +39,8 @@ const MostrarRepuestos = () => {
             sorter: (a, b) => a.Cantidad - b.Cantidad,
         },
         {
-            title: 'Costo unitario',
-            dataIndex: 'CostoUnitario',
+            title: 'Precio de compra',
+            dataIndex: 'PrecioCompra',
             defaultSortOrder: 'descend',
             render: (text) => `Bs.   ${text}`,
             width: '50px',
@@ -88,8 +88,8 @@ const MostrarRepuestos = () => {
                     <p><strong>Categoría: </strong> {record.Categoria}</p>
                     <p><strong>Estado: </strong> {record.Estado}</p>
                     <p><strong>Proveedor: </strong> {record.Proveedor}</p>
-                    <p><strong>Costo unitario: </strong>{record.CostoUnitario}</p>
-                    <p><strong>Precio del repuestos: </strong>{record.PrecioRepuesto}</p>
+                    <p><strong>Precio de compra: </strong>{record.PrecioCompra}</p>
+                    <p><strong>Precio del repuesto: </strong>{record.PrecioRepuesto}</p>
                     <p><strong>Fecha de ingreso: </strong> {record.Fecha}</p>
                     <p><strong>Ubicación en almacén: </strong> {record.UbicacionAlmacen}</p>
                 </div>

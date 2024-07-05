@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Select, DatePicker, Button, Table, InputNumber, AutoComplete } from 'antd';
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { Modal, Form, Input, Select, DatePicker, Button, Table, InputNumber, AutoComplete, message } from 'antd';
+import { collection, getDocs, addDoc, updateDoc, doc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import './RegistrarOrdenServicio.css'
 import { activate } from 'firebase/remote-config';
+import { XmlComponent } from 'docx';
+import { confirmPasswordReset } from 'firebase/auth';
 
 const { Option } = Select;
 
@@ -17,11 +19,13 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
     const [options, setOptions] = useState([]);
     const [selectedOption, setSelectedOption] = useState(null);
     const [costoTotal, setCostoTotal] = useState(0);
+    const [numeroOrden, setNumeroOrden] = useState(0);
+    const [control, setControl] = useState("")
 
     const handleSearch = (value) => {
         if (value) {
             const filtered = dataFirebase
-                .filter(item => item.NombreRepuesto.toLowerCase().includes(value.toLowerCase()))
+                .filter(item => (item.NombreRepuesto.toLowerCase().includes(value.toLowerCase()) && parseInt(item.Cantidad) > 0))
                 .map(item => ({ value: item.NombreRepuesto }));
             setOptions(filtered);
         } else {
@@ -36,6 +40,7 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
     const showModal = () => {
         form.resetFields();
         setIsModalVisible(true);
+        setControl("run");
     };
 
     const handleCancel = () => {
@@ -47,6 +52,7 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
     };
 
     const handleFinish = async (values) => {
+        const hide = message.loading('Registrando orden de servicio...', 0);
         try {
             const docRef = await addDoc(collection(db, "ListaOrdenServicio"), {
                 CodOrden: values.codOrden,
@@ -67,14 +73,31 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
                 })
             );
 
+            actualizarRepuestos();
+            hide();
             ModalExito();
         } catch (error) {
+            hide();
             console.error("Error adding document: ", error);
         }
     };
 
     const onFinishFailed = () => {
         message.error('Por favor complete el formulario correctamente.');
+    };
+
+    const actualizarRepuestos = async () => {
+        const promises = dataOrdenServicio.map((item) => {
+            const productRef = doc(db, "ListaRepuestos", item.id);
+            return updateDoc(productRef, { Cantidad: parseInt(item.Cantidad) - item.cantidadSeleccionada });
+        }).filter(promise => promise !== null);
+
+        try {
+            await Promise.all(promises);
+            console.log('Todos los repuestos han sido actualizados.');
+        } catch (error) {
+            console.error('Error al actualizar los repuestos:', error);
+        }
     };
 
     function formatearFecha(fechaString) {
@@ -197,6 +220,7 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
     }, [costoTotal]);
 
     useEffect(() => {
+        setDataOrdenServicio([]);
         const fetchData = async () => {
             const querySnapshot = await getDocs(collection(db, "ListaRepuestos"));
             const dataList = querySnapshot.docs.map(doc => ({
@@ -206,26 +230,51 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
             }));
             // console.log(dataList);
             setDataFirebase(dataList);
+
+            const querySnapshot2 = await getDocs(collection(db, "ListaOrdenServicio"));
+            const dataList2 = querySnapshot2.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id,
+            }));
+            // console.log(dataList);
+            setNumeroOrden(`2024-${dataList2.length + 1}`);
         };
         fetchData();
         const fetchDataEmpleados = async () => {
-            const querySnapshot = await getDocs(collection(db, "ListaEmpleados"));
-            const dataList = querySnapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id,
-                // cantidadSeleccionada: 0,
-            }));
-            // console.log(dataList);
-            setDataEmpleados(dataList);
+            // Obtén los datos de la colección "ListaEmpleados"
+            const empleadosSnapshot = await getDocs(collection(db, "ListaEmpleados"));
+            const empleadosList = empleadosSnapshot.docs.map(doc => ({ ...doc.data(), }));
+
+            // Obtén los datos de la colección "ListaCredenciales"
+            const credencialesSnapshot = await getDocs(collection(db, "ListaCredenciales"));
+            const credencialesList = credencialesSnapshot.docs.map(doc => doc.data());
+
+            // Combina los datos de ambas listas
+            const dataList = empleadosList.map(empleado => {
+                const credencial = credencialesList.find(cred => cred.Nombre === empleado.Nombre);
+                return {
+                    ...empleado,
+                    SistemaAsignado: credencial ? credencial.SistemaAsignado : null,
+                };
+            });
+
+            const dataFilterServicios = dataList.filter(empleado =>
+                ["Sistema de servicios", "Ninguno", null].includes(empleado.SistemaAsignado)
+            );
+
+            setDataEmpleados(dataFilterServicios);
         };
         fetchDataEmpleados();
-    }, []);
+        setControl("");
+        setCostoTotal(0);
+    }, [control]);
 
     const onChange = (pagination, filters, sorter, extra) => {
         //console.log('params', pagination, filters, sorter, extra);
     };
 
     const ModalExito = () => {
+        setCostoTotal(0);
         Modal.success({
             title: 'Registro de orden de servicio',
             content: 'Los datos de la orden de servicio se han guardado correctamente.',
@@ -233,14 +282,18 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
         });
     }
 
+    const initialValues = {
+        codOrden: numeroOrden
+    }
+
     return (
         <div style={{ marginRight: '20px', marginBottom: '10px' }}>
-            <Button type="primary" onClick={showModal}>
+            <Button type="primary" onClick={() => showModal()}>
                 Registrar orden de servicio
             </Button>
             <Modal
                 title="Registrar orden de servicio"
-                visible={isModalVisible}
+                open={isModalVisible}
                 onCancel={handleCancel}
                 footer={[
                     <Button key="cancel" onClick={handleCancel}>
@@ -259,6 +312,7 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
                     wrapperCol={{ span: 15 }}
                     onFinish={handleFinish}
                     onFinishFailed={onFinishFailed}
+                    initialValues={initialValues}
                 >
                     <div className='parentOS'>
                         <div className='divOS1'>
@@ -267,7 +321,7 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
                                 label="Código de orden de servicio"
                                 rules={[{ required: true, message: 'Por favor ingrese un código de orden de servicio' }]}
                             >
-                                <Input type="number" />
+                                <Input />
                             </Form.Item>
 
                             <Form.Item

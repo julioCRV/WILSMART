@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Button, DatePicker, Select, Modal } from 'antd';
+import { Form, Input, Button, DatePicker, Select, Modal, message } from 'antd';
 import { collection, addDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import { saveAs } from 'file-saver';
@@ -18,6 +18,7 @@ const RegistrarTicketAtencion = () => {
         if (action === 'generate') {
             generarDocumentoWord(values);
         } else if (action === 'save') {
+            const hide = message.loading('Registrando ticket de atención...', 0);
             //console.log('Received values of form: ', values);
 
             try {
@@ -33,8 +34,10 @@ const RegistrarTicketAtencion = () => {
                     CostoServicio: values.costoServicio,
                 });
                 //console.log("Document written with ID: ", docRef.id);
+                hide();
                 ModalExito();
             } catch (error) {
+                hide();
                 console.error("Error adding document: ", error);
             }
         }

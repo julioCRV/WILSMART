@@ -13,12 +13,30 @@ const GeneradorCVS = () => {
   const exportCSV = async () => {
     // Se obtiene la lista actual basada en la opción seleccionada
     const ListaActual = getLista(seleccionOpciones);
-    
+
     try {
       // Se realiza una consulta a la base de datos para obtener los documentos de la colección especificada
       const querySnapshot = await getDocs(collection(db, ListaActual));
       // Se mapea los documentos obtenidos a un array de datos
-      const dataArray = querySnapshot.docs.map(doc => doc.data());
+      var dataArray = querySnapshot.docs.map(doc => doc.data());
+
+      if (seleccionOpciones === "Ventas") {
+
+        const flattenedArray = dataArray.flatMap(obj =>
+          obj.productos.map(producto => {
+            const { productos, ...rest } = obj; // Extrae 'productos' y guarda el resto en 'rest'
+            return {
+              ...producto,
+              ...rest // Copia todas las propiedades del objeto principal, excepto 'productos'
+            };
+          })
+        );
+
+
+        dataArray = flattenedArray;
+        // console.log(flattenedArray);
+      }
+
       // Se convierte el array de datos a formato CSV
       const csv = convertToCSV(dataArray);
       // Se crea un blob (objeto binario grande) con el contenido CSV y se especifica el tipo de archivo como 'text/csv'
@@ -44,7 +62,7 @@ const GeneradorCVS = () => {
       console.error('Error al exportar datos como CSV:', error);
     }
   };
-  
+
 
   const getLista = (nombreLista) => {
     if (nombreLista === "Clientes") {
@@ -57,15 +75,35 @@ const GeneradorCVS = () => {
   }
 
   const convertToCSV = (dataArray) => {
-    const header = Object.keys(dataArray[0]).join(',');
-    const rows = dataArray.map(obj => Object.values(obj).join(','));
-    return header + '\n' + rows.join('\n');
+    if (dataArray.length === 0) return '';
+
+    const keys = Object.keys(dataArray[0]);
+    const header = keys.join(',');
+
+    const rows = dataArray.map(obj =>
+      keys.map(key => {
+        let value = obj[key] ?? '';
+        // Escapar comillas dobles y encerrar en comillas dobles si contiene comas, saltos de línea o comillas dobles
+        if (typeof value === 'string' && (value.includes(',') || value.includes('\n') || value.includes('"'))) {
+          value = '"' + value.replace(/"/g, '""') + '"';
+        }
+        // Envolver las fechas en comillas dobles
+        if (typeof value === 'string' && /\d{4}-\d{2}-\d{2}/.test(value)) {
+          value = '"' + value + '"';
+        }
+        return value;
+      }).join(',')
+    );
+
+    return [header, ...rows].join('\n');
   };
 
+
+
   const existeAutocompletable = () => {
-    if(seleccionOpciones === null){
+    if (seleccionOpciones === null) {
       return true;
-    }else{
+    } else {
       return false
     }
   }

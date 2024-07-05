@@ -9,6 +9,7 @@ const MostrarRegistrarClientes = () => {
     const { confirm } = Modal;
     const navigate = useNavigate();
     const [dataFirebase, setDataFirebase] = useState([]);
+    const [dataCliente, setDataClientes] = useState([]);
     const [numeroCliente, setNumeroClientes] = useState([]);
 
     const columns = [
@@ -66,11 +67,20 @@ const MostrarRegistrarClientes = () => {
             render: (text, record) => (
                 <Space>
                     {/* <Button onClick={() => showDetails(record)}>Mostrar</Button> */}
-                    <Button onClick={() => navegarRegistrarCliente(record)}>Registrar</Button>
+                    <Button disabled={verificarRegistrado(record)} onClick={() => navegarRegistrarCliente(record)}>Registrar</Button>
                 </Space>
             ),
         },
     ];
+
+    const verificarRegistrado =  (records) => {
+        const aux = dataCliente.some(cliente => cliente.IdCliente === records.id);
+        if (aux) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     const navegarRegistrarCliente = (record) => {
         // console.log('Editar:', record);
@@ -91,13 +101,14 @@ const MostrarRegistrarClientes = () => {
             }));
             // console.log(dataList);
             setDataFirebase(dataList);
-            
+
             const querySnapshot2 = await getDocs(collection(db, "ListaClientes"));
             const dataList2 = querySnapshot2.docs.map(doc => ({
                 ...doc.data(),
                 id: doc.id
             }));
-            setNumeroClientes(`2024-${dataList2.length+1}`);
+            setDataClientes(dataList2);
+            setNumeroClientes(`2024-${dataList2.length + 1}`);
         };
         fetchData();
     }, []);

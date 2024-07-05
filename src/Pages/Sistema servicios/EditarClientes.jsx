@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Table, Input, Button, Checkbox, DatePicker, Select, Space, Modal } from 'antd';
-import { doc, addDoc, getDocs, deleteDoc, collection, updateDoc } from "firebase/firestore";
+import { Form, Table, Input, Button, Checkbox, DatePicker, Select, Space, Modal, message } from 'antd';
+import { doc, addDoc, getDocs, deleteDoc, collection, updateDoc, getDoc } from "firebase/firestore";
 import { db, storage } from '../../FireBase/fireBase';
 import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -20,6 +20,7 @@ const EditarCliente = () => {
     const [confimarcion, setConfirmacion] = useState("");
 
     const onFinish = async (values) => {
+        const hide = message.loading('Editando la información del cliente...', 0);
         const docRef = doc(db, "ListaClientes", dataCliente.id);
         try {
             await updateDoc(docRef, {
@@ -48,8 +49,10 @@ const EditarCliente = () => {
                 PendienteOtro: values.pendienteOtro,
             });
             //console.log("Document updated"); 
+            hide();
             ModalExito();
         } catch (e) {
+            hide();
             console.error("Error updating document: ", e);
         }
     };
@@ -205,7 +208,10 @@ const EditarCliente = () => {
         try {
             const subcollectionRef = collection(db, `ListaOrdenServicio/${id}/ListaRepuestos`);
             const subcollectionSnapshot = await getDocs(subcollectionRef);
-
+            const dataList = subcollectionSnapshot.docs.map(doc => ({
+                ...doc.data(),
+            }));
+            actualizarRepuestos(dataList);
             subcollectionSnapshot.forEach(async (doc) => {
                 await deleteDoc(doc.ref);
                 //console.log("Document deleted from subcollection ListaRepuestos");
@@ -224,6 +230,33 @@ const EditarCliente = () => {
 
     const onChange = (pagination, filters, sorter, extra) => {
         //console.log('params', pagination, filters, sorter, extra);
+    };
+
+    const actualizarRepuestos = async (data) => {
+        const promises = data.map(async (item) => {
+            const productRef = doc(db, "ListaRepuestos", item.id);
+
+            try {
+                const productSnap = await getDoc(productRef);
+
+                if (productSnap.exists()) {
+                    const currentCantidad = productSnap.data().Cantidad || 0;
+                    const newCantidad = currentCantidad + item.cantidadSeleccionada;
+
+                    await updateDoc(productRef, { Cantidad: newCantidad });
+                } else {
+                    console.log(`Producto con ID ${item.id} no encontrado.`);
+                }
+            } catch (error) {
+                console.error(`Error al actualizar el producto con ID ${item.id}:`, error);
+            }
+        });
+        try {
+            await Promise.all(promises);
+            console.log('Todos los repuestos han sido actualizados.');
+        } catch (error) {
+            console.error('Error al actualizar los repuestos:', error);
+        }
     };
 
     const actualizarListaOrdeServicio = () => {
@@ -319,7 +352,7 @@ const EditarCliente = () => {
                             label="Código"
                             rules={[{ required: true, message: 'Por favor ingrese un código' }]}
                         >
-                            <Input type="number" />
+                            <Input />
                         </Form.Item>
 
                         <Form.Item
@@ -352,10 +385,10 @@ const EditarCliente = () => {
                         <Form.Item
                             name="correo"
                             label="Correo"
-                            // rules={[
-                            //     { required: true, message: 'Por favor ingrese el correo electrónico' },
-                            //     { type: 'email', message: 'El correo no es válido' }
-                            // ]}
+                        // rules={[
+                        //     { required: true, message: 'Por favor ingrese el correo electrónico' },
+                        //     { type: 'email', message: 'El correo no es válido' }
+                        // ]}
                         >
                             <Input />
                         </Form.Item>
