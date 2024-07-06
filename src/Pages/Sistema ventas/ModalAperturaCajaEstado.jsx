@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Button, DatePicker, message } from 'antd';
-import { collection, addDoc } from "firebase/firestore";
-import { db } from '../FireBase/fireBase';
+import { collection, addDoc, doc, getDoc } from "firebase/firestore";
+import { useNavigate } from 'react-router-dom';
+import { db } from '../../FireBase/fireBase';
 
-const ModalAperturaCaja = () => {
+const ModalAperturaCaja = ({ confirmacion, nombre }) => {
     const [form] = Form.useForm();
+    const navigate = useNavigate();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
     const [montoInicial, setMontoInicial] = useState(0);
-
-    const showModal = () => {
-        setIsModalVisible(true);
-    };
+    const [dataCaja, setDataCaja] = useState([]);
 
     const handleOk = () => {
         form.validateFields()
@@ -31,14 +30,24 @@ const ModalAperturaCaja = () => {
 
         try {
             const docRef = await addDoc(collection(db, "HistorialAperturaCaja"), {
-                NombreEmpleado: "En proceso tengo que crear credenciales primero",
-                MontoInicialCaja: montoInicial,
+                Estado: true,
                 Fecha: tiempoActual.fecha,
                 Hora: tiempoActual.hora,
-
+                NombreEmpleado: nombre,
+                MontoInicialCaja: parseInt(montoInicial),
+                MontoActualCaja: parseInt(montoInicial),
+                MontoFinalCaja: parseInt(montoInicial),
+                TotalGanancias: 0,
+                TotalCambio: 0,
+                TotalIngresoCaja: 0,
+                TotalPagado: 0,
+                TotalRetiroCaja: 0,
+                TotalVentas: 0
             });
-            console.log("Document written with ID: ", docRef.id);
+            // console.log("Document written with ID: ", docRef.id);
+            confirmacion("si")
             message.success('Caja abierta exitosamente.');
+            estadoAbrirCaja("si");
         } catch (e) {
             console.error("Error adding document: ", e);
         }
@@ -47,10 +56,6 @@ const ModalAperturaCaja = () => {
     const handleConfirmCancel = () => {
         setIsConfirmModalVisible(false);
     };
-
-    useEffect(() => {
-        showModal();
-    }, []);
 
     const obtenerFechaHoraActual = () => {
         const ahora = new Date();
@@ -63,21 +68,63 @@ const ModalAperturaCaja = () => {
         const segundos = ahora.getSeconds().toString().padStart(2, '0');
 
         const tiempo = {
-            fecha: `${dia}-${mes}-${año}`,
+            fecha: `${año}-${mes}-${dia}`,
             hora: `${hora}:${minutos}:${segundos}`
         };
 
         return tiempo;
     };
 
+    const estadoAbrirCaja = (confirma) => {
+        if (confirma === "si") {
+            return true;
+        } else {
+            if (Object.keys(dataCaja).length > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    const accionApertura = () => {
+        setIsModalVisible(true);
+    }
+
+    useEffect(() => {
+        const idCaja = sessionStorage.getItem('id');
+        if (idCaja != null) {
+            const fetchData2 = async () => {
+                const docRef = doc(db, "HistorialAperturaCaja", idCaja);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = { ...docSnap.data(), id: docSnap.id };
+                    setDataCaja(data)
+                } else {
+                    console.log("No such document!");
+                }
+            };
+            fetchData2();
+        }
+    }, []);
+
+    const reloadCurrentRoute = () => {
+        navigate('/sistema-ventas/recargar');
+        setTimeout(() => {
+          navigate('/sistema-ventas/estado-caja');
+        }, 50);
+      };
+
     return (
         <>
+            <Button onClick={accionApertura} disabled={estadoAbrirCaja("")} type='primary'>Abrir caja</Button>
             <Modal
                 title="Apertura de caja"
-                visible={isModalVisible}
+                open={isModalVisible}
                 // onOk={handleOk}
-                closable={false}
-                onCancel={() => { }}
+                // closable={false}
+                onCancel={() => { setIsModalVisible(false) }}
                 footer={[
                     <Button key="ok" type="primary" onClick={handleOk}>
                         Confirmar
@@ -107,7 +154,7 @@ const ModalAperturaCaja = () => {
                 onOk={handleConfirmOk}
                 onCancel={handleConfirmCancel}
             >
-                <p>Está inicializando la caja con un monto de {montoInicial}. ¿Está seguro de continuar?</p>
+                <p>Está inicializando la caja con un monto de {montoInicial} Bs. ¿Está seguro de continuar?</p>
             </Modal>
         </>
     );

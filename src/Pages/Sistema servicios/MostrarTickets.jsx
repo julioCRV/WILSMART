@@ -152,7 +152,7 @@ const MostrarTicketsAtencion = () => {
                             spacing: { after: 200 },
                         }),
                         new Paragraph({
-                            text: `Costo del servicio: Bs ${values.CostoServicio.toFixed(2)}`,
+                            text: `Costo del servicio: Bs ${parseInt(values.CostoServicio).toFixed(2)}`,
                             spacing: { after: 200 },
                         }),
                         new Paragraph({
@@ -181,7 +181,7 @@ const MostrarTicketsAtencion = () => {
         });
 
         Packer.toBlob(doc).then((blob) => {
-            saveAs(blob, `ticket_servicio_${values.nombreCliente}.docx`);
+            saveAs(blob, `ticket_servicio_${values.NombreCliente}.docx`);
         });
     };
 

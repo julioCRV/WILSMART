@@ -12,6 +12,13 @@ const MostrarProducto = () => {
 
     const columns = [
         {
+            title: 'Imagen',
+            dataIndex: 'Imagen',
+            render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '50px' }} />,
+            // defaultSortOrder: 'descend',
+            // sorter: (a, b) => a.name.localeCompare(b.name),
+          },
+        {
             title: 'Nombre',
             dataIndex: 'NombreProducto',
             defaultSortOrder: 'ascend',

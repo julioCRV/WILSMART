@@ -100,6 +100,7 @@ const EditarProducto = () => {
                 Categoria: values.categoria,
                 Fecha: formatearFecha(values.fecha.toDate()),
                 Precio: values.precio,
+                PrecioVenta: values.precioVenta,
                 Imagen: url,
                 Marca: values.marca,
                 Descripcion: values.descripcion,
@@ -139,6 +140,7 @@ const EditarProducto = () => {
         categoria: dataProducto.Categoria,
         fecha: dayjs(dataProducto.Fecha),
         precio: dataProducto.Precio,
+        precioCompra: dataProducto.PrecioCompra,
         imagen: [
             {
                 uid: 'rc-upload-1717606230863-15',
@@ -199,20 +201,19 @@ const EditarProducto = () => {
                         </Form.Item>
 
                         <Form.Item
-                            name="fecha"
-                            label="Fecha"
-                            rules={[{ required: true, message: 'Por favor seleccione la fecha' }]}
+                            name="precioCompra"
+                            label="Precio de compra"
+                            rules={[{ required: true, message: 'Por favor ingrese el precio de compra' }]}
                         >
-                            <DatePicker className='full-width' />
+                            <Input type="number" prefix="Bs." />
                         </Form.Item>
-
 
                         <Form.Item
                             name="precio"
-                            label="Precio"
-                            rules={[{ required: true, message: 'Por favor ingrese el precio' }]}
+                            label="Precio de venta"
+                            rules={[{ required: true, message: 'Por favor ingrese el precio de venta' }]}
                         >
-                            <Input type="number" />
+                            <Input type="number" prefix="Bs." />
                         </Form.Item>
                     </div>
 
@@ -228,6 +229,14 @@ const EditarProducto = () => {
                                 <Button style={{ marginRight: '255px' }} icon={<UploadOutlined />}>Examinar</Button>
                                 {imageUploaded}
                             </Upload>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="fecha"
+                            label="Fecha"
+                            rules={[{ required: true, message: 'Por favor seleccione la fecha' }]}
+                        >
+                            <DatePicker className='full-width' />
                         </Form.Item>
 
                         <Form.Item

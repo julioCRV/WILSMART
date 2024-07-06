@@ -4,7 +4,7 @@ import { auth, db } from '../../FireBase/fireBase';
 import { doc, updateDoc} from "firebase/firestore";
 const { Option } = Select;
 
-const ModalCrearCredenciales = ({ record, desabilitar, actualizar }) => {
+const ModalPagoCambioDinero = () => {
     const [visible, setVisible] = useState(false);
     const [form] = Form.useForm();
 
@@ -47,11 +47,11 @@ const ModalCrearCredenciales = ({ record, desabilitar, actualizar }) => {
         }
     };
 
-    const initialValues = { correo: record.CorreoElectrónico, nombreEmpleado: record.Nombre }
+    const initialValues = { }
     return (
         <>
-            <Button type="default" disabled={desabilitar} onClick={showModal}>
-                Dar credenciales
+            <Button type="primary"  onClick={showModal}>
+                Registrar
             </Button>
             <Modal
                 visible={visible}
@@ -117,4 +117,4 @@ const ModalCrearCredenciales = ({ record, desabilitar, actualizar }) => {
     );
 };
 
-export default ModalCrearCredenciales;
+export default ModalPagoCambioDinero;

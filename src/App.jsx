@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { collection, getDocs } from "firebase/firestore";
+import { db } from './FireBase/fireBase';
 import './App.css'
 import { Navigate, Routes, Route } from "react-router-dom";
 
@@ -8,6 +10,7 @@ import InicioAdmi from './Pages/InicioAdministrador'
 import IniciarSesionA from './Pages/Sistema administración/IniciarSesionAdministración';
 import IniciarSesionV from './Pages/Sistema ventas/IniciarSesionVentas';
 import IniciarSesionS from './Pages/Sistema servicios/IniciarSesionServicios';
+import Recargar from './components/Recargar'
 
 //  V  E  N  T  A  S
 import NavbarSisVentas from './components/NavbarSistemaVentas';
@@ -18,6 +21,8 @@ import MostrarProductos from './Pages/Sistema ventas/MostrarProductos';
 import IncrementarProductos from './Pages/Sistema ventas/IncrementarProductos'
 import RealizarVenta from './Pages/Sistema ventas/RealizarVenta';
 import ReporteVentas from './Pages/Sistema ventas/ReporteVentas';
+import ModalAperturaCaja from './Pages/Sistema ventas/ModalAperturaCaja';
+import EstadoCaja from './Pages/Sistema ventas/EstadoCaja';
 
 //  A  D  M  I  N  I  S  T  R  A  C  I  Ó  N 
 import NavbarSisAdministracion from './components/NavbarSistemaAdministracion';
@@ -53,6 +58,9 @@ import Prueba5 from './papelerajsjsjjs/prueba5'
 
 function App() {
   const [rol, setRol] = useState(sessionStorage.getItem('saveRol'));
+  const [nombre, setNombre] = useState("");
+  const [respuest, setRespuesta] = useState("")
+  const [mostrarRutas, setMostrarRutas] = useState(false);
 
   useEffect(() => {
     setRol(sessionStorage.getItem('saveRol'));
@@ -60,27 +68,74 @@ function App() {
 
   const handleLogin = (userData) => {
     setRol(userData.sistemaAsignado);
+    setNombre(userData.Nombre);
     // if (sessionStorage.getItem('saveRol') == null) {
     //   sessionStorage.setItem('saveRol', userData.rol)
     // }
   };
+
+  // const handleLoginVentas = (userData) => {
+  //   setRol(userData.sistemaAsignado);
+  //   setMostrarRutas(true);
+  //   // if (sessionStorage.getItem('saveRol') == null) {
+  //   //   sessionStorage.setItem('saveRol', userData.rol)
+  //   // }
+  // };
+
+
 
   const handleLogout = (userData) => {
     // console.log(userData);
     // console.log('lo logro señor');
     setRol(null);
     sessionStorage.removeItem('saveRol');
+    sessionStorage.removeItem('id');
+    sessionStorage.removeItem('nombre')
     // if (sessionStorage.getItem('saveRol') == null) {
     //   sessionStorage.setItem('saveRol', userData.rol)
     // }
   };
 
+  const confirmacion = (estado) => {
+    setRespuesta(estado);
+  };
+
+  useEffect(() => {
+    if (respuest === "si") {
+      setMostrarRutas(true);
+      const fetchData = async () => {
+        const querySnapshot = await getDocs(collection(db, "HistorialAperturaCaja"));
+        const dataList = querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+
+        const listSeleccionada = dataList.filter((item) => item.Estado === true);
+        sessionStorage.setItem('id', listSeleccionada[0].id);
+      };
+      fetchData();
+    }
+    setRespuesta("")
+  }, [respuest]);
+
+  useEffect(() => {
+    const idCaja = sessionStorage.getItem('id');
+    if (idCaja != null) {
+      setMostrarRutas(true);
+    } else {
+      const nombre = sessionStorage.getItem('nombre');
+      if (nombre != null) {
+        setMostrarRutas(true);
+      }
+    }
+  }, []);
+
   return (
     <div className='App'>
       {/* <Prueba /> */}
       {/* <Prueba3/> */}
-      {/*<Prueba4 id="7gsP6wg9iYVsE9UWjm5h" />
-      <Prueba5/> */}
+      {/* <Prueba4 id="7gsP6wg9iYVsE9UWjm5h" /> */}
+      {/* <Prueba5/> */}
       {/* <Prueba6 /> */}
       {/* <Prueba7/> */}
 
@@ -110,11 +165,14 @@ function App() {
             <>
               {rol === 'Sistema de ventas' ? (
                 <>
-                  <Routes>
-                    <Route path='/' element={<InicioAdmi />}></Route>
-                    <Route path='/sistema-ventas/*' element={<SistemaVentas logout={handleLogout} />}></Route>
-                    <Route path='*' element={<Navigate to="/"></Navigate>}></Route>
-                  </Routes>
+                  <ModalAperturaCaja confirmacion={confirmacion} nombre={nombre} />
+                  {mostrarRutas && (
+                    <Routes>
+                      <Route path='/' element={<InicioAdmi />}></Route>
+                      <Route path='/sistema-ventas/*' element={<SistemaVentas logout={handleLogout} />}></Route>
+                      <Route path='*' element={<Navigate to="/"></Navigate>}></Route>
+                    </Routes>
+                  )}
                 </>
               ) : (
                 <>
@@ -165,6 +223,8 @@ function SistemaVentas({ logout }) {
         <Route path='/incrementar-productos' element={<IncrementarProductos />}></Route>
         <Route path='/realizar-venta' element={<RealizarVenta />}></Route>
         <Route path='/mostrar-reportes' element={<ReporteVentas />}></Route>
+        <Route path='/estado-caja' element={<EstadoCaja />}></Route>
+        <Route path='/recargar' element={<Recargar />}></Route>
         <Route path='*' element={<Navigate to="/" />} />
       </Routes>
     </div>

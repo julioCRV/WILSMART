@@ -39,6 +39,7 @@ const EliminarCuenta = ({ record, desabilitar, actualizar }) => {
                 })
                 .catch((error) => {
                     message.error("Contraseña incorrecta. Inténtelo de nuevo.");
+                    console.log(error);
                 });
         } else {
             message.error("No hay ningún usuario autenticado.");

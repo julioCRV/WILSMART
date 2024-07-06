@@ -58,6 +58,7 @@ const RegistrarProducto = () => {
         Categoria: values.categoria,
         Fecha: formatearFecha(values.fecha.toDate()),
         Precio: values.precio,
+        PrecioCompra: values.precioCompra,
         Imagen: url,
         Marca: values.marca,
         Descripcion: values.descripcion,
@@ -150,20 +151,19 @@ const RegistrarProducto = () => {
             </Form.Item>
 
             <Form.Item
-              name="fecha"
-              label="Fecha"
-              rules={[{ required: true, message: 'Por favor seleccione la fecha' }]}
+              name="precioCompra"
+              label="Precio de compra"
+              rules={[{ required: true, message: 'Por favor ingrese el precio de compra' }]}
             >
-              <DatePicker className='full-width' />
+              <Input type="number" prefix="Bs." />
             </Form.Item>
-
 
             <Form.Item
               name="precio"
-              label="Precio"
-              rules={[{ required: true, message: 'Por favor ingrese el precio' }]}
+              label="Precio de venta"
+              rules={[{ required: true, message: 'Por favor ingrese el precio de venta' }]}
             >
-              <Input type="number" />
+              <Input type="number" prefix="Bs." />
             </Form.Item>
           </div>
 
@@ -179,6 +179,14 @@ const RegistrarProducto = () => {
                 <Button style={{ marginRight: '255px' }} icon={<UploadOutlined />}>Examinar</Button>
                 {imageUploaded}
               </Upload>
+            </Form.Item>
+
+            <Form.Item
+              name="fecha"
+              label="Fecha"
+              rules={[{ required: true, message: 'Por favor seleccione la fecha' }]}
+            >
+              <DatePicker className='full-width' />
             </Form.Item>
 
             <Form.Item

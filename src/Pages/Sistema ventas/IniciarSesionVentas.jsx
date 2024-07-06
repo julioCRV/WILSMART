@@ -32,8 +32,8 @@ function InicarSesion({ login }) {
           if (dataCredencialUnica[0].SistemaAsignado === "Ninguno" || dataCredencialUnica[0].SistemaAsignado === "Sistema de servicios") {
             message.info("No cuenta con credenciales para este sistema.");
           } else {
-            login({ rol: userCredential.user.email, sistemaAsignado: dataCredencialUnica[0].SistemaAsignado });
-            sessionStorage.setItem('saveRol', dataCredencialUnica[0].SistemaAsignado);
+            login({ rol: userCredential.user.email, sistemaAsignado: dataCredencialUnica[0].SistemaAsignado, Nombre: dataCredencialUnica[0].Nombre });
+            sessionStorage.setItem('saveRol', dataCredencialUnica[0].SistemaAsignado);         
             navigate('/sistema-ventas');
             message.success(`Inicio de sesión exitoso, ¡bienvenido ${dataCredencialUnica[0].Nombre}!`);
             setShowError(false);
@@ -128,9 +128,7 @@ function InicarSesion({ login }) {
               Ingresar  
             </Button> */}
           </Form.Item>
-
         </Form>
-
       </div>
 
       <div class="div3-card">

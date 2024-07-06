@@ -1,6 +1,6 @@
-import { Table, Button, InputNumber, Badge, Modal, message, Space } from 'antd';
+import { Table, Button, InputNumber, Badge, Modal, message, Space, Form, Input } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { collection, addDoc, getDocs, doc, updateDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCartOutlined } from '@ant-design/icons';
@@ -8,11 +8,15 @@ import './MostrarProducto.css'
 
 const MostrarProducto = () => {
   const { confirm } = Modal;
+  const [form] = Form.useForm();
   const navigate = useNavigate();
   const [dataFirebase, setDataFirebase] = useState([]);
+  const [dataCaja, setDataCaja] = useState([]);
   const [valorCarrito, setValorCarrito] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [reporte, setReporte] = useState('');
+  const [change, setChange] = useState(0);
+  const idCaja = sessionStorage.getItem('id');
 
   const columns = [
     {
@@ -25,7 +29,7 @@ const MostrarProducto = () => {
     {
       title: 'Imagen',
       dataIndex: 'Imagen',
-      render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '100px' }} />,
+      render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '50px' }} />,
       defaultSortOrder: 'descend',
       // sorter: (a, b) => a.name.localeCompare(b.name),
     },
@@ -37,10 +41,19 @@ const MostrarProducto = () => {
       // sorter: (a, b) => a.NombreProducto.localeCompare(b.NombreProducto),
     },
     {
-      title: 'Precio',
+      title: 'Precio compra',
+      dataIndex: 'PrecioCompra',
+      // defaultSortOrder: 'descend',
+      render: (text) => `Bs   ${text}`,
+      width: '80px',
+      sorter: (a, b) => a.Precio - b.Precio,
+    },
+    {
+      title: 'Precio venta',
       dataIndex: 'Precio',
       // defaultSortOrder: 'descend',
       render: (text) => `Bs   ${text}`,
+      width: '80px',
       sorter: (a, b) => a.Precio - b.Precio,
     },
     {
@@ -94,6 +107,7 @@ const MostrarProducto = () => {
       return producto;
     });
     setDataFirebase(updatedProductos);
+
   };
 
   const handleQuitar = (key) => {
@@ -147,20 +161,7 @@ const MostrarProducto = () => {
     //console.log('params', pagination, filters, sorter, extra);
   };
 
-  // const handleSaveAll = async () => {
-  //     const batch = db.batch(); 
-  //     dataFirebase.forEach((item) => {
-  //         const productRef = doc(db, "ListaProductos", item.id);
-  //         if(item.nuevaCantidad != 0){
-  //             batch.update(productRef, { cantidad: item.nuevaCantidad });
-  //         }
-  //     });
-
-  //     await batch.commit(); 
-  //     console.log('Todos los productos han sido actualizados en Firebase.');
-  // };
-
-  const handleSaveAll = async () => {
+  const UpdateProductos = async () => {
     const promises = dataFirebase.map((item) => {
       const productRef = doc(db, "ListaProductos", item.id);
       return updateDoc(productRef, { Cantidad: item.Cantidad });
@@ -168,19 +169,28 @@ const MostrarProducto = () => {
 
     try {
       await Promise.all(promises); // Espera a que todas las actualizaciones se completen
-      //console.log('Todos los productos han sido actualizados en Firebase.');
+      // console.log('Todos los productos han sido actualizados en Firebase.');
     } catch (error) {
       console.error('Error al actualizar los productos:', error);
     }
   };
 
-  const guardarReporteVentas = async () => {
-    // Filtrar productos que fueron añadidos al carrito
+  const guardarReporteVentas = async (montoPagado) => {
+    // Filtrar productos que fueron añadidos al carrito de compra
     const productosVendidos = dataFirebase.filter(producto => producto.cantidadCarrito > 0);
+    const tiempoActual = obtenerFechaHoraActual();
 
     // Crear el reporte de ventas
     const reporte = {
-      fecha: new Date().toISOString(), // Fecha y hora actuales
+      Fecha: tiempoActual.fecha,
+      Hora: tiempoActual.hora,
+      NombreEmpleado: dataCaja.NombreEmpleado,
+      IdCaja: dataCaja.id,
+      TotalVenta: calcularTotal(),
+      TotalGanancias: calcularGanancias(),
+      PagoCliente: parseInt(montoPagado),
+      CambioCliente: change,
+      CajaActual: dataCaja.MontoActualCaja + calcularTotal(),
       productos: productosVendidos.map(producto => ({
         NombreProducto: producto.NombreProducto,
         CantidadInicial: producto.cantidadRespaldo,
@@ -191,33 +201,66 @@ const MostrarProducto = () => {
     };
 
     try {
-      // Guardar el reporte en Firebase
       await addDoc(collection(db, "ReportesVentas"), reporte);
-      //console.log("Reporte de ventas guardado con éxito.");
+      // console.log("Reporte de ventas guardado con éxito.");
     } catch (error) {
       console.error("Error al guardar el reporte de ventas:", error);
     }
   };
 
-  const confirmRegistrarVenta = () => {
-    handleSaveAll();
-    guardarReporteVentas();
-    message.success('Se ha registrado la venta de los productos correctamente.');
-    navigate('/sistema-ventas/mostrar-productos');
+  const actualizarCaja = async (id, pagoCliente) => {
+    try {
+      const docRef = doc(db, "HistorialAperturaCaja", id);
+      await updateDoc(docRef, {
+        MontoActualCaja: dataCaja.MontoActualCaja + calcularTotal(),
+        TotalVentas: dataCaja.TotalVentas + calcularTotal(),
+        TotalPagado: dataCaja.TotalPagado + parseInt(pagoCliente),
+        TotalCambio: dataCaja.TotalCambio + change,
+        TotalGanancias: dataCaja.TotalGanancias + calcularGanancias(),
+      });
+    } catch (e) {
+      console.error("Error updating document: ", e);
+    }
+  }
 
-    // confirm({
-    //   title: 'Confirmar guardado',
-    //   content: '¿Está seguro de guardar las modificaciones?',
-    //   okText: 'Guardar',
-    //   okType: 'ghost',
-    //   cancelText: 'Cancelar',
-    //   onOk() {
-    //     handleSaveAll();
-    //     message.success('Se han actualizado los productos correctamente.');
-    //     navigate('/sistema-ventas/mostrar-productos');
-    //   },
-    //   onCancel() { },
-    // });
+  // ---------------------- G  U  A  R  D  A  D  O -------------------------------------F
+  const confirmRegistrarVenta = () => {
+    form.validateFields()
+      .then(values => {
+        UpdateProductos();
+        guardarReporteVentas(values.pagoCliente);
+        message.success('Se ha registrado la venta de los productos correctamente.');
+        setModalVisible(false);
+        recargarTablaProductos();
+        actualizarCaja(dataCaja.id, values.pagoCliente);
+      })
+      .catch(info => {
+        console.log('Validation Failed:', info);
+      });
+  };
+
+
+  const recargarTablaProductos = async () => {
+    const querySnapshot = await getDocs(collection(db, "ListaProductos"));
+    const dataList = querySnapshot.docs.map(doc => ({
+      ...doc.data(),
+      id: doc.id,
+      cantidadRespaldo: doc.data().Cantidad,
+      cantidadIncrementada: 0,
+      cantidadCarrito: 0,
+    }));
+    setDataFirebase(dataList);
+    setValorCarrito(0);
+
+    const docRef = doc(db, "HistorialAperturaCaja", idCaja);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = { ...docSnap.data(), id: docSnap.id };
+      setDataCaja(data)
+    } else {
+      console.log("No existe el docuemnto!");
+    }
   };
 
   useEffect(() => {
@@ -235,8 +278,21 @@ const MostrarProducto = () => {
       setValorCarrito(0)
     };
     fetchData();
-  }, []);
 
+    const fetchData2 = async () => {
+      const docRef = doc(db, "HistorialAperturaCaja", idCaja);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = { ...docSnap.data(), id: docSnap.id };
+        setDataCaja(data)
+      } else {
+        console.log("No such document!");
+      }
+    };
+    fetchData2();
+    estadoCarrito();
+  }, []);
 
   const calcularTotal = () => {
     let total = 0;
@@ -248,8 +304,36 @@ const MostrarProducto = () => {
     return total;
   };
 
+  const calcularGanancias = () => {
+    let total = 0;
+    dataFirebase.forEach((producto) => {
+      if (producto.cantidadCarrito > 0) {
+        total += producto.Precio*producto.cantidadIncrementada - producto.PrecioCompra * producto.cantidadIncrementada;
+      }
+    });
+    return total;
+  };
+
+  const obtenerFechaHoraActual = () => {
+    const ahora = new Date();
+
+    const dia = ahora.getDate().toString().padStart(2, '0');
+    const mes = (ahora.getMonth() + 1).toString().padStart(2, '0');
+    const año = ahora.getFullYear();
+    const hora = ahora.getHours().toString().padStart(2, '0');
+    const minutos = ahora.getMinutes().toString().padStart(2, '0');
+    const segundos = ahora.getSeconds().toString().padStart(2, '0');
+
+    const tiempo = {
+      fecha: `${año}-${mes}-${dia}`,
+      hora: `${hora}:${minutos}:${segundos}`
+    };
+
+    return tiempo;
+  };
+
   const generarReporte = () => {
-    let contenidoReporte = 'Factura de venta\n\nProducto | Precio unitario | Cantidad | Subtotal\n\n';
+    let contenidoReporte = `Monto en caja: ${dataCaja.MontoActualCaja ?? '0'}\n\nProducto | Precio unitario | Cantidad | Subtotal\n\n`;
     dataFirebase.forEach((producto) => {
       if (producto.cantidadIncrementada > 0 && producto.cantidadCarrito > 0) {
         contenidoReporte += `${producto.NombreProducto}: ${producto.Precio} Bs x ${producto.cantidadIncrementada} unidades = ${producto.Precio * producto.cantidadIncrementada} Bs\n`;
@@ -260,30 +344,43 @@ const MostrarProducto = () => {
   };
   //console.log(dataFirebase);
   const accionRegistrarVenta = () => {
-    if (valorCarrito > 0) {
+    if (Object.keys(dataCaja).length > 0) {
       generarReporte();
+      setChange(0);
+      form.resetFields();
       setModalVisible(true);
     } else {
-      confirm({
-        title: 'Carrito de compras vacío',
-        content: 'No ha añadido ningún producto al carrito de compras.',
-        okText: 'Aceptar',
-        okType: 'warning',
-        onOk() {
-          message.warning('No se realizo un registro de compra.');
-        },
-      });
+      message.info("No se realizo la apertura de caja");
     }
   }
 
+  const handleValuesChange = (changedValues, allValues) => {
+    const { pagoCliente } = allValues;
+    setChange(pagoCliente - calcularTotal());
+  };
+
+  useEffect(() => {
+    estadoCarrito();
+  }, [valorCarrito])
+
+  const estadoCarrito = () => {
+    if (valorCarrito > 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
   return (
     <>
       <div>
-        <h2 className="form-titleIncr">Realizar ventas</h2>
+        <h2 className="form-titleIncr">Registrar venta</h2>
         <div className='TituloForm'>
           <Badge count={valorCarrito} showZero>
             <ShoppingCartOutlined style={{ fontSize: '45px' }} />
           </Badge>
+          <div className='BotIncrementar'>
+            <Button disabled={estadoCarrito()} className='btn-realizar-venta' onClick={accionRegistrarVenta}>Realizar venta</Button>
+          </div>
         </div>
 
         <div className='parentMostrarIncre'>
@@ -298,19 +395,65 @@ const MostrarProducto = () => {
             scroll={{ x: true }}
           />
         </div>
-        <div className='BotIncrementar'>
-          <Button className='btn-realizar-venta' onClick={accionRegistrarVenta}>Realizar venta</Button>
-        </div>
       </div>
 
 
       <Modal
-        title="Reporte de venta"
-        visible={modalVisible}
-        onOk={() => confirmRegistrarVenta()}
+        title="Factura de venta"
+        open={modalVisible}
+        // onOk={() => confirmRegistrarVenta()}
         onCancel={() => setModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setModalVisible(false)}>
+            Cancelar
+          </Button>,
+          <Button key="register" type="primary" onClick={confirmRegistrarVenta}>
+            Registrar
+          </Button>,
+          // <BottonPAgoCambio />
+        ]}
       >
         <pre>{reporte}</pre>
+        <Form
+          form={form}
+          layout="horizontal"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 12 }}
+          onValuesChange={handleValuesChange}
+        // initialValues={initialValues}
+        >
+          <Form.Item
+            name="pagoCliente"
+            label="Pago del cliente"
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (value === undefined || value === null || value === '') {
+                    return Promise.reject('Por favor, indique el monto pagado por el cliente.');
+                  }
+                  if (value >= calcularTotal()) {
+                    if ((value - calcularTotal()) <= dataCaja.MontoActualCaja) {
+                      return Promise.resolve();
+                    } else {
+                      return Promise.reject('No existe suficiente dinero en caja para dar cambio.');
+                    }
+                  } else {
+                    return Promise.reject('El monto es insuficiente para pagar los productos.');
+                  }
+                },
+              }),
+            ]}
+          >
+            <Input prefix="Bs." type='number' />
+          </Form.Item>
+
+
+          <Form.Item
+            label="Cambio a entregar"
+          >
+            <Input prefix="Bs." type="number" value={change} readOnly />
+          </Form.Item>
+        </Form>
       </Modal>
 
     </>

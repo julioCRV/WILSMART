@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Menu } from 'antd';
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from '../../src/FireBase/fireBase';
 import { HomeOutlined, InboxOutlined, ReconciliationOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -12,17 +14,21 @@ const NavigationBar = ({ logout }) => {
         setSelectedKey(location.pathname);
     }, [location]);
 
-    const salir = () => {
-        logout({ rol: "none" });
-        // signInWithEmailAndPassword(auth, email, password)
-        //   .then((userCredential) => {
-        //     // console.log(userCredential.user);
-        //     console.log("Puede ingresar");
-        //     login({rol: "administrador"})
-        //   })
-        //   .catch((error) => {
-        //     console.error(error);
-        //   });
+    const salir = async () => {
+        const idCaja = sessionStorage.getItem('id');
+        try {
+            // Actualizar documento en la colección "HistorialAperturaCaja"
+            const docRefHistorial = doc(db, "HistorialAperturaCaja", idCaja);
+            await updateDoc(docRefHistorial, {
+                Estado: false
+            });
+            // message.success('Cierre de caja realizado exitosamente.');
+            // sessionStorage.removeItem('id');
+            // reloadCurrentRoute();
+            logout({ rol: "none" });
+        } catch (e) {
+            console.error("Error processing request: ", e);
+        }
     };
 
     return (
@@ -54,9 +60,14 @@ const NavigationBar = ({ logout }) => {
                     </Menu.Item>
                 </SubMenu>
 
-                <Menu.Item key="/sistema-ventas/mostrar-reportes" icon={<ReconciliationOutlined />}>
-                    <Link to="/sistema-ventas/mostrar-reportes">Reportes</Link>
-                </Menu.Item>
+                <SubMenu key="Reportes" icon={<ReconciliationOutlined />} title="Reportes">
+                    <Menu.Item key="/sistema-ventas/mostrar-reportes" >
+                        <Link to="/sistema-ventas/mostrar-reportes">Reportes de venta</Link>
+                    </Menu.Item>
+                    <Menu.Item key="/sistema-ventas/estado-caja" >
+                        <Link to="/sistema-ventas/estado-caja">Estado de caja</Link>
+                    </Menu.Item>
+                </SubMenu>
 
                 <Menu.Item key="cerrar" icon={<LogoutOutlined />} style={{ margin: '0 63%' }} onClick={salir}>
                     {/* <Link to="/">Cerrar sesión</Link> */}

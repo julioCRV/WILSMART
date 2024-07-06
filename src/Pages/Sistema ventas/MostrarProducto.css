@@ -26,11 +26,15 @@
 }
 
 .TituloForm {
-    text-align: right;
-    width: 90.1%;
+    position: fixed; 
+    right: 8%; 
     margin-top: -55px;
     margin-bottom: 15px;
+    z-index: 1000;
+    max-width: 3.5%;
+    /* border: 1px solid #000; */
 }
+
 
 .parentMostrarProductos {
     display: grid;

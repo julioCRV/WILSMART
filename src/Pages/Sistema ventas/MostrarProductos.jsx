@@ -39,7 +39,15 @@ const MostrarProducto = () => {
       sorter: (a, b) => a.Categoria.localeCompare(b.Categoria),
     },
     {
-      title: 'Precio',
+      title: 'Precio compra',
+      dataIndex: 'PrecioCompra',
+      // defaultSortOrder: 'descend',
+      render: (text) => `Bs   ${text}`,
+      width: '80px',
+      sorter: (a, b) => a.Precio - b.Precio,
+    },
+    {
+      title: 'Precio venta',
       dataIndex: 'Precio',
       // defaultSortOrder: 'descend',
       render: (text) => `Bs   ${text}`,
@@ -62,7 +70,7 @@ const MostrarProducto = () => {
     {
       title: 'Imagen',
       dataIndex: 'Imagen',
-      render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '100px' }} />,
+      render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '50px' }} />,
       // defaultSortOrder: 'descend',
       // sorter: (a, b) => a.name.localeCompare(b.name),
     },

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Button, DatePicker, message } from 'antd';
 import { collection, addDoc } from "firebase/firestore";
-import { db } from '../FireBase/fireBase';
+import { db } from '../../FireBase/fireBase';
 
-const ModalAperturaCaja = () => {
+const ModalAperturaCaja = ({ confirmacion, nombre }) => {
     const [form] = Form.useForm();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
@@ -31,13 +31,22 @@ const ModalAperturaCaja = () => {
 
         try {
             const docRef = await addDoc(collection(db, "HistorialAperturaCaja"), {
-                NombreEmpleado: "En proceso tengo que crear credenciales primero",
-                MontoInicialCaja: montoInicial,
+                Estado: true,
                 Fecha: tiempoActual.fecha,
                 Hora: tiempoActual.hora,
-
+                NombreEmpleado: sessionStorage.getItem('nombre'),
+                MontoInicialCaja: parseInt(montoInicial),
+                MontoActualCaja: parseInt(montoInicial),
+                MontoFinalCaja: parseInt(montoInicial),
+                TotalGanancias: 0,
+                TotalCambio: 0,
+                TotalIngresoCaja: 0,
+                TotalPagado: 0,
+                TotalRetiroCaja: 0,
+                TotalVentas: 0
             });
-            console.log("Document written with ID: ", docRef.id);
+            // console.log("Document written with ID: ", docRef.id);
+            confirmacion("si")
             message.success('Caja abierta exitosamente.');
         } catch (e) {
             console.error("Error adding document: ", e);
@@ -49,7 +58,14 @@ const ModalAperturaCaja = () => {
     };
 
     useEffect(() => {
-        showModal();
+        const idcaja = sessionStorage.getItem('id');
+        if (idcaja === null) {
+            showModal();
+        }
+
+        if (nombre != "") {
+            sessionStorage.setItem('nombre', nombre)
+        }
     }, []);
 
     const obtenerFechaHoraActual = () => {
@@ -63,7 +79,7 @@ const ModalAperturaCaja = () => {
         const segundos = ahora.getSeconds().toString().padStart(2, '0');
 
         const tiempo = {
-            fecha: `${dia}-${mes}-${año}`,
+            fecha: `${año}-${mes}-${dia}`,
             hora: `${hora}:${minutos}:${segundos}`
         };
 
@@ -107,7 +123,7 @@ const ModalAperturaCaja = () => {
                 onOk={handleConfirmOk}
                 onCancel={handleConfirmCancel}
             >
-                <p>Está inicializando la caja con un monto de {montoInicial}. ¿Está seguro de continuar?</p>
+                <p>Está inicializando la caja con un monto de {montoInicial} Bs. ¿Está seguro de continuar?</p>
             </Modal>
         </>
     );

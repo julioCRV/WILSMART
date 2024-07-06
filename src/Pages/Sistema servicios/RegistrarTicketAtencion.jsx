@@ -191,7 +191,7 @@ const RegistrarTicketAtencion = () => {
             <Form
                 name="generarTicket"
                 layout="horizontal"
-                initialValues={initialValues}
+                // initialValues={initialValues}
                 labelCol={{ span: 9 }}
                 wrapperCol={{ span: 22 }}
                 form={form}

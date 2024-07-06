@@ -14,13 +14,14 @@ const GenerarCredenciales = () => {
     const navigate = useNavigate();
     const [dataFirebase, setDataFirebase] = useState([]);
     const [dataCredenciales, setDataCredenciales] = useState([]);
+    const [dataUnificada, setDataUnificada] = useState([]);
     const [confimarcion, setConfirmacion] = useState("");
 
     const columns = [
         {
             title: 'Foto',
             dataIndex: 'FotoEmpleado',
-            render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '100px' }} />,
+            render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '50px' }} />,
             defaultSortOrder: 'descend',
             // sorter: (a, b) => a.name.localeCompare(b.name),
         },
@@ -220,13 +221,23 @@ const GenerarCredenciales = () => {
         setConfirmacion("");
     }, [confimarcion]);
 
-    const dataUnificada = dataFirebase.map((item) => {
-        const credencial = dataCredenciales.find((cred) => cred.id === item.id);
-        return {
-            ...item,
-            SistemaAsignado: credencial ? credencial.SistemaAsignado : 'Ninguno', // Asignar 'Ninguno' si no se encuentra coincidencia
+    useEffect(() => {
+        const unificarDatos = () => {
+            const unificada = dataFirebase.map((item) => {
+                const credencial = dataCredenciales.find((cred) => cred.id === item.id);
+                return {
+                    ...item,
+                    SistemaAsignado: credencial ? credencial.SistemaAsignado : 'Ninguno', // Asignar 'Ninguno' si no se encuentra coincidencia
+                };
+            });
+            setDataUnificada(unificada);
         };
-    });
+
+        if (dataFirebase.length > 0 && dataCredenciales.length > 0) {
+            unificarDatos();
+        }
+
+    }, [dataFirebase, dataCredenciales]);
 
     return (
         <>
