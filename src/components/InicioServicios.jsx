@@ -1,45 +1,100 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Typography } from 'antd';
+import { Card, Typography, Row, Col } from 'antd';
 
 const { Title, Paragraph } = Typography;
 
 const HomePage = () => {
     return (
-        <div style={{ textAlign: 'center', padding: '50px' }}>
+        <div style={{ textAlign: 'center' }}>
             <Title level={4}>
                 WilSmart
             </Title>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Link to="/sistema-servicios/registro-repuesto">
-                    <Card title="Repuestos" style={{ width: 300, marginLeft: '120px', backgroundColor: '#f0f0f0' }}>
-                        <img src="/assets/agregarRepuesto.png" alt="Ventas" style={{ width: '100px' }} />
-                        <Paragraph>
-                            Registro de repuesto
-                        </Paragraph>
-                    </Card>
-                </Link>
+            <div className='EcardVentas'>
+                <Row gutter={16}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
+                        <Link to="/sistema-servicios/registro-repuesto">
+                            <Card title="Repuestos">
+                                <img src="/assets/agregarRepuesto.png" alt="agregarRepuesto" style={{ width: '100px' }} />
+                                <Paragraph>
+                                    Registro de repuesto
+                                </Paragraph>
+                            </Card>
+                        </Link>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} lg={6}>
 
-
-                <Link to="/sistema-servicios/mostrar-repuestos">
-                    <Card title="Repuestos" style={{ width: 300, backgroundColor: '#f0f0f0' }}>
-                        <img src="/assets/mostrarRepuestos.png" alt="Administración" style={{ width: '100px' }} />
-                        <Paragraph>
-                            Mostrar repuestos
-                        </Paragraph>
-                    </Card>
-                </Link>
-
-                <Link to="/sistema-servicios/mostrar-clientes">
-                    <Card title="Clientes" style={{ width: 300, marginRight: '120px', backgroundColor: '#f0f0f0' }}>
-                        <img src="/assets/listarClientes.png" alt="Servicios" style={{ width: '100px' }} />
-                        <Paragraph>
-                            Listar clientes
-                        </Paragraph>
-                    </Card>
-                </Link>
-
+                        <Link to="/sistema-servicios/mostrar-repuestos">
+                            <Card title="Repuestos">
+                                <img src="/assets/mostrarRepuestos.png" alt="mostrarRepuestos" style={{ width: '100px' }} />
+                                <Paragraph>
+                                    Mostrar repuestos
+                                </Paragraph>
+                            </Card>
+                        </Link>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} lg={6}>
+                        <Link to="/sistema-servicios/mostrar-registrarClientes">
+                            <Card title="Clientes">
+                                <img src="/assets/registrarCliente.png" alt="registraCliente" style={{ width: '100px' }} />
+                                <Paragraph>
+                                    Registrar clientes
+                                </Paragraph>
+                            </Card>
+                        </Link>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} lg={6}>
+                        <Link to="/sistema-servicios/mostrar-clientes">
+                            <Card title="Clientes">
+                                <img src="/assets/listarClientes.png" alt="mostrarClientes" style={{ width: '100px' }} />
+                                <Paragraph>
+                                    Mostrar clientes
+                                </Paragraph>
+                            </Card>
+                        </Link>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} lg={6}>
+                        <Link to="/sistema-servicios/registrar-ticket">
+                            <Card title="Clientes">
+                                <img src="/assets/registrarTicket.png" alt="registrarTicket" style={{ width: '100px' }} />
+                                <Paragraph>
+                                    Registrar ticket de atención
+                                </Paragraph>
+                            </Card>
+                        </Link>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} lg={6}>
+                        <Link to="/sistema-servicios/mostrar-tickets">
+                            <Card title="Clientes">
+                                <img src="/assets/mostrarTickets.png" alt="mostrarTickets" style={{ width: '100px' }} />
+                                <Paragraph>
+                                    Mostrar tickets de atención
+                                </Paragraph>
+                            </Card>
+                        </Link>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} lg={6}>
+                        <Link to="/sistema-servicios/registrar-clientePerdido">
+                            <Card title="Clientes">
+                                <img src="/assets/registrarPerdido.png" alt="registrarPerdido" style={{ width: '100px' }} />
+                                <Paragraph>
+                                    Registrar clientes perdidos
+                                </Paragraph>
+                            </Card>
+                        </Link>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} lg={6}>
+                        <Link to="/sistema-servicios/mostrar-clientesPerdidos">
+                            <Card title="Clientes">
+                                <img src="/assets/mostrarPerdidos.png" alt="mostrarPerdidos" style={{ width: '100px' }} />
+                                <Paragraph>
+                                    Mostrar clientes perdidos
+                                </Paragraph>
+                            </Card>
+                        </Link>
+                    </Col>
+                </Row>
             </div>
         </div>
     );

@@ -12,11 +12,11 @@ const HomePage = () => {
         ¡Bienvenido a WilSmart! <br /> Tu plataforma personalizada para impulsar la gestión de nuestra tienda y ofrecer el mejor servicio <br /> a nuestros clientes.
       </Title>
 
-      <div className='pru'>
+      <div className='cardDisenio'>
         <Row gutter={16}>
           <Col md={8}>
             <Link to="/sistema-ventas">
-            {/* <Link to="/iniciar-sesion/ventas"> */}
+              {/* <Link to="/iniciar-sesion/ventas"> */}
               <Card title="Sistema de ventas" >
                 <img src="/assets/logoVentas.png" alt="Ventas" style={{ maxWidth: '80%', height: 'auto' }} />
                 <Paragraph>
@@ -28,7 +28,7 @@ const HomePage = () => {
 
           <Col md={8}>
             <Link to="/sistema-administración">
-            {/* <Link to="/iniciar-sesion/administración"> */}
+              {/* <Link to="/iniciar-sesion/administración"> */}
               <Card title="Sistema de administración" >
                 <img src="/assets/logoAdministracion.png" alt="Administración" style={{ maxWidth: '80%', height: 'auto' }} />
                 <Paragraph>
@@ -40,7 +40,7 @@ const HomePage = () => {
 
           <Col xs={24} sm={24} md={8}>
             <Link to="/sistema-servicios">
-            {/* <Link to="/iniciar-sesion/servicios"> */}
+              {/* <Link to="/iniciar-sesion/servicios"> */}
               <Card title="Sistema de servicios" >
                 <img src="/assets/logoServicios.png" alt="Servicios" style={{ maxWidth: '70%', height: 'auto' }} />
                 <Paragraph>

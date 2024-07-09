@@ -4,9 +4,9 @@ import { HomeOutlined, SignatureOutlined, TeamOutlined, LogoutOutlined } from '@
 import { Link, useLocation } from 'react-router-dom';
 
 const NavigationBar = ({ logout }) => {
-    const { SubMenu } = Menu;
     const location = useLocation();
     const [selectedKey, setSelectedKey] = useState('');
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
     useEffect(() => {
         setSelectedKey(location.pathname);
@@ -24,54 +24,87 @@ const NavigationBar = ({ logout }) => {
         //     console.error(error);
         //   });
     };
+
+    const items = [
+        {
+            label: 'Inicio',
+            key: 'inicio',
+            icon: <HomeOutlined />,
+            children: [
+                {
+                    label: <Link to="/sistema-servicios">Inicio</Link>,
+                    key: '/sistema-servicios',
+                },
+                {
+                    label: <Link to="/">Pagina principal</Link>,
+                    key: 'inicio-general',
+                },
+            ],
+        },
+        {
+            label: 'Repuestos',
+            key: 'repuestos',
+            icon: <SignatureOutlined />,
+            children: [
+                {
+                    label: <Link to="/sistema-servicios/registro-repuesto">Registrar repuesto</Link>,
+                    key: '/sistema-servicios/registro-repuesto',
+                },
+                {
+                    label: <Link to="/sistema-servicios/mostrar-repuestos">Mostrar repuestos</Link>,
+                    key: '/sistema-servicios/mostrar-repuestos',
+                },
+            ],
+        },
+        {
+            label: 'Clientes',
+            key: 'clientes',
+            icon: <TeamOutlined />,
+            children: [
+                {
+                    label: <Link to="/sistema-servicios/registrar-ticket">Registrar ticket de atención</Link>,
+                    key: '/sistema-servicios/registrar-ticket',
+                },
+                {
+                    label: <Link to="/sistema-servicios/mostrar-tickets">Mostrar tickets de atención</Link>,
+                    key: '/sistema-servicios/mostrar-tickets',
+                },
+                {
+                    label: <Link to="/sistema-servicios/mostrar-registrarClientes">Registrar cliente</Link>,
+                    key: '/sistema-servicios/mostrar-registrarClientes',
+                },
+                {
+                    label: <Link to="/sistema-servicios/mostrar-clientes">Mostrar clientes</Link>,
+                    key: '/sistema-servicios/mostrar-clientes',
+                },
+                {
+                    label: <Link to="/sistema-servicios/registrar-clientePerdido">Registrar cliente perdido</Link>,
+                    key: '/sistema-servicios/registrar-clientePerdido',
+                },
+                {
+                    label: <Link to="/sistema-servicios/mostrar-clientesPerdidos">Mostrar clientes perdidos</Link>,
+                    key: '/sistema-servicios/mostrar-clientesPerdidos',
+                },
+            ],
+        },
+        {
+            label: <Link to="/">Cerrar sesión</Link>,
+            key: 'cerrar',
+            icon: <LogoutOutlined />,
+            style: { margin: isMobile ? '0' : '0 63%' },
+            onClick: () => { salir() },
+        },
+    ];
+
     return (
         <>
             <h2 style={{ top: 0, width: '100%' }}>Sistema de servicios</h2>
-            <Menu mode="horizontal" selectedKeys={[selectedKey]} style={{ top: 50, width: '100%', border: '1px solid #000' }}>
-
-                <SubMenu key="inicio" icon={<HomeOutlined />} title="Inicio">
-                    <Menu.Item key="/sistema-servicios">
-                        <Link to="/sistema-servicios">Inicio</Link>
-                    </Menu.Item>
-                    <Menu.Item key="inicio-general">
-                        <Link to="/">Pagina principal</Link>
-                    </Menu.Item>
-                </SubMenu>
-
-                <SubMenu key="repuestos" icon={<SignatureOutlined />} title="Repuestos">
-                    <Menu.Item key="/sistema-servicios/registro-repuesto" >
-                        <Link to="/sistema-servicios/registro-repuesto">Registrar repuesto</Link>
-                    </Menu.Item>
-                    <Menu.Item key="/sistema-servicios/mostrar-repuestos" >
-                        <Link to="/sistema-servicios/mostrar-repuestos">Mostrar repuestos</Link>
-                    </Menu.Item>
-                </SubMenu>
-
-                <SubMenu key="clientes" icon={<TeamOutlined />} title="Clientes">
-                    <Menu.Item key="/sistema-servicios/registrar-ticket" >
-                        <Link to="/sistema-servicios/registrar-ticket">Registrar ticket de atención</Link>
-                    </Menu.Item>
-                    <Menu.Item key="/sistema-servicios/mostrar-registrarClientes" >
-                        <Link to="/sistema-servicios/mostrar-registrarClientes">Registrar cliente</Link>
-                    </Menu.Item>
-                    <Menu.Item key="/sistema-servicios/registrar-clientePerdido" >
-                        <Link to="/sistema-servicios/registrar-clientePerdido">Registrar cliente perdido</Link>
-                    </Menu.Item>
-                    <Menu.Item key="/sistema-servicios/mostrar-tickets" >
-                        <Link to="/sistema-servicios/mostrar-tickets">Mostrar tickets de atención</Link>
-                    </Menu.Item>
-                    <Menu.Item key="/sistema-servicios/mostrar-clientes" >
-                        <Link to="/sistema-servicios/mostrar-clientes">Mostrar clientes</Link>
-                    </Menu.Item>
-                    <Menu.Item key="/sistema-servicios/mostrar-clientesPerdidos" >
-                        <Link to="/sistema-servicios/mostrar-clientesPerdidos">Mostrar clientes perdidos</Link>
-                    </Menu.Item>
-                </SubMenu>
-
-                <Menu.Item key="cerrar" icon={<LogoutOutlined />} style={{ margin: '0 63%' }} onClick={salir}>
-                    <Link to="/">Cerrar sesión</Link>
-                </Menu.Item>
-            </Menu>
+            <Menu
+                mode={isMobile ? "inline" : "horizontal"}
+                selectedKeys={[selectedKey]}
+                style={{ top: 50, width: '100%', border: '1px solid #000' }}
+                items={items}
+            />
         </>
     );
 };

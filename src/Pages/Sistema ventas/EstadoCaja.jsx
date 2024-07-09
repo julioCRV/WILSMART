@@ -11,6 +11,7 @@ const EstadoCaja = () => {
   const navigate = useNavigate();
   const { confirm } = Modal;
   const [dataCaja, setDataCaja] = useState([]);
+  const [dataRetiroIngreso, setDataRetiroIngreso] = useState([]);
   const [respuesta, setRespuesta] = useState("");
   const [nombre, setNombre] = useState("");
 
@@ -31,6 +32,23 @@ const EstadoCaja = () => {
         }
       };
       fetchData2();
+
+      const fetchData = async () => {
+        const querySnapshot = await getDocs(collection(db, "ListaCambiosCaja"));
+        const dataList = querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id
+        }));
+        const data = dataList.filter((item) => item.IdEmpleado === idCaja);
+        const dataF = data.sort((a, b) => {
+          const horaA = new Date(`${a.Fecha}T${a.Hora}`);
+          const horaB = new Date(`${b.Fecha}T${b.Hora}`);
+          return horaB - horaA;
+        });
+        setDataRetiroIngreso(dataF);
+        // console.log(dataF);
+      };
+      fetchData();
     }
     estadoCerrarCaja();
   }, []);
@@ -52,20 +70,7 @@ const EstadoCaja = () => {
       reloadCurrentRoute();
     }
     if (respuesta === "sisi") {
-      const fetchData = async () => {
-        const querySnapshot = await getDocs(collection(db, "HistorialAperturaCaja"));
-        const dataList = querySnapshot.docs.map(doc => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        const listSeleccionada = dataList.filter((item) => item.Estado === true)
-        .reduce((obj, item) => {
-          obj = { ...item };
-          return obj;
-        }, {});
-        setDataCaja(listSeleccionada);
-      };
-      fetchData();
+      reloadCurrentRoute();
       // reloadCurrentRoute();
     }
     setRespuesta("");
@@ -120,7 +125,7 @@ const EstadoCaja = () => {
     navigate('/sistema-ventas/recargar');
     setTimeout(() => {
       navigate('/sistema-ventas/estado-caja');
-    }, 1000);
+    }, 1300);
   };
 
   return (
@@ -137,7 +142,7 @@ const EstadoCaja = () => {
       <p><strong>Nombre encargado caja: </strong>{dataCaja.NombreEmpleado ?? nombre}</p>
       <BottonModalIngresoRetiroCaja confirmacion={confirmacion} dataCaja={dataCaja} />
       <div style={{ textAlign: 'Right', paddingRight: '10%' }}>
-        <Space style={{paddingBottom: '10px'}}> 
+        <Space style={{ paddingBottom: '10px' }}>
           <BottonModalAperturaCaja confirmacion={confirmacion} nombre={nombre} />
           <Button onClick={confirmarCierreCaja} disabled={estadoCerrarCaja()} type='primary'>Cerrar caja</Button>
         </Space>
@@ -201,10 +206,6 @@ const EstadoCaja = () => {
           </div>
         </div>
         <div className='div5-caja'>
-          {/* <div className="row">
-            <span>Monto inicial de caja Bs</span>
-            <span>{dataCaja.MontoInicialCaja}</span>
-          </div> */}
           <div className="row">
             <span>Pago en efectivo </span>
             <span>+ Bs {dataCaja.TotalPagado ?? '0'}</span>
@@ -213,21 +214,47 @@ const EstadoCaja = () => {
             <span>Cambio dado </span>
             <span>- Bs {dataCaja.TotalCambio ?? '0'}</span>
           </div>
-          {/* <div className="row">
-            <span>Ventas totales </span>
-            <span>Bs {dataCaja.TotalVentas}</span>
-          </div> */}
-
-          {/* <div className="row">
-            <span>Retiro caja </span>
-            <span>{dataCaja.TotalRetiroCaja}</span>
-          </div>
-          <div className="row">
-            <span>Entrada caja </span>
-            <span>{dataCaja.TotalIngresoCaja}</span>
-          </div> */}
         </div>
         <div className='div6-caja'>{dataCaja.TotalVentas ?? '0'}</div>
+
+        <div className="div7-caja">
+          <div className='row-otro'>
+            <span style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>
+              <img src="/assets/ingresar.png" alt="cajero" style={{ paddingRight: '15px', height: '35px', position: 'relative', top: '5px' }} />
+              Dinero ingreso a caja
+            </span>
+          </div>
+        </div>
+        <div className='div8-caja'>
+          {dataRetiroIngreso.map((item, index) => (
+            item.MontoIngreso !== 0 && (
+              <div className="row" key={index}>
+                <span>{item.Hora} {item.Descripcion}</span>
+                <span>+ Bs {item.MontoIngreso}</span>
+              </div>
+            )
+          ))}
+        </div>
+
+
+        <div className='div9-caja'>
+          <div className='row-otro'>
+            <span style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>
+              <img src="/assets/retirar.png" alt="vemtas" style={{ paddingRight: '15px', height: '35px', position: 'relative', top: '5px' }} />
+              Dinero retirado de caja
+            </span>
+          </div>
+        </div>
+        <div className='div10-caja'>
+          {dataRetiroIngreso.map((item, index) => (
+            item.MontoRetiro !== 0 && (
+              <div className="row" key={index}>
+                <span>{item.Hora} {item.Descripcion} </span>
+                <span>- Bs {item.MontoRetiro ?? '0'}</span>
+              </div>
+            )
+          ))}
+        </div>
 
       </div>
     </>

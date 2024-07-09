@@ -222,6 +222,30 @@ const GenerarCredenciales = () => {
     }, [confimarcion]);
 
     useEffect(() => {
+        const fetchData = async () => {
+            const querySnapshot = await getDocs(collection(db, "ListaEmpleados"));
+            const dataList = querySnapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }));
+            // console.log(dataList);
+            setDataFirebase(dataList);
+        };
+        fetchData();
+
+        const fetchData2 = async () => {
+            const querySnapshot = await getDocs(collection(db, "ListaCredenciales"));
+            const dataList = querySnapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }));
+            setDataCredenciales(dataList);
+        };
+        fetchData2();
+        setConfirmacion("");
+    }, []);
+
+    useEffect(() => { 
         const unificarDatos = () => {
             const unificada = dataFirebase.map((item) => {
                 const credencial = dataCredenciales.find((cred) => cred.id === item.id);
@@ -231,10 +255,25 @@ const GenerarCredenciales = () => {
                 };
             });
             setDataUnificada(unificada);
+            console.log(unificada);
+        };
+
+        const unificarDatos2 = () => {
+            const unificada = dataFirebase.map((item) => {
+                // const credencial = dataCredenciales.find((cred) => cred.id === item.id);
+                return {
+                    ...item,
+                    SistemaAsignado: 'Ninguno', // Asignar 'Ninguno' si no se encuentra coincidencia
+                };
+            });
+            setDataUnificada(unificada);
+            console.log(unificada);
         };
 
         if (dataFirebase.length > 0 && dataCredenciales.length > 0) {
             unificarDatos();
+        }else{
+            unificarDatos2();
         }
 
     }, [dataFirebase, dataCredenciales]);

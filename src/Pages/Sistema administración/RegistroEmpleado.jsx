@@ -41,36 +41,36 @@ const RegistroEmpleado = () => {
   };
 
   const onFinish = async (values) => {
-    //console.log('Received values of form: ', values);
-
+    // se guarda en una variable la imagen del array de foto con el objeto del archivo original
     const imagen = values.foto[0].originFileObj;
     try {
-      // Sube la imagen a Cloud Storage
+      // se sube la imagen a Cloud Storage de firebase para almcenar las imagenes en la ruta designada
       const storageRef = ref(storage, `imagenes/empleados/${imagen.name}`);
       await uploadBytes(storageRef, imagen);
-
-      // Obtiene la URL de descarga de la imagen
+      // se obtiene la URL de la imagen subida para guardar en la lista de empleados
       const url = await getDownloadURL(storageRef);
-
+      // se guarda los datos del empleado en la "ListaEmpleados" de la base de datos con los datos proporcionados
       const docRef = await addDoc(collection(db, "ListaEmpleados"), {
-        Nombre: values.nombreCompleto,
-        FechaNacimiento: formatearFecha(values.fechaNacimiento.toDate()),
-        CI: values.ci,
-        Genero: values.genero,
-        EstadoCivil: values.estadoCivil,
-        NumeroTeléfono: values.telefono,
-        FotoEmpleado: url,
-        CorreoElectrónico: values.email,
-        PuestoOcargo: values.puesto,
-        Salario: values.salario,
-        DirecciónDeDomicilio: values.direccion
+        Nombre: values.nombreCompleto, // Nombre del empleado
+        FechaNacimiento: formatearFecha(values.fechaNacimiento.toDate()), // Fecha de nacimiento formateada
+        CI: values.ci, // CI del empleado
+        Genero: values.genero, // Género del empleado
+        EstadoCivil: values.estadoCivil, // Estado civil del empleado
+        NumeroTeléfono: values.telefono, // Número de teléfono del empleado
+        FotoEmpleado: url, // URL de la foto del empleado
+        CorreoElectrónico: values.email, // Correo electrónico del empleado
+        PuestoOcargo: values.puesto, // Puesto o cargo del empleado
+        Salario: values.salario, // Salario del empleado
+        DirecciónDeDomicilio: values.direccion // Dirección de domicilio del empleado
       });
-      //console.log("Document written with ID: ", docRef.id);
+      // se muestro un modal de éxito si el documento se agrega correctamente
       ModalExito();
     } catch (error) {
+      // si ocurre un error al agregar el documento, lo imprimo en la consola
       console.error("Error adding document: ", error);
     }
   };
+
 
   function formatearFecha(fechaString) {
     const fecha = new Date(fechaString);

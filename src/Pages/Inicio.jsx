@@ -12,7 +12,7 @@ const HomePage = () => {
         ¡Bienvenido a WilSmart! <br /> Tu plataforma personalizada para impulsar la gestión de nuestra tienda y ofrecer el mejor servicio <br /> a nuestros clientes.
       </Title>
 
-      <div className='pru'>
+      <div className='cardDisenio'>
         <Row gutter={16}>
           <Col md={8}>
             {/* <Link to="/sistema-ventas"> */}

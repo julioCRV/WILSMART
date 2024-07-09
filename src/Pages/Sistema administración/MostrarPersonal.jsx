@@ -14,7 +14,7 @@ const MostrarEmpleado = () => {
     {
       title: 'Foto',
       dataIndex: 'FotoEmpleado',
-      render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '100px' }} />,
+      render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '70px' }} />,
       defaultSortOrder: 'descend',
       // sorter: (a, b) => a.name.localeCompare(b.name),
     },
@@ -46,6 +46,7 @@ const MostrarEmpleado = () => {
     {
       title: 'Salario',
       dataIndex: 'Salario',
+      render: (text) => `Bs   ${text}`,
       defaultSortOrder: 'descend',
       // sorter: (a, b) => a.age - b.age,
     },

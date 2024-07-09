@@ -1,21 +1,20 @@
 .ant-col {
-    margin-bottom: 10px; /* Ajusta el valor según tus preferencias */
-  }
-  
-  .ant-card {
-    margin-bottom: 20px; 
-    justify-content: center; /* Centrar horizontalmente */
-    align-items: center; /* Centrar verticalmente */
-    background-color: #f0f0f0;
-    height: 90%;
-    width: auto;
-  }
+  /* margin-bottom: 10px; */
+}
 
-  .pru{
-    display: grid;
+.ant-card {
+  margin-bottom: 20px;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  height: 90%;
+  width: auto;
+  /* border: 1px solid #000; */
+}
+
+@media (min-width: 768px) and (max-width:1820px) {
+  .cardDisenio {
     margin-right: 10%;
     margin-left: 10%;
-    /* height: 100vh; */
-    justify-content: center; /* Centrar horizontalmente */
-    align-items: center; /* Centrar verticalmente */
   }
+}

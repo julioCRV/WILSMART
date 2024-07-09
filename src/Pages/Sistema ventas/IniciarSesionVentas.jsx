@@ -33,7 +33,7 @@ function InicarSesion({ login }) {
             message.info("No cuenta con credenciales para este sistema.");
           } else {
             login({ rol: userCredential.user.email, sistemaAsignado: dataCredencialUnica[0].SistemaAsignado, Nombre: dataCredencialUnica[0].Nombre });
-            sessionStorage.setItem('saveRol', dataCredencialUnica[0].SistemaAsignado);         
+            sessionStorage.setItem('saveRol', dataCredencialUnica[0].SistemaAsignado);
             navigate('/sistema-ventas');
             message.success(`Inicio de sesión exitoso, ¡bienvenido ${dataCredencialUnica[0].Nombre}!`);
             setShowError(false);
@@ -134,10 +134,7 @@ function InicarSesion({ login }) {
       <div class="div3-card">
         <Card
           hoverable
-          style={{
-            width: 400,
-            height: 350
-          }}
+          className='cardLogin'
         >
           <h2>Sistema de ventas</h2>
           <img src="/assets/logoVentas.png" alt="Ventas" style={{ maxWidth: '70%', height: 'auto', marginBottom: '20px' }} />

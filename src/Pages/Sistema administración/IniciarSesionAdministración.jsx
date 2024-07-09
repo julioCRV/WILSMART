@@ -25,7 +25,7 @@ function InicarSesion({ login }) {
       .then((userCredential) => {
         // console.log(userCredential.user);
         // console.log("Puede ingresar");
-        login({ sistemaAsignado: userCredential.user.email});
+        login({ sistemaAsignado: userCredential.user.email });
         sessionStorage.setItem('saveRol', userCredential.user.email);
         navigate('/sistema-administración');
         message.success('Inicio de sesión exitoso, ¡bienvenido!');
@@ -84,8 +84,8 @@ function InicarSesion({ login }) {
             <Input.Password prefix={<LockOutlined className="filled-icon" />} placeholder="Contraseña" />
           </Form.Item>
 
-          {showError && <Alert style={{width: 300}} message="Credenciales incorrectas" type="error" showIcon />}
-         
+          {showError && <Alert style={{ width: 300 }} message="Credenciales incorrectas" type="error" showIcon />}
+
           <Form.Item>
             <button style={{ marginTop: 20, width: 150 }} type="primary" htmlType="submit" block>Ingresar</button>
             {/* <Button type="primary" htmlType="submit" block on>
@@ -100,10 +100,7 @@ function InicarSesion({ login }) {
       <div class="div3-card">
         <Card
           hoverable
-          style={{
-            width: 400,
-            height: 350
-          }}
+          className='cardLogin'
         >
           <h2>Sistema de administración</h2>
           <img src="/assets/logoAdministracion.png" alt="Administración" style={{ maxWidth: '70%', height: 'auto', marginBottom: '20px' }} />

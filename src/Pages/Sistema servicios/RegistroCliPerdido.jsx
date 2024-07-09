@@ -139,7 +139,7 @@ const RegistrarOrdenServicio = ({ record, disabled }) => {
             </Button>
             <Modal
                 title="Registro de cliente perdido"
-                visible={isModalVisible}
+                open={isModalVisible}
                 onCancel={handleCancel}
                 footer={[
                     <Button key="cancel" onClick={handleCancel}>

@@ -124,10 +124,7 @@ function InicarSesion({ login }) {
       <div class="div3-card">
         <Card
           hoverable
-          style={{
-            width: 400,
-            height: 350
-          }}
+          className='cardLogin'
         >
           <h2>Sistema de servicios</h2>
           <img src="/assets/logoServicios.png" alt="Servicios" style={{ maxWidth: '60%', height: 'auto', marginBottom: '20px' }} />

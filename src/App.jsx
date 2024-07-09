@@ -273,7 +273,6 @@ function SistemaServicios({ logout }) {
         <Route path='/registrar-ticket' element={<RegistrarTicketAtencion />}></Route>
         <Route path='/mostrar-tickets' element={<MostrarTicketsAtencion />}></Route>
         <Route path='/registrar-cliente' element={<RegistrarCliente />}></Route>
-        <Route path='/registrar-cliente' element={<RegistrarCliente />}></Route>
         <Route path='/mostrar-clientes' element={<MostrarClientes />}></Route>
         <Route path='/editar-cliente' element={<EditarClientes />}></Route>
         <Route path='/registrar-clientePerdido' element={<RegistrarClientePerdido />}></Route>

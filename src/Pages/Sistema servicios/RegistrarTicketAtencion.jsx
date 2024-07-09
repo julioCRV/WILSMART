@@ -16,7 +16,7 @@ const RegistrarTicketAtencion = () => {
 
     const onFinish = async (values, action) => {
         if (action === 'generate') {
-            generateWordDocument(values);
+            generarDocumentoWord(values);
         } else if (action === 'save') {
             //console.log('Received values of form: ', values);
 
@@ -66,8 +66,11 @@ const RegistrarTicketAtencion = () => {
         navigate('/sistema-servicios');
     }
 
-    const generateWordDocument = (values) => {
+    const generarDocumentoWord = (values) => {
+        // se crea una variable doc que almacenara el ticket del formulario de Registro de ticket de atención
         const doc = new Document({
+            // al parte de seccions es donde va el titulo del ticket y cada input del formulario
+            // del registro del ticket de atención como su tamaño de letra, tipo de letra, estilo de letra,etc.
             sections: [
                 {
                     properties: {},
@@ -94,17 +97,6 @@ const RegistrarTicketAtencion = () => {
                             alignment: "center",
                             spacing: { after: 200 },
                         }),
-                        // new Paragraph({
-                        //     children: [
-                        //         new TextRun({
-                        //             text: `Número de Ticket: ${Math.floor(Math.random() * 1000000)}`,
-                        //             bold: true,
-                        //             size: 20,
-                        //         }),
-                        //     ],
-                        //     alignment: "center",
-                        //     spacing: { after: 200 },
-                        // }),
                         new Paragraph({
                             text: `Nombre del cliente: ${values.nombreCliente}`,
                             spacing: { after: 200 },
@@ -165,10 +157,14 @@ const RegistrarTicketAtencion = () => {
                 },
             ],
         });
-
-        Packer.toBlob(doc).then((blob) => {
-            saveAs(blob, `ticket_servicio_${values.nombreCliente}.docx`);
-        });
+        // se convierte el documento a un blob utilizando Packer.toBlob de la biblioteca "docx" de javaSript
+        Packer.toBlob(doc)
+            // se maneja la promesa devuelta por toBlob
+            .then((blob) => {
+                // se utiliza la función "saveAs" para guardar el blob como un archivo .docx, que lleva de nombre 
+                // el cliente actual que se esta registrando en el formulario
+                saveAs(blob, `ticket_servicio_${values.NombreCliente}.docx`);
+            });
     };
 
     const initialValues = {

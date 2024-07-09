@@ -156,7 +156,7 @@ const ModalRetiroIngresoCaja = ({ confirmacion, dataCaja }) => {
     return (
         <>
             <Space>
-                <Button disabled={verificarId()} type='primary' onClick={mostrarModalRetiroCaja}>Retira dinero</Button>
+                <Button disabled={verificarId()} type='primary' onClick={mostrarModalRetiroCaja}>Retirar dinero</Button>
                 <Button disabled={verificarId()} type='primary' onClick={mostrarModalIngresoCaja}>Ingresar dinero</Button>
             </Space>
 
