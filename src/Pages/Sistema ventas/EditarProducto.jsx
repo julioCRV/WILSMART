@@ -45,7 +45,7 @@ const EditarProducto = () => {
 
 
     const onFinish = async (values) => {
-        //console.log('Received values of form: ', values);
+        // console.log('Received values of form: ', values);
         // console.log(values.imagen);
 
         const imagen = values.imagen[0].originFileObj;
@@ -96,16 +96,17 @@ const EditarProducto = () => {
 
             // Aquí puedes utilizar la variable url con el valor correspondiente
             await updateDoc(docRef, {
+                NombreProducto: values.nombreProducto,
                 Cantidad: values.cantidad,
                 Categoria: values.categoria,
                 Fecha: formatearFecha(values.fecha.toDate()),
                 Precio: values.precio,
-                PrecioVenta: values.precioVenta,
+                PrecioCompra: values.precioCompra,
                 Imagen: url,
                 Marca: values.marca,
                 Descripcion: values.descripcion,
             });
-            console.log("Document updated");
+            // console.log("Document updated");
             ModalExito();
         } catch (e) {
             console.error("Error updating document: ", e);
