@@ -76,7 +76,6 @@ const EditarRepuesto = () => {
         descripcion: dataRepuesto.Descripcion,
         costo: dataRepuesto.CostoUnitario,
         precio: dataRepuesto.PrecioRepuesto,
-        proveedor: dataRepuesto.Proveedor,
         ubicacion: dataRepuesto.UbicacionAlmacen,
     };
 

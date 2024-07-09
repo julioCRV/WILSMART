@@ -43,8 +43,6 @@ const MostrarDashboard = () => {
         ...doc.data(),
         id: doc.id
       }));
-      // console.log(dataList);
-      // console.log(dataList);
       const cajaDinero = {
         TotalVentas: dataList.reduce((total, item) => total + item.TotalVentas, 0),
         TotalGanancias: dataList.reduce((total, item) => total + item.TotalGanancias, 0)

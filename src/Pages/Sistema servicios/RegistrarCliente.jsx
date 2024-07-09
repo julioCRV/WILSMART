@@ -262,7 +262,7 @@ const RegistrarCliente = () => {
         // otrosDatosRelevantes: 'Se intentó reiniciar varias veces',
         // diagnostico: 'Pendiente',
 
-        notasAdicionales: ' ',
+        // notasAdicionales: ' ',   
         otrosDatosRelevantes: ' ',
         diagnostico: ' ',
 
