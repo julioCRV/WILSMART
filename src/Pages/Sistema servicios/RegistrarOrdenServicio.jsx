@@ -37,11 +37,22 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
         setSelectedOption(value);
     };
 
-    const showModal = () => {
+    const showModal = async() => {
         form.resetFields();
         setIsModalVisible(true);
         setControl("run");
+        const querySnapshot2 = await getDocs(collection(db, "ListaOrdenServicio"));
+        const dataList2 = querySnapshot2.docs.map(doc => ({
+            ...doc.data(),
+            id: doc.id,
+        }));
+        // console.log(dataList);
+        setNumeroOrden(`2024-${dataList2.length + 1}`);
     };
+
+    useEffect(() => {
+        showModal();
+    },[numeroOrden,setNumeroOrden])
 
     const handleCancel = () => {
         setIsModalVisible(false);
@@ -52,6 +63,7 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
     };
 
     const handleFinish = async (values) => {
+        const tiempoActual = obtenerFechaHoraActual();
         const hide = message.loading('Registrando orden de servicio...', 0);
         try {
             const docRef = await addDoc(collection(db, "ListaOrdenServicio"), {
@@ -63,6 +75,9 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
                 MontoServicio: parseInt(values.costoServicio),
                 MontoRepuestos: costoTotal,
                 Garantia: values.garantia,
+
+                Fecha: tiempoActual.fecha,
+                Hora: tiempoActual.hora,
             });
             //console.log("Document written with ID: ", docRef.id);
 
@@ -230,14 +245,6 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
             }));
             // console.log(dataList);
             setDataFirebase(dataList);
-
-            const querySnapshot2 = await getDocs(collection(db, "ListaOrdenServicio"));
-            const dataList2 = querySnapshot2.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id,
-            }));
-            // console.log(dataList);
-            setNumeroOrden(`2024-${dataList2.length + 1}`);
         };
         fetchData();
         const fetchDataEmpleados = async () => {
@@ -286,9 +293,27 @@ const RegistrarOrdenServicio = ({ nombre, actualizar }) => {
         codOrden: numeroOrden
     }
 
+    const obtenerFechaHoraActual = () => {
+        const ahora = new Date();
+    
+        const dia = ahora.getDate().toString().padStart(2, '0');
+        const mes = (ahora.getMonth() + 1).toString().padStart(2, '0');
+        const año = ahora.getFullYear();
+        const hora = ahora.getHours().toString().padStart(2, '0');
+        const minutos = ahora.getMinutes().toString().padStart(2, '0');
+        const segundos = ahora.getSeconds().toString().padStart(2, '0');
+    
+        const tiempo = {
+          fecha: `${año}-${mes}-${dia}`,
+          hora: `${hora}:${minutos}:${segundos}`
+        };
+    
+        return tiempo;
+      };
+
     return (
         <div style={{ marginRight: '20px', marginBottom: '10px' }}>
-            <Button type="primary" onClick={() => showModal()}>
+            <Button type="primary" onClick={showModal}>
                 Registrar orden de servicio
             </Button>
             <Modal

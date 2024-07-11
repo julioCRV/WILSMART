@@ -1,0 +1,30 @@
+.vistas-container {
+    font-family: Arial, sans-serif;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #ccc;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    cursor: pointer;
+    /* border: black; */
+    background: #ccc;
+    border-bottom: 2px solid transparent;
+    transition: border-bottom 0.3s ease;
+    color: black;
+}
+
+.tab-button:hover {
+    border-bottom: 2px solid #aaa;
+}
+
+.tab-button.active {
+    border-bottom: 2px solid #1a3e8763;
+    font-weight: bold;
+    background-color: #a09f9f;
+}
+
+
