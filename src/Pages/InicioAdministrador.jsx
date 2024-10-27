@@ -18,7 +18,7 @@ const HomePage = () => {
             <Link to="/sistema-ventas">
               {/* <Link to="/iniciar-sesion/ventas"> */}
               <Card title="Sistema de ventas" >
-                <img src="/assets/logoVentas.png" alt="Ventas" style={{ maxWidth: '80%', height: 'auto' }} />
+                <img src="/assets/logoVentas.png" alt="Ventas" style={{ maxWidth: '50%', height: 'auto' }} />
                 <Paragraph>
                   Gestiona tus compras y ventas de manera eficiente con nuestro sistema de ventas.
                 </Paragraph>
@@ -30,7 +30,7 @@ const HomePage = () => {
             <Link to="/sistema-administración">
               {/* <Link to="/iniciar-sesion/administración"> */}
               <Card title="Sistema de administración" >
-                <img src="/assets/logoAdministracion.png" alt="Administración" style={{ maxWidth: '80%', height: 'auto' }} />
+                <img src="/assets/logoAdministracion.png" alt="Administración" style={{ maxWidth: '50%', height: 'auto' }} />
                 <Paragraph>
                   Controla y organiza tus procesos administrativos con nuestro sistema especializado.
                 </Paragraph>
@@ -42,7 +42,7 @@ const HomePage = () => {
             <Link to="/sistema-servicios">
               {/* <Link to="/iniciar-sesion/servicios"> */}
               <Card title="Sistema de servicios" >
-                <img src="/assets/logoServicios.png" alt="Servicios" style={{ maxWidth: '70%', height: 'auto' }} />
+                <img src="/assets/logoServicios.png" alt="Servicios" style={{ maxWidth: '40%', height: 'auto' }} />
                 <Paragraph>
                   Ofrece servicios de alta calidad a tus clientes utilizando nuestro sistema de servicios.
                 </Paragraph>

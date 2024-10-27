@@ -14,7 +14,7 @@ const MostrarEmpleado = () => {
     {
       title: 'Foto',
       dataIndex: 'FotoEmpleado',
-      render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '70px' }} />,
+      render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '40px' }} />,
       defaultSortOrder: 'descend',
       // sorter: (a, b) => a.name.localeCompare(b.name),
     },

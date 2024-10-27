@@ -61,10 +61,10 @@ const NavigationBar = ({ logout }) => {
             key: 'clientes',
             icon: <TeamOutlined />,
             children: [
-                {
-                    label: <Link to="/sistema-servicios/registrar-ticket">Registrar ticket de atención</Link>,
-                    key: '/sistema-servicios/registrar-ticket',
-                },
+                // {
+                //     label: <Link to="/sistema-servicios/registrar-ticket">Registrar ticket de atención</Link>,
+                //     key: '/sistema-servicios/registrar-ticket',
+                // },
                 {
                     label: <Link to="/sistema-servicios/mostrar-tickets">Mostrar tickets de atención</Link>,
                     key: '/sistema-servicios/mostrar-tickets',

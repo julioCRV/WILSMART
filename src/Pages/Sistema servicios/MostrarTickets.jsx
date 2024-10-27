@@ -4,13 +4,16 @@ import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import { saveAs } from 'file-saver';
 import { Document, Packer, Paragraph, TextRun } from 'docx';
-import { useNavigate } from 'react-router-dom';
-import './MostrarRepuestos.css'
+import { useNavigate, Link } from 'react-router-dom';
+import './MostrarRepuestos.css';
+import { jsPDF } from "jspdf";
 
 const MostrarTicketsAtencion = () => {
     const { confirm } = Modal;
     const navigate = useNavigate();
     const [dataFirebase, setDataFirebase] = useState([]);
+    const [dataCliente, setDataClientes] = useState([]);
+    const [numeroCliente, setNumeroClientes] = useState([]);
 
     const columns = [
         {
@@ -31,27 +34,28 @@ const MostrarTicketsAtencion = () => {
             title: 'Descripción del problema',
             dataIndex: 'DescripcionProblema',
             defaultSortOrder: 'descend',
-            with: '180px'
+            width: '200px'
             // sorter: (a, b) => a.name.localeCompare(b.name),
         },
         {
             title: 'Teléfono/celular',
             dataIndex: 'TelefonoCelular',
             defaultSortOrder: 'descend',
+            width: '10px'
             // sorter: (a, b) => a.name.localeCompare(b.name),
         },
         {
             title: 'Fecha ingreso',
             dataIndex: 'FechaIngreso',
             defaultSortOrder: 'descend',
-            width: '110px'
+            width: '140px'
             // sorter: (a, b) => a.name.localeCompare(b.name),
         },
         {
             title: 'Fecha entrega',
             dataIndex: 'FechaEntrega',
             defaultSortOrder: 'descend',
-            width: '110px'
+            width: '140px'
             // sorter: (a, b) => a.age - b.age,
         },
         {
@@ -66,7 +70,8 @@ const MostrarTicketsAtencion = () => {
             key: 'actions',
             render: (text, record) => (
                 <Space>
-                    <Button onClick={() => generarTicket(record)}>Generar ticket</Button>
+                    <Button disabled={verificarRegistrado(record)} onClick={() => navegarRegistrarCliente(record)}>Registrar cliente</Button>
+                    <Button onClick={() => generarTicketPDF(record)}>Imprimir ticket</Button>
                     {/* <Button onClick={() => editRecord(record)}>Editar</Button> */}
                     <Button onClick={() => confirmDelete(record)}>Eliminar</Button>
                 </Space>
@@ -74,145 +79,66 @@ const MostrarTicketsAtencion = () => {
         },
     ];
 
+    // Registrar metodo
+    const verificarRegistrado =  (records) => {
+        const aux = dataCliente.some(cliente => cliente.IdCliente === records.id);
+        if (aux) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // Registrar metodo
     const navegarRegistrarCliente = (record) => {
         // console.log('Editar:', record);
-        navigate('/sistema-servicios/registrar-cliente', { state: { objetoProp: record } });
+        navigate('/sistema-servicios/registrar-cliente', { state: { objetoProp: record, numeroCliente: numeroCliente } });
         // Aquí puedes implementar la lógica para editar el registro
     };
 
-    const generarTicket = (values) => {
-        const doc = new Document({
-            sections: [
-                {
-                    properties: {},
-                    children: [
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: "WilSmart",
-                                    bold: true,
-                                    size: 26,
-                                }),
-                            ],
-                            alignment: "center",
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: "Ticket de atención",
-                                    bold: true,
-                                    size: 24,
-                                }),
-                            ],
-                            alignment: "center",
-                            spacing: { after: 200 },
-                        }),
-                        // new Paragraph({
-                        //     children: [
-                        //         new TextRun({
-                        //             text: `Número de Ticket: ${Math.floor(Math.random() * 1000000)}`,
-                        //             bold: true,
-                        //             size: 20,
-                        //         }),
-                        //     ],
-                        //     alignment: "center",
-                        //     spacing: { after: 200 },
-                        // }),
-                        new Paragraph({
-                            text: `Nombre del cliente: ${values.NombreCliente}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `C.I.: ${values.CI}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Teléfono/celular: ${values.TelefonoCelular}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Nombre del dispositivo: ${values.NombreDispositivo}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Descripción del problema: ${values.DescripcionProblema}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Notas adicionales: ${values.NotasAdicionales}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Fecha de ingreso: ${values.FechaIngreso}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Fecha de entrega: ${values.FechaEntrega}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Costo del servicio: Bs ${parseInt(values.CostoServicio).toFixed(2)}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: "Gracias por elegir WilSmart",
-                                    bold: true,
-                                    size: 20,
-                                }),
-                            ],
-                            alignment: "center",
-                            spacing: { before: 400 },
-                        }),
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: "Por favor, conserve este ticket para recoger su dispositivo.",
-                                    size: 16,
-                                }),
-                            ],
-                            alignment: "center",
-                        }),
-                    ],
-                },
-            ],
-        });
+    const generarTicketPDF = (values) => {
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+        const marginX = 20;
+        const maxLineWidth = pageWidth - marginX * 2; // Define el ancho máximo para el texto
 
-        Packer.toBlob(doc).then((blob) => {
-            saveAs(blob, `ticket_servicio_${values.NombreCliente}.docx`);
-        });
-    };
+        doc.setFontSize(22);
+        doc.text("WilSmart", pageWidth / 2, 20, { align: "center" });
+        doc.setFontSize(20);
+        doc.text("Ticket de atención", pageWidth / 2, 30, { align: "center" });
+        doc.setFontSize(14);
 
-    const showDetails = (record) => {
-        Modal.info({
-            title: 'Detalles del repuesto',
-            content: (
-                <div>
-                    {/* <img src={record.FotoEmpleado} alt="Empleado" style={{ width: '200px', marginLeft: '15%' }} /> */}
-                    <p><strong>Cod.  </strong>{record.CodRepuesto}</p>
-                    <p><strong>Cantidad: </strong>{record.Cantidad}</p>
+        // Información general
+        doc.text(`Nombre del cliente: ${values.NombreCliente}`, marginX, 46);
+        doc.text(`C.I.: ${values.CI}`, marginX, 56);
+        doc.text(`Teléfono/celular: ${values.TelefonoCelular}`, marginX, 66);
+        doc.text(`Nombre del dispositivo: ${values.NombreDispositivo}`, marginX, 76);
 
-                    <p style={{ fontSize: "20px" }}><strong>{record.NombreRepuesto}</strong></p>
-                    <p><strong>Descripción: </strong> {record.Descripcion}</p>
-                    <p><strong>Categoría: </strong> {record.Categoria}</p>
-                    <p><strong>Estado: </strong> {record.Estado}</p>
-                    <p><strong>Proveedor: </strong> {record.Proveedor}</p>
-                    <p><strong>Costo unitario: </strong>{record.CostoUnitario}</p>
-                    <p><strong>Precio del repuestos: </strong>{record.PrecioRepuesto}</p>
-                    <p><strong>Fecha de ingreso: </strong> {record.Fecha}</p>
-                    <p><strong>Ubicación en almacén: </strong> {record.UbicacionAlmacen}</p>
-                </div>
-            ),
-            onOk() { },
-        });
-    };
+        // Para los textos largos
+        let yPosition = 86; // Posición inicial para el texto largo
 
-    const editRecord = (record) => {
-        //console.log('Editar:', record);
-        navigate('/sistema-servicios/editar-repuesto', { state: { objetoProp: record } });
-        // Aquí puedes implementar la lógica para editar el registro
+        // Descripción del problema
+        const descripcion = doc.splitTextToSize(`Descripción del problema: ${values.DescripcionProblema}`, maxLineWidth);
+        doc.text(descripcion, marginX, yPosition);
+        yPosition += descripcion.length * 10; // Ajuste de posición en base a las líneas generadas
+
+        // Notas adicionales
+        const notas = doc.splitTextToSize(`Notas adicionales: ${values.NotasAdicionales}`, maxLineWidth);
+        doc.text(notas, marginX, yPosition);
+        yPosition += notas.length * 7; // Ajuste de posición en base a las líneas generadas
+
+        // Resto del contenido
+        doc.text(`Fecha de ingreso: ${values.FechaIngreso}`, marginX, yPosition + 0);
+        doc.text(`Fecha de entrega: ${values.FechaEntrega}`, marginX, yPosition + 10);
+        doc.text(`Costo del servicio: Bs ${parseInt(values.CostoServicio).toFixed(2)}`, marginX, yPosition + 20);
+
+        doc.setFontSize(16);
+        doc.text("Gracias por elegir WilSmart", pageWidth / 2, yPosition + 35, { align: "center" });
+        doc.setFontSize(12);
+        doc.text("Por favor, conserve este ticket para recoger su dispositivo.", pageWidth / 2, yPosition + 40, { align: "center" });
+
+        // Abrir el PDF en el navegador para imprimir
+        window.open(doc.output("bloburl"), "_blank").print();
     };
 
     const handleDelete = async (id) => {
@@ -266,12 +192,36 @@ const MostrarTicketsAtencion = () => {
             setDataFirebase(dataList);
         };
         fetchData();
+
+        const fetchData2 = async () => {
+            const querySnapshot = await getDocs(collection(db, "ListaTicketsAtencion"));
+            const dataList = querySnapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }));
+            // console.log(dataList);
+            setDataFirebase(dataList);
+
+            const querySnapshot2 = await getDocs(collection(db, "ListaClientes"));
+            const dataList2 = querySnapshot2.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }));
+            setDataClientes(dataList2);
+            setNumeroClientes(`2024-${dataList2.length + 1}`);
+        };
+        fetchData2();
     }, []);
 
     return (
         <>
             <div>
                 <h2 className="form-titleRepuestos">Mostrar tickets de atención</h2>
+                <div style={{ textAlign: 'right', paddingRight: '2.5%', paddingBottom: '1%' }}>
+                    <Link to="/sistema-servicios/registrar-ticket">
+                        <Button>Registrar nuevo ticket</Button>
+                    </Link>
+                </div>
                 <div className='parentMostrarRepuestos'>
                     <Table
                         columns={columns}

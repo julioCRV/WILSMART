@@ -116,7 +116,7 @@ const MostrarRegistrarClientes = () => {
     return (
         <>
             <div>
-                <h2 className="form-titleRepuestos">Mostrar tickets de atención</h2>
+                <h2 className="form-titleRepuestos">Lista de clientes con ticket</h2>
                 <div className='parentMostrarRepuestos'>
                     <Table
                         columns={columns}

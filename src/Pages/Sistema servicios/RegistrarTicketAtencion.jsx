@@ -4,19 +4,23 @@ import { collection, addDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import { saveAs } from 'file-saver';
 import { Document, Packer, Paragraph, TextRun } from 'docx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './RegistrarTicketAtencion.css';
 import dayjs from 'dayjs';
+import { jsPDF } from "jspdf";
 
 const { Option } = Select;
 
 const RegistrarTicketAtencion = () => {
+    const location = useLocation();
+    const dataCliente = location.state && location.state.objetoProp;
+    // console.log(dataCliente);
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
     const onFinish = async (values, action) => {
         if (action === 'generate') {
-            generarDocumentoWord(values);
+            imprimirTicket(values);
         } else if (action === 'save') {
             const hide = message.loading('Registrando ticket de atención...', 0);
             //console.log('Received values of form: ', values);
@@ -69,119 +73,67 @@ const RegistrarTicketAtencion = () => {
         navigate('/sistema-servicios');
     }
 
-    const generarDocumentoWord = (values) => {
-        // console.log(values);
-        // se crea una variable doc que almacenara el ticket del formulario de Registro de ticket de atención
-        const doc = new Document({
-            // al parte de seccions es donde va el titulo del ticket y cada input del formulario
-            // del registro del ticket de atención como su tamaño de letra, tipo de letra, estilo de letra,etc.
-            sections: [
-                {
-                    properties: {},
-                    children: [
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: "WilSmart",
-                                    bold: true,
-                                    size: 26,
-                                }),
-                            ],
-                            alignment: "center",
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: "Ticket de atención",
-                                    bold: true,
-                                    size: 24,
-                                }),
-                            ],
-                            alignment: "center",
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Nombre del cliente: ${values.nombreCliente}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `C.I.: ${values.ci}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Teléfono/celular: ${values.telefonoCelular}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Nombre del dispositivo: ${values.NombreDispositivo}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Descripción del problema: ${values.descripcionProblema}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Notas adicionales: ${values.notasAdicionales}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Fecha de ingreso: ${values.fechaIngreso.format('YYYY-MM-DD')}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Fecha de entrega: ${values.fechaEntrega.format('YYYY-MM-DD')}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            text: `Costo del servicio: Bs ${parseInt(values.costoServicio).toFixed(2)}`,
-                            spacing: { after: 200 },
-                        }),
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: "Gracias por elegir WilSmart",
-                                    bold: true,
-                                    size: 20,
-                                }),
-                            ],
-                            alignment: "center",
-                            spacing: { before: 400 },
-                        }),
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: "Por favor, conserve este ticket para recoger su dispositivo.",
-                                    size: 16,
-                                }),
-                            ],
-                            alignment: "center",
-                        }),
-                    ],
-                },
-            ],
-        });
-        // se convierte el documento a un blob utilizando Packer.toBlob de la biblioteca "docx" de javaSript
-        Packer.toBlob(doc)
-            // se maneja la promesa devuelta por toBlob
-            .then((blob) => {
-                // se utiliza la función "saveAs" para guardar el blob como un archivo .docx, que lleva de nombre 
-                // el cliente actual que se esta registrando en el formulario
-                saveAs(blob, `ticket_servicio_${values.nombreCliente}.docx`);
-            });
+    const imprimirTicket = (values) => {
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+        const marginX = 20;
+        const maxLineWidth = pageWidth - marginX * 2; // Define el ancho máximo para el texto
+    
+        doc.setFontSize(22);
+        doc.text("WilSmart", pageWidth / 2, 20, { align: "center" });
+        doc.setFontSize(20);
+        doc.text("Ticket de atención", pageWidth / 2, 30, { align: "center" });
+        doc.setFontSize(14);
+    
+        // Información general
+        doc.text(`Nombre del cliente: ${values.nombreCliente}`, marginX, 46);
+        doc.text(`C.I.: ${values.ci}`, marginX, 56);
+        doc.text(`Teléfono/celular: ${values.telefonoCelular}`, marginX, 66);
+        doc.text(`Nombre del dispositivo: ${values.NombreDispositivo}`, marginX, 76);
+    
+        // Para los textos largos
+        let yPosition = 86; // Posición inicial para el texto largo
+    
+        // Descripción del problema
+        const descripcion = doc.splitTextToSize(`Descripción del problema: ${values.descripcionProblema}`, maxLineWidth);
+        doc.text(descripcion, marginX, yPosition);
+        yPosition += descripcion.length * 10; // Ajuste de posición en base a las líneas generadas
+    
+        // Notas adicionales
+        const notas = doc.splitTextToSize(`Notas adicionales: ${values.notasAdicionales}`, maxLineWidth);
+        doc.text(notas, marginX, yPosition);
+        yPosition += notas.length * 7; // Ajuste de posición en base a las líneas generadas
+    
+        // Resto del contenido
+        doc.text(`Fecha de ingreso: ${new Date(values.fechaIngreso).toLocaleDateString("es-ES")}`, marginX, yPosition + 0);
+        doc.text(`Fecha de entrega: ${new Date(values.fechaEntrega).toLocaleDateString("es-ES")}`, marginX, yPosition + 10);        
+        doc.text(`Costo del servicio: Bs ${parseInt(values.costoServicio).toFixed(2)}`, marginX, yPosition + 20);
+    
+        doc.setFontSize(16);
+        doc.text("Gracias por elegir WilSmart", pageWidth / 2, yPosition + 35, { align: "center" });
+        doc.setFontSize(12);
+        doc.text("Por favor, conserve este ticket para recoger su dispositivo.", pageWidth / 2, yPosition + 40, { align: "center" });
+    
+        // Abrir el PDF en el navegador para imprimir
+        window.open(doc.output("bloburl"), "_blank").print();
     };
 
-    const initialValues = {
-        nombreCliente: 'Juan Pérez',
-        ci: '12345678',
-        telefonoCelular: '123-456-7890',
-        NombreDispositivo: 'iPhone 12',
-        descripcionProblema: 'Pantalla rota',
-        notasAdicionales: 'El dispositivo no enciende después de la caída.',
-        fechaIngreso: dayjs('2024-05-22'),
-        fechaEntrega: dayjs('2024-05-29'),
-        costoServicio: 100.00
-    };
+    let initialValues = {};
+
+    if (dataCliente) {
+        initialValues = {
+            nombreCliente: dataCliente.NombreCliente,
+            ci: dataCliente.CI,
+            telefonoCelular: dataCliente.TelefonoCelular,
+            NombreDispositivo: dataCliente.NombreDispositivo,
+            descripcionProblema: dataCliente.DescripcionProblema,
+            notasAdicionales: dataCliente.NotasAdicionales,
+            fechaIngreso: dayjs(dataCliente.FechaIngreso),
+            fechaEntrega: dayjs(dataCliente.FechaEntrega),
+            // costoServicio: dataCliente.CostoServicio
+        };
+    }
+    
 
     return (
         <div >
@@ -191,7 +143,7 @@ const RegistrarTicketAtencion = () => {
             <Form
                 name="generarTicket"
                 layout="horizontal"
-                // initialValues={initialValues}
+                initialValues={dataCliente !== null && initialValues}
                 labelCol={{ span: 9 }}
                 wrapperCol={{ span: 22 }}
                 form={form}
@@ -279,7 +231,7 @@ const RegistrarTicketAtencion = () => {
                     <div className='divTicket2'>
                         <Form.Item>
                             <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={() => form.validateFields().then(values => onFinish(values, 'generate'))}>
-                                Generar ticket
+                                Imprimir ticket
                             </Button>
                             <Button style={{ width: '150px', marginTop: '10px' }} type="primary" htmlType="submit">
                                 Guardar

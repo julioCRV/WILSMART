@@ -281,7 +281,7 @@ const GenerarCredenciales = () => {
     return (
         <>
             <div>
-                <h2 className="form-title">Lista empleados</h2>
+                <h2 className="form-title">Gestión de cuentas y credenciales de empleados</h2>
                 <div className='parentMostrar'>
                     <Table
                         columns={columns}

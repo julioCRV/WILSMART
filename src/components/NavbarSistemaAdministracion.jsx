@@ -56,7 +56,7 @@ const NavigationBar = ({ logout }) => {
                     key: '/sistema-administración/mostrar-empleados',
                 },
                 {
-                    label: <Link to="/sistema-administración/generar-credenciales">Generar credenciales</Link>,
+                    label: <Link to="/sistema-administración/generar-credenciales">Gestión de cuentas y credenciales</Link>,
                     key: '/sistema-administración/generar-credenciales',
                 },
             ],

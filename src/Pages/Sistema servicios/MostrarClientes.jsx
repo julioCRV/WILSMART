@@ -93,14 +93,22 @@ const MostrarClientes = () => {
             key: 'actions',
             render: (text, record) => (
                 <Space>
+                    <Button onClick={() => navegarRegistrarCliente(record)}>Registrar ticket</Button>
                     <BotonVer record={record} />
                     {/* <Button onClick={() => showDetails(record)}>Mostrar</Button> */}
                     <Button onClick={() => editRecord(record)}>Editar</Button>
                     <Button onClick={() => confirmDelete(record)}>Eliminar</Button>
+
                 </Space>
             ),
         },
     ];
+
+    const navegarRegistrarCliente = (record) => {
+        // console.log('Editar:', record);
+        navigate('/sistema-servicios/registrar-ticket', { state: { objetoProp: record } });
+        // Aquí puedes implementar la lógica para editar el registro
+    };
 
     // - - - - - - - - - - - - - - -  M   O   S   T   R   A   R  - - - - - - - - - - - - - - - -
     const showDetails = (record) => {

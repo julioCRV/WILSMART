@@ -46,7 +46,7 @@ import MostrarClientes from './Pages/Sistema servicios/MostrarClientes';
 import EditarClientes from './Pages/Sistema servicios/EditarClientes';
 import RegistrarClientePerdido from './Pages/Sistema servicios/RegistrarClientePerdido';
 import MostrarClientesPerdidos from './Pages/Sistema servicios/MostrarClientesPerdidos';
-import MostrarRegistrarClientes from './Pages/Sistema servicios/MostrarRegistrarClientes';
+import MostrarRegistrarClientes from './Pages/Sistema servicios/RegistrarClienteNuevo';
 
 function App() {
   const [rol, setRol] = useState(sessionStorage.getItem('saveRol'));
@@ -109,7 +109,7 @@ function App() {
     }
     setRespuesta("")
   }, [respuest]);
-
+// 
   useEffect(() => {
     const idCaja = sessionStorage.getItem('id');
     if (idCaja != null) {
@@ -117,7 +117,7 @@ function App() {
     } else {
       const nombre = sessionStorage.getItem('nombre');
       if (nombre != null) {
-        setMostrarRutas(true);
+        // setMostrarRutas(true);
       }
     }
   }, []);

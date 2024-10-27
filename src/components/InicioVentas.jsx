@@ -17,7 +17,7 @@ const HomePage = () => {
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Link to="/sistema-ventas/registrar-producto">
                             <Card title="Inventario" >
-                                <img src="/assets/agregarProducto.png" alt="Ventas" style={{ width: '100px' }} />
+                                <img src="/assets/agregarProducto.png" alt="Ventas" style={{ width: '50px' }} />
                                 <Paragraph>
                                     Registrar producto
                                 </Paragraph>
@@ -27,7 +27,7 @@ const HomePage = () => {
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Link to="/sistema-ventas/mostrar-productos">
                             <Card title="Inventario" >
-                                <img src="/assets/mostrarProducto.png" alt="Administración" style={{ width: '100px' }} />
+                                <img src="/assets/mostrarProducto.png" alt="Administración" style={{ width: '50px' }} />
                                 <Paragraph>
                                     Mostrar productos
                                 </Paragraph>
@@ -37,7 +37,7 @@ const HomePage = () => {
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Link to="/sistema-ventas/incrementar-productos">
                             <Card title="Inventario" >
-                                <img src="/assets/incrementarProductos.png" alt="Administración" style={{ width: '100px' }} />
+                                <img src="/assets/incrementarProductos.png" alt="Administración" style={{ width: '50px' }} />
                                 <Paragraph>
                                     Incrementar productos
                                 </Paragraph>
@@ -47,7 +47,7 @@ const HomePage = () => {
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Link to="/sistema-ventas/realizar-venta">
                             <Card title="Inventario" >
-                                <img src="/assets/realizarVenta.png" alt="Administración" style={{ width: '100px' }} />
+                                <img src="/assets/realizarVenta.png" alt="Administración" style={{ width: '50px' }} />
                                 <Paragraph>
                                     Realizar venta
                                 </Paragraph>
@@ -58,7 +58,7 @@ const HomePage = () => {
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Link to="/sistema-ventas/mostrar-reportes">
                             <Card title="Reportes" >
-                                <img src="/assets/reporteVenta.png" alt="Servicios" style={{ width: '100px' }} />
+                                <img src="/assets/reporteVenta.png" alt="Servicios" style={{ width: '50px' }} />
                                 <Paragraph>
                                     Reporte de ventas
                                 </Paragraph>
@@ -68,7 +68,7 @@ const HomePage = () => {
                     <Col  xs={24} sm={12} md={8} lg={6}>
                         <Link to="/sistema-ventas/estado-caja">
                             <Card title="Reportes" >
-                                <img src="/assets/estadoCaja.png" alt="Administración" style={{ width: '100px' }} />
+                                <img src="/assets/estadoCaja.png" alt="Administración" style={{ width: '50px' }} />
                                 <Paragraph>
                                     Estado de caja
                                 </Paragraph>
