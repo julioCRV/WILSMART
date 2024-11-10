@@ -9,13 +9,14 @@ const ReporteVentas = () => {
 
   useEffect(() => {
     const fetchData2 = async () => {
-      const idCaja = sessionStorage.getItem('id');
+      // const idCaja = sessionStorage.getItem('id');
+      const idCaja = 'xMFyO4kv4xDBTYOhvUsH';
       const docRef = doc(db, "HistorialAperturaCaja", idCaja);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         const data = { ...docSnap.data(), id: docSnap.id };
-  
+        // console.log(data);
         setDataCaja(data);
       } else {
         console.log("No such document!");
