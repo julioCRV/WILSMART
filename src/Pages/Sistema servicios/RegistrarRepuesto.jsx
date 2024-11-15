@@ -1,51 +1,54 @@
-import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, message, DatePicker, Select, Upload, Modal } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import React from 'react';
+import { Form, Input, Button, message, DatePicker, Select, Modal } from 'antd';
 import { collection, addDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../../FireBase/fireBase';
+import { db } from '../../FireBase/fireBase';
 import { useNavigate } from 'react-router-dom';
 import './RegistrarRepuesto.css';
-import dayjs from 'dayjs';
-
-const { Option } = Select;
 
 const RegistrarRepuesto = () => {
+    // Importación de Option desde el componente Select de Ant Design, usado para los selectores.
+    const { Option } = Select;
+
+    // Hook de navegación de React Router para redirigir a otras rutas de la aplicación.
     const navigate = useNavigate();
 
+    // Función que maneja el envío del formulario, registrando un nuevo repuesto en la base de datos.
     const onFinish = async (values) => {
+        // Muestra un mensaje de carga mientras se realiza el registro.
         const hide = message.loading('Registrando repuesto...', 0);
-        //console.log('Received values of form: ', values);
         try {
+            // Intenta agregar un nuevo documento a la colección "ListaRepuestos" en Firestore.
             const docRef = await addDoc(collection(db, "ListaRepuestos"), {
-                CodRepuesto: values.codRepuesto,
-                NombreRepuesto: values.nombreRepuesto,
-                Cantidad: parseInt(values.cantidad),
-                Fecha: formatearFecha(values.fecha.toDate()),
-                Categoria: values.categoria,
-                Proveedor: values.proveedor,
-                Estado: values.estado,
-                Descripcion: values.descripcion,
-                PrecioCompra: values.costo,
-                PrecioRepuesto: values.precio,
-                UbicacionAlmacen: values.ubicacion,
+                CodRepuesto: values.codRepuesto,           // Código del repuesto.
+                NombreRepuesto: values.nombreRepuesto,     // Nombre del repuesto.
+                Cantidad: parseInt(values.cantidad),       // Cantidad de repuestos.
+                Fecha: formatearFecha(values.fecha.toDate()), // Fecha formateada.
+                Categoria: values.categoria,               // Categoría del repuesto.
+                Proveedor: values.proveedor,               // Proveedor del repuesto.
+                Estado: values.estado,                     // Estado del repuesto (nuevo, usado, etc.).
+                Descripcion: values.descripcion,           // Descripción del repuesto.
+                PrecioCompra: values.costo,                // Costo del repuesto.
+                PrecioRepuesto: values.precio,             // Precio de venta del repuesto.
+                UbicacionAlmacen: values.ubicacion,        // Ubicación del repuesto en el almacén.
             });
-            //console.log("Document written with ID: ", docRef.id);
+            // Llama a la función de éxito para mostrar un mensaje y redirigir.
             ModalExito();
-            hide()
+            hide();
         } catch (error) {
-            hide()
+            // En caso de error, oculta el mensaje de carga y muestra el error.
+            hide();
             console.error("Error adding document: ", error);
         }
     };
 
+    // Función que se llama cuando el formulario no pasa la validación, mostrando un mensaje de error.
     const onFinishFailed = () => {
         message.error('Por favor complete el formulario correctamente.');
-      };
+    };
 
+    // Función que formatea la fecha a un formato estándar (YYYY-MM-DD).
     function formatearFecha(fechaString) {
         const fecha = new Date(fechaString);
-
         const dia = fecha.getDate().toString().padStart(2, '0');
         const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
         const año = fecha.getFullYear();
@@ -53,30 +56,19 @@ const RegistrarRepuesto = () => {
         return `${año}-${mes}-${dia}`;
     }
 
+    // Función que muestra un modal de éxito al guardar los datos del repuesto en la base de datos.
     const ModalExito = () => {
         Modal.success({
             title: 'Registro de repuesto',
             content: 'Los datos del repuesto se han guardado correctamente.',
-            onOk: () => { navigate('/sistema-servicios/mostrar-repuestos'); }
+            onOk: () => { navigate('/sistema-servicios/mostrar-repuestos'); } // Redirige al listado de repuestos.
         });
     }
 
+    // Función para navegar de vuelta a la página principal del sistema de servicios.
     const backHome = () => {
         navigate('/sistema-servicios');
     }
-
-    const initialValues = {
-        cantidad: "30",
-        estado: "Usado",
-        codRepuesto: "2024003",
-        costo: "3.50",
-        fecha: dayjs("2024-07-10"),
-        descripcion: "Batería de reemplazo para MacBook Pro 15 pulgadas",
-        nombreRepuesto: "Batería MacBook Pro 15\"",
-        precio: "50.00",
-        proveedor: "PowerCells Co.",
-        ubicacion: "Almacén C3, Estante 2"
-    };
 
     return (
         <div >
@@ -85,12 +77,10 @@ const RegistrarRepuesto = () => {
             <Form
                 name="registro_respuesto"
                 layout="horizontal"
-                // initialValues={initialValues}
                 labelCol={{ span: 9 }}
                 wrapperCol={{ span: 22 }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
-            // className="form-columns"
             >
                 <div className='parent2'>
 
@@ -160,7 +150,7 @@ const RegistrarRepuesto = () => {
                         >
                             <Input />
                         </Form.Item>
-                        
+
                         <Form.Item
                             name="descripcion"
                             label="Descripción"

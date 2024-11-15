@@ -1,136 +1,88 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Select, DatePicker, Button, Table, Checkbox, Space } from 'antd';
-import { collection, getDocs, setDoc, doc, updateDoc } from "firebase/firestore";
+import React, { useState } from 'react';
+import { Modal, Form, Input, DatePicker, Button } from 'antd';
+import { setDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import './RegistrarOrdenServicio.css';
 
-import { useNavigate } from 'react-router-dom';
-import dayjs from 'dayjs';
-import BotonOrdenServicio from './RegistrarOrdenServicio.jsx';
-import BotonEditarOrden from './EditarOrdenServicio.jsx'
-
-const { Option } = Select;
-
 const RegistrarOrdenServicio = ({ record, disabled, confirmacion }) => {
-    const navigate = useNavigate();
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [form] = Form.useForm();
-    const { confirm } = Modal;
+    // Declaración de estado para controlar la visibilidad del modal y el formulario.
+    const [isModalVisible, setIsModalVisible] = useState(false); // Controla si el modal está visible.
+    const [form] = Form.useForm(); // Controla el formulario de Ant Design.
 
+    // Función para mostrar el modal y resetear los campos del formulario.
     const showModal = () => {
-        form.resetFields();
-        setIsModalVisible(true);
+        form.resetFields(); // Resetear los campos del formulario antes de mostrar el modal.
+        setIsModalVisible(true); // Mostrar el modal.
     };
 
+    // Función para manejar el cierre del modal.
     const handleCancel = () => {
-        setIsModalVisible(false);
+        setIsModalVisible(false); // Cierra el modal.
     };
 
+    // Función para manejar la confirmación del formulario (se ejecuta al hacer clic en "Ok").
     const handleOk = () => {
-        form.submit();
+        form.submit(); // Enviar el formulario.
     };
 
+    // Función que se ejecuta cuando el formulario se envía correctamente.
     const onFinish = async (values) => {
         try {
+            // Actualizar o agregar datos en "ListaClientesPerdidos".
             const docRef = doc(db, "ListaClientesPerdidos", record.id);
             await setDoc(docRef, {
-                CodCliente: record.CodCliente,
-                NombreCliente: values.nombreCliente,
-                NombreDispositivo: record.NombreDispositivo,
-                Fecha: formatearFecha(values.fecha.toDate()),
-                Motivo: values.motivo,
+                CodCliente: record.CodCliente, // Código del cliente.
+                NombreCliente: values.nombreCliente, // Nombre del cliente.
+                NombreDispositivo: record.NombreDispositivo, // Nombre del dispositivo.
+                Fecha: formatearFecha(values.fecha.toDate()), // Fecha formateada.
+                Motivo: values.motivo, // Motivo de cliente perdido.
             });
 
-            //console.log("Document written with custom ID: ", record.id);
-
+            // Actualizar el estado del cliente en "ListaClientes" a "Inactivo".
             const docRef2 = doc(db, "ListaClientes", record.id);
             try {
                 await updateDoc(docRef2, {
-                    Estado: "Inactivo",
+                    Estado: "Inactivo", // Actualizar el estado a "Inactivo".
                 });
-                //console.log("Document updated");
-                confirmacion("Si")
-                ModalExito();
-
+                confirmacion("Si"); // Función de confirmación (probablemente muestra un mensaje).
+                ModalExito(); // Llamar a la función para mostrar el modal de éxito.
             } catch (e) {
-                console.error("Error updating document: ", e);
+                console.error("Error updating document: ", e); // Manejo de errores.
             }
         } catch (error) {
-            console.error("Error adding document: ", error);
+            console.error("Error adding document: ", error); // Manejo de errores.
         }
-
-
     };
 
+    // Función que se ejecuta cuando el formulario no se envía correctamente.
     const onFinishFailed = () => {
-        message.error('Por favor complete el formulario correctamente.');
+        message.error('Por favor complete el formulario correctamente.'); // Mostrar un mensaje de error.
     };
 
+    // Función para formatear las fechas en formato 'YYYY-MM-DD'.
     function formatearFecha(fechaString) {
-        const fecha = new Date(fechaString);
+        const fecha = new Date(fechaString); // Convertir el string de fecha en un objeto Date.
 
-        const dia = fecha.getDate().toString().padStart(2, '0');
-        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
-        const año = fecha.getFullYear();
+        const dia = fecha.getDate().toString().padStart(2, '0'); // Formatear el día.
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Formatear el mes (sumamos 1 porque en JavaScript los meses son base 0).
+        const año = fecha.getFullYear(); // Obtener el año.
 
-        return `${año}-${mes}-${dia}`;
+        return `${año}-${mes}-${dia}`; // Devolver la fecha en formato 'YYYY-MM-DD'.
     }
 
+    // Función para mostrar un modal de éxito después de guardar los datos del cliente perdido.
     const ModalExito = () => {
         Modal.success({
-            title: 'Registro de cliente perdido',
-            content: 'Los datos del cliente perdido se han guardado correctamente.',
-            onOk: () => { handleCancel() }
+            title: 'Registro de cliente perdido', // Título del modal.
+            content: 'Los datos del cliente perdido se han guardado correctamente.', // Contenido del modal.
+            onOk: () => { handleCancel(); } // Al hacer clic en "Ok", se cierra el modal.
         });
-    }
+    };
 
+    // Valores iniciales del formulario con los datos del cliente.
     const initialValues = {
-        // codCliente: record.CodCliente,
-        nombreCliente: record.NombreCliente,
-        // ci: record.CI,
-        // telefono: record.TelefonoCelular,
-        // correo: record.Correo,
-        // estado: record.Estado,
-        // domicilio: record.Domicilio,
-
-        // nombreDispositivo: record.NombreDispositivo,
-        // modelo: record.Modelo,
-        // marca: record.Marca,
-        // numeroSerie: record.NumeroSerie,
-        // fechaRecepcion: dayjs(record.FechaRecepcion),
-        // descripcionProblema: record.DescripcionProblema,
-        // notasAdicionales: record.NotasAdicionales,
-        // otrosDatosRelevantes: record.OtrosDatos,
-        // diagnostico: record.Diagnostico,
-
-        // pendienteRepuestos: record.PendienteRepuestos,
-        // pendienteReparar: record.PendienteReparar,
-        // pendienteEntrega: record.PendienteEntrega,
-        // pendientePagar: record.PendientePagar,
-        // pendienteOtro: record.PendienteOtro,
+        nombreCliente: record.NombreCliente, // Establecer el valor inicial del campo nombreCliente con el valor de 'record'.
     };
-
-    const recibirRespuesta = (mensaje) => {
-        setConfirmacion(mensaje);
-    };
-
-
-
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const querySnapshot = await getDocs(collection(db, "ListaOrdenServicio"));
-    //         const dataList = querySnapshot.docs.map(doc => ({
-    //             ...doc.data(),
-    //             id: doc.id
-    //         }));
-    //         const filteredDataList = dataList.filter(item => item.NombreCliente === record.NombreCliente);
-
-    //         setDataFirebase(filteredDataList);
-    //     };
-    //     fetchData();
-    //     // console.log("control");
-    //     setConfirmacion("");
-    // }, [confimarcion]);
 
     return (
         <div>

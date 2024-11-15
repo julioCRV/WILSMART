@@ -1,12 +1,14 @@
+/* Estilos para el contenedor principal con estructura de grid */
 .parentOS {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    grid-column-gap: 0px;
-    grid-row-gap: 0px;
+    display: grid; /* Utiliza el modelo de diseño Grid */
+    grid-template-columns: 1fr; /* Define 1 columna de tamaño igual */
+    grid-template-rows: 1fr; /* Define 1 fila de tamaño igual */
+    grid-column-gap: 0px; /* Sin espacio entre columnas */
+    grid-row-gap: 0px; /* Sin espacio entre filas */
 }
 
+/* Estilos para la primera división */
 .divOS1 {
-    grid-area: 1 / 1 / 2 / 2;
-    margin-top: 5%;
+    grid-area: 1 / 1 / 2 / 2; /* Define el área de la grilla (cubre toda la grilla disponible) */
+    margin-top: 5%; /* Espacio superior del 5% */
 }

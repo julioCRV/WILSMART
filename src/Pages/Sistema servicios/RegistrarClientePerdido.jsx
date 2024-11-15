@@ -1,96 +1,94 @@
-import { Table, Button, Space, Modal } from 'antd';
+import { Table, Space, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
-import { useNavigate } from 'react-router-dom';
 import './MostrarRepuestos.css';
 import BotonRegistro from './RegistroCliPerdido';
 
 const RegistrarClientePerdido = () => {
-    const { confirm } = Modal;
-    const navigate = useNavigate();
-    const [dataFirebase, setDataFirebase] = useState([]);
-    const [confimarcion, setConfirmacion] = useState("");
+    // Estado para almacenar los datos obtenidos de Firebase y el mensaje de confirmación.
+    const [dataFirebase, setDataFirebase] = useState([]); // Almacena los datos de la lista de clientes.
+    const [confimarcion, setConfirmacion] = useState(""); // Almacena el mensaje de confirmación.
 
+    // Definición de las columnas de la tabla.
     const columns = [
         {
-            title: 'Código',
-            dataIndex: 'CodCliente',
-            defaultSortOrder: 'descend',
-            width: '150px'
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            title: 'Código', // Título de la columna para el código del cliente.
+            dataIndex: 'CodCliente', // El campo de datos que se mostrará en esta columna.
+            defaultSortOrder: 'descend', // Orden de clasificación por defecto.
+            width: '150px', // Ancho de la columna.
         },
         {
-            title: 'Nombre',
-            dataIndex: 'NombreCliente',
-            defaultSortOrder: 'descend',
-            width: '200px'
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            title: 'Nombre', // Título de la columna para el nombre del cliente.
+            dataIndex: 'NombreCliente', // Campo que se mostrará en esta columna.
+            defaultSortOrder: 'descend', // Orden por defecto de clasificación.
+            width: '200px', // Ancho de la columna.
         },
         {
-            title: 'Dispositivo',
-            dataIndex: 'NombreDispositivo',
-            defaultSortOrder: 'descend',
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            title: 'Dispositivo', // Título de la columna para el nombre del dispositivo.
+            dataIndex: 'NombreDispositivo', // Campo que se mostrará en esta columna.
+            defaultSortOrder: 'descend', // Orden de clasificación por defecto.
         },
         {
-            title: 'Teléfono/celular',
-            dataIndex: 'TelefonoCelular',
-            defaultSortOrder: 'descend',
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            title: 'Teléfono/celular', // Título de la columna para el teléfono celular.
+            dataIndex: 'TelefonoCelular', // Campo que se mostrará en esta columna.
+            defaultSortOrder: 'descend', // Orden de clasificación por defecto.
         },
         {
-            title: 'Correo',
-            dataIndex: 'Correo',
-            defaultSortOrder: 'descend',
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            title: 'Correo', // Título de la columna para el correo electrónico.
+            dataIndex: 'Correo', // Campo que se mostrará en esta columna.
+            defaultSortOrder: 'descend', // Orden de clasificación por defecto.
         },
         {
-            title: 'Acciones',
-            key: 'actions',
+            title: 'Acciones', // Título de la columna para las acciones.
+            key: 'actions', // Clave para identificar la columna de acciones.
             render: (text, record) => (
                 <Space size="middle">
+                    {/* Botón de registro que se deshabilita si el cliente está inactivo. */}
                     <BotonRegistro record={record} disabled={record.Estado === "Inactivo"} confirmacion={confirmarRecarga} />
                 </Space>
             ),
         },
     ];
 
-    const confirmarRecarga = (value) => {
-        setConfirmacion(value);
-    }
-    const onChange = (pagination, filters, sorter, extra) => {
-        //console.log('params', pagination, filters, sorter, extra);
-    };
-
-
-
+    // Primer useEffect que se ejecuta al montar el componente para obtener los datos de la colección "ListaClientes" de Firebase.
     useEffect(() => {
         const fetchData = async () => {
             const querySnapshot = await getDocs(collection(db, "ListaClientes"));
             const dataList = querySnapshot.docs.map(doc => ({
                 ...doc.data(),
-                id: doc.id
+                id: doc.id // Se incluye el ID del documento como parte de los datos.
             }));
-            // console.log(dataList);
-            setDataFirebase(dataList);
+            setDataFirebase(dataList); // Se establece el estado de dataFirebase con los datos obtenidos.
         };
         fetchData();
-    }, []);
+    }, []); // Se ejecuta solo una vez al montar el componente.
 
+    // Segundo useEffect que se ejecuta cada vez que cambia la variable de confirmación (confimarcion) para actualizar los clientes.
     useEffect(() => {
         const actualizarClientes = async () => {
             const querySnapshot = await getDocs(collection(db, "ListaClientes"));
             const dataList = querySnapshot.docs.map(doc => ({
                 ...doc.data(),
-                id: doc.id
+                id: doc.id // Se incluye el ID del documento como parte de los datos.
             }));
-            // console.log(dataList);
-            setDataFirebase(dataList);
+            setDataFirebase(dataList); // Se establece el estado de dataFirebase con los datos actualizados.
         };
         actualizarClientes();
-        setConfirmacion("");
-    }, [confimarcion]);
+        setConfirmacion(""); // Resetea el estado de confirmación después de actualizar los clientes.
+    }, [confimarcion]); // Se ejecuta cada vez que cambia confimarcion.
+
+    // Función que recibe un valor y establece el mensaje de confirmación.
+    const confirmarRecarga = (value) => {
+        setConfirmacion(value); // Establece el valor de confirmación.
+    }
+
+    // Función que maneja el cambio de la tabla (por ejemplo, paginación, filtros o clasificación).
+    const onChange = (pagination, filters, sorter, extra) => {
+        //console.log('params', pagination, filters, sorter, extra); // Puedes descomentar esto para depurar los parámetros de cambio.
+    };
+
+
     return (
         <>
             <div>

@@ -6,10 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import './MostrarRepuestos.css'
 
 const MostrarRepuestos = () => {
-    const { confirm } = Modal;
-    const navigate = useNavigate();
-    const [dataFirebase, setDataFirebase] = useState([]);
+    const { confirm } = Modal; // Desestructura el método confirm de Modal para usarlo en confirmaciones
+    const navigate = useNavigate(); // Utiliza el hook useNavigate de React Router para la navegación
+    const [dataFirebase, setDataFirebase] = useState([]); // Estado para almacenar los datos obtenidos de Firebase
 
+    // Definición de las columnas de la tabla para mostrar los datos
     const columns = [
         {
             title: 'Código',
@@ -74,15 +75,29 @@ const MostrarRepuestos = () => {
         },
     ];
 
+    // useEffect para cargar los datos de repuestos desde Firestore al montar el componente
+    useEffect(() => {
+        const fetchData = async () => {
+            // Consulta los repuestos desde la colección "ListaRepuestos" en Firestore
+            const querySnapshot = await getDocs(collection(db, "ListaRepuestos"));
+            const dataList = querySnapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }));
+            setDataFirebase(dataList); // Almacena los datos obtenidos en el estado
+        };
+        fetchData(); // Llama a la función para cargar los datos
+    }, []);
+
+    // Método para mostrar los detalles de un repuesto en un Modal
     const showDetails = (record) => {
         Modal.info({
-            title: 'Detalles del repuesto',
+            title: 'Detalles del repuesto', // Título del modal
             content: (
                 <div>
-                    {/* <img src={record.FotoEmpleado} alt="Empleado" style={{ width: '200px', marginLeft: '15%' }} /> */}
+                    {/* Aquí se podrían mostrar más detalles, como la imagen del repuesto */}
                     <p><strong>Cod.  </strong>{record.CodRepuesto}</p>
                     <p><strong>Cantidad: </strong>{record.Cantidad}</p>
-
                     <p style={{ fontSize: "20px" }}><strong>{record.NombreRepuesto}</strong></p>
                     <p><strong>Descripción: </strong> {record.Descripcion}</p>
                     <p><strong>Categoría: </strong> {record.Categoria}</p>
@@ -98,64 +113,51 @@ const MostrarRepuestos = () => {
         });
     };
 
+    // Método para navegar a la vista de edición del repuesto
     const editRecord = (record) => {
-        //console.log('Editar:', record);
         navigate('/sistema-servicios/editar-repuesto', { state: { objetoProp: record } });
-        // Aquí puedes implementar la lógica para editar el registro
     };
 
+    // Método para confirmar la eliminación de un repuesto mediante un Modal
     const confirmDelete = (record) => {
         confirm({
-            title: '¿Estás seguro de eliminar este respuesto?',
-            content: 'Esta acción no se puede deshacer.',
+            title: '¿Estás seguro de eliminar este repuesto?', // Título del modal de confirmación
+            content: 'Esta acción no se puede deshacer.', // Mensaje de advertencia
             okText: 'Eliminar',
             okType: 'danger',
             cancelText: 'Cancelar',
             onOk() {
-                //console.log('Eliminar:', record);
-                handleDelete(record.id);
+                handleDelete(record.id); // Llama a la función de eliminación si el usuario confirma
             },
             onCancel() { },
         });
     };
 
+    // Método para eliminar un repuesto de la base de datos de Firestore
     const handleDelete = async (id) => {
-        const docRef = doc(db, "ListaRepuestos", id);
+        const docRef = doc(db, "ListaRepuestos", id); // Referencia al documento a eliminar
         try {
-            await deleteDoc(docRef);
-            //console.log("Document deleted");
-            actualizarListaRepuestos();
+            await deleteDoc(docRef); // Elimina el documento de Firestore
+            actualizarListaRepuestos(); // Actualiza la lista de repuestos después de la eliminación
         } catch (e) {
-            console.error("Error deleting document: ", e);
+            console.error("Error deleting document: ", e); // Muestra el error en caso de fallo
         }
     };
 
+    // Método que maneja cambios en la tabla (paginación, filtros, ordenamiento)
     const onChange = (pagination, filters, sorter, extra) => {
-        //console.log('params', pagination, filters, sorter, extra);
+        //console.log('params', pagination, filters, sorter, extra); // Puede usarse para depurar o personalizar la tabla
     };
 
+    // Método para actualizar la lista de repuestos obteniendo los datos nuevamente desde Firestore
     const actualizarListaRepuestos = async () => {
         const querySnapshot = await getDocs(collection(db, "ListaRepuestos"));
         const dataList = querySnapshot.docs.map(doc => ({
             ...doc.data(),
             id: doc.id
         }));
-        // console.log(dataList);
-        setDataFirebase(dataList);
+        setDataFirebase(dataList); // Actualiza el estado con los nuevos datos de los repuestos
     };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const querySnapshot = await getDocs(collection(db, "ListaRepuestos"));
-            const dataList = querySnapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id
-            }));
-            // console.log(dataList);
-            setDataFirebase(dataList);
-        };
-        fetchData();
-    }, []);
 
     return (
         <>

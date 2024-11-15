@@ -1,26 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Table, Input, Button, Checkbox, DatePicker, Select, Space, Modal, message } from 'antd';
-import { doc, addDoc, getDocs, deleteDoc, collection, updateDoc, getDoc } from "firebase/firestore";
-import { db, storage } from '../../FireBase/fireBase';
-import { useNavigate, useLocation } from 'react-router-dom';
-import dayjs from 'dayjs';
+import { Form, Input, Button, Checkbox, DatePicker, Select, Modal, message } from 'antd';
+import { addDoc, collection } from "firebase/firestore";
+import { db } from '../../FireBase/fireBase';
+import { useNavigate } from 'react-router-dom';
 import './RegistrarClienteNuevo.css';
-import BotonOrdenServicio from './RegistrarOrdenServicio.jsx';
-import BotonEditarOrden from './EditarOrdenServicio.jsx'
-
-const { Option } = Select;
 
 const RegistrarCliente = () => {
-    const { confirm } = Modal;
-    const location = useLocation();
+    // Desestructuración de Option de Select (de Ant Design) y creación de la variable para la navegación.
+    const { Option } = Select;
     const navigate = useNavigate();
-    const [dataFirebase, setDataFirebase] = useState([]);
-    const [confimarcion, setConfirmacion] = useState("");
 
+    // Función que se ejecuta cuando el formulario se envía correctamente.
     const onFinish = async (values) => {
+        // Muestra un mensaje de carga mientras se registra el cliente.
         const hide = message.loading('Registrando cliente...', 0);
-        //console.log(values);
+
         try {
+            // Se agrega un nuevo documento a la colección "ListaClientes" con los valores del formulario.
             const docRef = await addDoc(collection(db, "ListaClientes"), {
                 CodCliente: values.codCliente,
                 NombreCliente: values.nombreCliente,
@@ -34,7 +30,7 @@ const RegistrarCliente = () => {
                 Modelo: values.modelo,
                 Marca: values.marca,
                 NumeroSerie: values.numeroSerie,
-                FechaRecepcion: formatearFecha(values.fechaRecepcion.toDate()),
+                FechaRecepcion: formatearFecha(values.fechaRecepcion.toDate()), // Se formatea la fecha antes de guardarla.
                 DescripcionProblema: values.descripcionProblema,
                 NotasAdicionales: values.notasAdicionales,
                 OtrosDatos: values.otrosDatosRelevantes,
@@ -46,258 +42,59 @@ const RegistrarCliente = () => {
                 PendientePagar: values.pendientePagar,
                 PendienteOtro: values.pendienteOtro,
 
-                IdCliente: values.codCliente
+                IdCliente: values.codCliente // Se asegura que el codCliente también esté en IdCliente.
             });
-            //console.log("Document written with ID: ", docRef.id);
-            hide();
-            ModalExito();
+            hide(); // Se oculta el mensaje de carga.
+            ModalExito(); // Muestra el modal de éxito después de guardar los datos.
         } catch (error) {
-            console.error("Error adding document: ", error);
+            console.error("Error adding document: ", error); // Manejo de errores si la operación falla.
         }
     };
 
+    // Función que se ejecuta si el formulario no se envía correctamente.
     const onFinishFailed = () => {
-        message.error('Por favor complete el formulario correctamente.');
+        message.error('Por favor complete el formulario correctamente.'); // Muestra un mensaje de error.
     };
 
-    const columns = [
-        {
-            title: 'Codigo',
-            dataIndex: 'CodOrden',
-            defaultSortOrder: 'descend',
-            width: '80px'
-            // sorter: (a, b) => a.name.localeCompare(b.name),
-        },
-        {
-            title: 'Técnico encargado',
-            dataIndex: 'TecnicoEncargado',
-            defaultSortOrder: 'descend',
-            width: '180px'
-            // sorter: (a, b) => a.name.localeCompare(b.name),
-        },
-        {
-            title: 'Fecha reparación',
-            dataIndex: 'FechaReparacion',
-            defaultSortOrder: 'descend',
-            width: '120px'
-            // sorter: (a, b) => a.name.localeCompare(b.name),
-        },
-        {
-            title: 'Fecha entrega',
-            dataIndex: 'FechaEntrega',
-            defaultSortOrder: 'descend',
-            width: '120px'
-            // sorter: (a, b) => a.name.localeCompare(b.name),
-        },
-        {
-            title: 'Monto repuestos',
-            dataIndex: 'MontoRepuestos',
-            defaultSortOrder: 'descend',
-            render: (text) => `Bs.  ${text}`,
-            // sorter: (a, b) => a.age - b.age,
-        },
-        {
-            title: 'Monto servicio',
-            dataIndex: 'MontoServicio',
-            defaultSortOrder: 'descend',
-            render: (text) => `Bs.  ${text}`,
-            // sorter: (a, b) => a.age - b.age,
-        },
-        {
-            title: 'Acciones',
-            key: 'actions',
-            render: (text, record) => (
-                <Space>
-                    <Button onClick={() => showDetails(record)}>Mostrar</Button>
-                    {/* <Button onClick={() => editRecord(record)}>Editar</Button> */}
-                    <BotonEditarOrden nombre={dataTicket.NombreCliente} actualizar={recibirRespuesta} record={record} />
-                    <Button onClick={() => confirmDelete(record)}>Eliminar</Button>
-                </Space>
-            ),
-        },
-    ];
-
+    // Función para formatear la fecha a formato "YYYY-MM-DD".
     function formatearFecha(fechaString) {
-        const fecha = new Date(fechaString);
+        const fecha = new Date(fechaString); // Se convierte el string de fecha en objeto Date.
 
-        const dia = fecha.getDate().toString().padStart(2, '0');
-        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
-        const año = fecha.getFullYear();
+        const dia = fecha.getDate().toString().padStart(2, '0'); // Se obtiene el día y se asegura que tenga 2 dígitos.
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Se obtiene el mes (sumando 1 porque los meses empiezan desde 0).
+        const año = fecha.getFullYear(); // Se obtiene el año.
 
-        return `${año}-${mes}-${dia}`;
+        return `${año}-${mes}-${dia}`; // Se devuelve la fecha en formato "YYYY-MM-DD".
     }
 
+    // Función que muestra un modal de éxito cuando los datos se guardan correctamente.
     const ModalExito = () => {
         Modal.success({
-            title: 'Registro de cliente',
-            content: 'Los datos del cliente se han guardado correctamente.',
-            onOk: () => { navigate('/sistema-servicios/mostrar-tickets'); }
+            title: 'Registro de cliente', // Título del modal.
+            content: 'Los datos del cliente se han guardado correctamente.', // Contenido del modal.
+            onOk: () => { navigate('/sistema-servicios/mostrar-tickets'); } // Redirige al usuario a otra vista después de cerrar el modal.
         });
     }
 
+    // Función para volver a la lista de tickets cuando se presiona el botón de retroceso.
     const backList = () => {
-        navigate('/sistema-servicios/mostrar-tickets');
+        navigate('/sistema-servicios/mostrar-tickets'); // Redirige a la lista de tickets.
     }
 
-
-
-    const showDetails = async (record) => {
-        var DataOrdenRepuestos = [];
-
-        try {
-            const subcollectionRef = collection(db, `ListaOrdenServicio/${record.id}/ListaRepuestos`);
-            const subcollectionSnapshot = await getDocs(subcollectionRef);
-
-            let repuestosList = [];
-            subcollectionSnapshot.forEach(subDoc => {
-                repuestosList.push({
-                    idRepuesto: subDoc.id,
-                    ...subDoc.data()
-                });
-            });
-            DataOrdenRepuestos = repuestosList;
-            // setDataOrdenRepuestos(repuestosList);
-        } catch (error) {
-            console.error("Error fetching subcollection data: ", error);
-        }
-
-        Modal.info({
-            title: 'Detalles de la orden de servicio',
-            width: 500,
-            content: (
-                <div>
-                    {/* <img src={record.FotoEmpleado} alt="Empleado" style={{ width: '200px', marginLeft: '15%' }} /> */}
-                    <p style={{ fontSize: "18px" }}><strong>Técnico encargado: </strong> {record.TecnicoEncargado}</p>
-                    <p><strong>Código de orden:  </strong>{record.CodOrden}</p>
-                    <p><strong>Fecha de recepción: </strong> {record.FechaReparacion}</p>
-                    <p><strong>Fecha de entrega: </strong>{record.FechaEntrega}</p>
-                    <p><strong>Garantía: </strong>{record.Garantia}</p>
-                    <div>
-                        {DataOrdenRepuestos.map(repuesto => (
-                            <div key={repuesto.id}>
-                                <p> --------------------------------------------------------------- </p>
-                                <p><strong>Código de repuesto: </strong>{repuesto.CodRepuesto}</p>
-                                <p><strong>Nombre del repuesto: </strong> {repuesto.NombreRepuesto}</p>
-                                <p><strong>Precio: </strong> {repuesto.PrecioRepuesto} Bs.</p>
-                                <p><strong>Cantidad: </strong> {repuesto.cantidadSeleccionada} unidades</p>
-                            </div>
-                        ))}
-                    </div>
-                    <p></p>
-                    <p> --------------------------------------------------------------- </p>
-                    <p><strong>Costo de repustos: </strong> {record.MontoRepuestos} Bs.</p>
-                    <p><strong>Costo del servicio: </strong> {record.MontoServicio} Bs.</p>
-                </div>
-            ),
-            onOk() { },
-        });
-    };
-
-    const confirmDelete = (record) => {
-        confirm({
-            title: '¿Estás seguro de eliminar esta orden de servicio?',
-            content: 'Esta acción no se puede deshacer.',
-            okText: 'Eliminar',
-            okType: 'danger',
-            cancelText: 'Cancelar',
-            onOk() {
-                //console.log('Eliminar:', record);
-                handleDelete(record.id);
-            },
-            onCancel() { },
-        });
-    };
-
-    const handleDelete = async (id) => {
-        try {
-            const subcollectionRef = collection(db, `ListaOrdenServicio/${id}/ListaRepuestos`);
-            const subcollectionSnapshot = await getDocs(subcollectionRef);
-            const dataList = subcollectionSnapshot.docs.map(doc => ({
-                ...doc.data(),
-            }));
-            actualizarRepuestos(dataList);
-            subcollectionSnapshot.forEach(async (doc) => {
-                await deleteDoc(doc.ref);
-                //console.log("Document deleted from subcollection ListaRepuestos");
-            });
-
-            const docRef = doc(db, "ListaOrdenServicio", id);
-            await deleteDoc(docRef);
-            //console.log("Document deleted from collection ListaOrdenServicio");
-
-            actualizarListaOrdeServicio();
-
-        } catch (error) {
-            console.error("Error deleting document: ", error);
-        }
-    };
-
-    const onChange = (pagination, filters, sorter, extra) => {
-        //console.log('params', pagination, filters, sorter, extra);
-    };
-
-    const actualizarRepuestos = async (data) => {
-        const promises = data.map(async (item) => {
-            const productRef = doc(db, "ListaRepuestos", item.id);
-
-            try {
-                const productSnap = await getDoc(productRef);
-
-                if (productSnap.exists()) {
-                    const currentCantidad = productSnap.data().Cantidad || 0;
-                    const newCantidad = currentCantidad + item.cantidadSeleccionada;
-
-                    await updateDoc(productRef, { Cantidad: newCantidad });
-                } else {
-                    console.log(`Producto con ID ${item.id} no encontrado.`);
-                }
-            } catch (error) {
-                console.error(`Error al actualizar el producto con ID ${item.id}:`, error);
-            }
-        });
-        try {
-            await Promise.all(promises);
-            console.log('Todos los repuestos han sido actualizados.');
-        } catch (error) {
-            console.error('Error al actualizar los repuestos:', error);
-        }
-    };
-
-    const actualizarListaOrdeServicio = () => {
-    
-    }
-
-    const recibirRespuesta = (mensaje) => {
-        setConfirmacion(mensaje);
-    };
-
-    const calcularTotal = () => {
-        return dataFirebase.reduce((acc, item) => {
-            const montoRepuesto = item.MontoRepuestos || 0; // Asignar 0 si es undefined o null
-            const montoServicio = item.MontoServicio || 0; // Asignar 0 si es undefined o null
-            return acc + montoRepuesto + montoServicio;
-        }, 0);
-    };
-
-    useEffect(() => {
-
-        setConfirmacion("");
-    }, [confimarcion]);
-
+    // Valores iniciales del formulario.
     const initialValues = {
-        correo: '',
-        estado: 'Activo',
-  
-        otrosDatosRelevantes: ' ',
-        diagnostico: ' ',
-        NotasAdicionales: '',
+        correo: '', // Inicializa los campos del formulario con valores vacíos.
+        estado: 'Activo', // Por defecto, el estado del cliente es 'Activo'.
 
-        pendienteRepuestos: false,
+        otrosDatosRelevantes: ' ', // Valor por defecto para otros datos relevantes.
+        diagnostico: ' ', // Valor por defecto para diagnóstico.
+        NotasAdicionales: '', // Valor por defecto para notas adicionales.
+
+        pendienteRepuestos: false, // Inicializa los campos de pendientes en falso.
         pendienteReparar: false,
         pendienteEntrega: false,
         pendientePagar: false,
         pendienteOtro: false,
-
     };
 
     return (
@@ -312,7 +109,6 @@ const RegistrarCliente = () => {
                 wrapperCol={{ span: 16 }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
-            // className="form-columns"
             >
                 <div className='parentRC'>
                     <div className='divRCN1'>
@@ -359,10 +155,6 @@ const RegistrarCliente = () => {
                         <Form.Item
                             name="correo"
                             label="Correo"
-                        // rules={[
-                        //     { required: true, message: 'Por favor ingrese el correo electrónico' },
-                        //     { type: 'email', message: 'El correo no es válido' }
-                        // ]}
                         >
                             <Input />
                         </Form.Item>
@@ -463,25 +255,6 @@ const RegistrarCliente = () => {
                             <Input.TextArea rows={3} />
                         </Form.Item>
                     </div>
-                    {/* 
-                    <div className='divRC7'>
-                        <h3>Detalles de orden de servicio</h3>
-                    </div>
-                    <div className='divRC8'>
-                        <BotonOrdenServicio nombre={dataTicket.NombreCliente} actualizar={recibirRespuesta} />
-                        <Table
-                            columns={columns}
-                            dataSource={dataFirebase}
-                            pagination={false}
-                            onChange={onChange}
-                            showSorterTooltip={{
-                                target: 'sorter-icon',
-                            }}
-                            scroll={{ x: true }}
-                        />
-                        <h3 style={{ textAlign: 'right', marginRight: '100px' }}>Costo total del servicio: {calcularTotal()} Bs.</h3>
-                    </div> */}
-
                     <div className='divRCN7'>
                         <h3>Estado de orden de servicio</h3>
                     </div>

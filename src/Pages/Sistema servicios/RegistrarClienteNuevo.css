@@ -1,33 +1,106 @@
+/* Estilos para el contenedor principal con estructura de grid */
 .parentRC {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 0.1fr 0.5fr 0.1fr 0.5fr 0.11fr 0.5fr 0.1fr 0.2fr 0.2fr;
-    grid-column-gap: 0px;
-    grid-row-gap: 0px;
+    display: grid; /* Utiliza el modelo de diseño Grid */
+    grid-template-columns: repeat(2, 1fr); /* Define 2 columnas de tamaño igual */
+    grid-template-rows: 0.1fr 0.5fr 0.1fr 0.5fr 0.11fr 0.5fr 0.1fr 0.2fr 0.2fr; /* Define las alturas de las filas */
+    grid-column-gap: 0px; /* Sin espacio entre columnas */
+    grid-row-gap: 0px; /* Sin espacio entre filas */
    
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #f0f2f5;
-    border: 1px solid #000;
-    
-    }
-    
-    .divRCN1 { grid-area: 1 / 1 / 2 / 3; padding-left: 5%; text-align: left; }
-    .divRCN23 { grid-area: 2 / 1 / 3 / 3; margin-left: auto; margin-right: auto; border-radius: 10px; width: 90%; border: 1px solid #000; }
-    .divRCN2 { grid-area: 2 / 1 / 3 / 2; padding-top: 5%; padding-left: 10%; }
-    .divRCN3 { grid-area: 2 / 2 / 3 / 3; padding-top: 5%; padding-right: 20%;  }
-   
-    .divRCN4 { grid-area: 3 / 1 / 4 / 3; padding-left: 5%; text-align: left; } 
-    .divRCN56 { grid-area: 4 / 1 / 5 / 3; margin-left: auto; margin-right: auto; border-radius: 10px; width: 90%; border: 1px solid #000; }
-    .divRCN5 { grid-area: 4 / 1 / 5 / 2; padding-top: 5%; padding-left: 10%;}
-    .divRCN6 { grid-area: 4 / 2 / 5 / 3; padding-top: 5%; padding-right: 22%;}
+    width: 80%; /* Ancho del contenedor */
+    margin-left: auto; /* Centra el contenedor horizontalmente */
+    margin-right: auto; /* Centra el contenedor horizontalmente */
+    background-color: #f0f2f5; /* Color de fondo gris claro */
+    border: 1px solid #000; /* Borde de 1px sólido y negro */
+}
 
-    .divRCN7 { grid-area: 5 / 1 / 6 / 3; padding-left: 5%; text-align: left; }
-    .divRCN89 { grid-area: 6 / 1 / 7 / 3; margin-left: auto; margin-right: auto; border-radius: 10px; width: 90%; border: 1px solid #000; }
-    .divRCN8 { grid-area: 6 / 1 / 7 / 2; padding-top: 5%; padding-left: 10%;}
-    .divRCN9 { grid-area: 6 / 2 / 7 / 3; padding-top: 5%; padding-right: 20%;}
+/* Estilos para las divisiones dentro del contenedor */
+.divRCN1 { 
+    grid-area: 1 / 1 / 2 / 3; /* Define el área de la grilla */
+    padding-left: 5%; /* Espacio izquierdo del 5% */
+    text-align: left; /* Alinea el texto a la izquierda */
+}
 
-    .divRCN12 { grid-area: 8 / 1 / 9 / 3;     display: grid;
-        justify-content: center; 
-        align-items: center;  }
+.divRCN23 { 
+    grid-area: 2 / 1 / 3 / 3; /* Define el área de la grilla */
+    margin-left: auto; /* Centra el contenedor horizontalmente */
+    margin-right: auto; /* Centra el contenedor horizontalmente */
+    border-radius: 10px; /* Bordes redondeados */
+    width: 90%; /* Ancho del 90% */
+    border: 1px solid #000; /* Borde de 1px sólido y negro */
+}
+
+.divRCN2 { 
+    grid-area: 2 / 1 / 3 / 2; /* Define el área de la grilla */
+    padding-top: 5%; /* Espacio superior del 5% */
+    padding-left: 10%; /* Espacio izquierdo del 10% */
+}
+
+.divRCN3 { 
+    grid-area: 2 / 2 / 3 / 3; /* Define el área de la grilla */
+    padding-top: 5%; /* Espacio superior del 5% */
+    padding-right: 20%; /* Espacio derecho del 20% */
+}
+
+/* Estilos para divisiones en la fila 3 */
+.divRCN4 { 
+    grid-area: 3 / 1 / 4 / 3; /* Define el área de la grilla */
+    padding-left: 5%; /* Espacio izquierdo del 5% */
+    text-align: left; /* Alinea el texto a la izquierda */
+}
+
+.divRCN56 { 
+    grid-area: 4 / 1 / 5 / 3; /* Define el área de la grilla */
+    margin-left: auto; /* Centra el contenedor horizontalmente */
+    margin-right: auto; /* Centra el contenedor horizontalmente */
+    border-radius: 10px; /* Bordes redondeados */
+    width: 90%; /* Ancho del 90% */
+    border: 1px solid #000; /* Borde de 1px sólido y negro */
+}
+
+.divRCN5 { 
+    grid-area: 4 / 1 / 5 / 2; /* Define el área de la grilla */
+    padding-top: 5%; /* Espacio superior del 5% */
+    padding-left: 10%; /* Espacio izquierdo del 10% */
+}
+
+.divRCN6 { 
+    grid-area: 4 / 2 / 5 / 3; /* Define el área de la grilla */
+    padding-top: 5%; /* Espacio superior del 5% */
+    padding-right: 22%; /* Espacio derecho del 22% */
+}
+
+/* Estilos para divisiones en la fila 4 */
+.divRCN7 { 
+    grid-area: 5 / 1 / 6 / 3; /* Define el área de la grilla */
+    padding-left: 5%; /* Espacio izquierdo del 5% */
+    text-align: left; /* Alinea el texto a la izquierda */
+}
+
+.divRCN89 { 
+    grid-area: 6 / 1 / 7 / 3; /* Define el área de la grilla */
+    margin-left: auto; /* Centra el contenedor horizontalmente */
+    margin-right: auto; /* Centra el contenedor horizontalmente */
+    border-radius: 10px; /* Bordes redondeados */
+    width: 90%; /* Ancho del 90% */
+    border: 1px solid #000; /* Borde de 1px sólido y negro */
+}
+
+.divRCN8 { 
+    grid-area: 6 / 1 / 7 / 2; /* Define el área de la grilla */
+    padding-top: 5%; /* Espacio superior del 5% */
+    padding-left: 10%; /* Espacio izquierdo del 10% */
+}
+
+.divRCN9 { 
+    grid-area: 6 / 2 / 7 / 3; /* Define el área de la grilla */
+    padding-top: 5%; /* Espacio superior del 5% */
+    padding-right: 20%; /* Espacio derecho del 20% */
+}
+
+/* Estilos para la última división */
+.divRCN12 { 
+    grid-area: 8 / 1 / 9 / 3; /* Define el área de la grilla */
+    display: grid; /* Utiliza el modelo de diseño Grid */
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Table, Input, Button, Checkbox, DatePicker, Select, Space, Modal, message } from 'antd';
-import { doc, addDoc, getDocs, deleteDoc, collection, updateDoc,getDoc } from "firebase/firestore";
-import { db, storage } from '../../FireBase/fireBase';
+import { doc, addDoc, getDocs, deleteDoc, collection, updateDoc, getDoc } from "firebase/firestore";
+import { db } from '../../FireBase/fireBase';
 import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import './RegistrarCliente.css';
@@ -11,57 +11,20 @@ import BotonEditarOrden from './EditarOrdenServicio.jsx'
 const { Option } = Select;
 
 const RegistrarCliente = () => {
+    // Modal de confirmación de Ant Design
     const { confirm } = Modal;
+    // useLocation para obtener el estado pasado a través de la navegación (location)
     const location = useLocation();
-    const dataTicket = location.state && location.state.objetoProp;
-    const numeroCli = location.state && location.state.numeroCliente;
+    // Obteniendo 'objetoProp' y 'numeroCliente' del estado pasado a través de la navegación
+    const dataTicket = location.state && location.state.objetoProp; // El objeto 'dataTicket' contiene los datos del ticket
+    const numeroCli = location.state && location.state.numeroCliente; // El 'numeroCli' obtiene el número de cliente
+    // Función 'useNavigate' de React Router para realizar navegación programática
     const navigate = useNavigate();
+    // Estado para almacenar los datos obtenidos de Firebase
     const [dataFirebase, setDataFirebase] = useState([]);
-    const [confimarcion, setConfirmacion] = useState("");
-
-    const onFinish = async (values) => {
-        const hide = message.loading('Registrando cliente...', 0);
-        //console.log(values);
-        try {
-            const docRef = await addDoc(collection(db, "ListaClientes"), {
-                CodCliente: values.codCliente,
-                NombreCliente: values.nombreCliente,
-                CI: values.ci,
-                TelefonoCelular: values.telefono,
-                Correo: values.correo,
-                Estado: values.estado,
-                Domicilio: values.domicilio,
-
-                NombreDispositivo: values.nombreDispositivo,
-                Modelo: values.modelo,
-                Marca: values.marca,
-                NumeroSerie: values.numeroSerie,
-                FechaRecepcion: formatearFecha(values.fechaRecepcion.toDate()),
-                DescripcionProblema: values.descripcionProblema,
-                NotasAdicionales: values.notasAdicionales,
-                OtrosDatos: values.otrosDatosRelevantes,
-                Diagnostico: values.diagnostico,
-
-                PendienteRepuestos: values.pendienteRepuestos,
-                PendienteReparar: values.pendienteReparar,
-                PendienteEntrega: values.pendienteEntrega,
-                PendientePagar: values.pendientePagar,
-                PendienteOtro: values.pendienteOtro,
-
-                IdCliente: dataTicket.id
-            });
-            //console.log("Document written with ID: ", docRef.id);
-            hide();
-            ModalExito();
-        } catch (error) {
-            console.error("Error adding document: ", error);
-        }
-    };
-
-    const onFinishFailed = () => {
-        message.error('Por favor complete el formulario correctamente.');
-    };
-
+    // Estado para almacenar la confirmación o cualquier mensaje relacionado con la operación
+    const [confimarcion, setConfirmacion] = useState(""); // Este estado se usa para mostrar una confirmación (vacío en este caso)
+    // Definición de las columnas para la tabla
     const columns = [
         {
             title: 'Codigo',
@@ -111,7 +74,6 @@ const RegistrarCliente = () => {
             render: (text, record) => (
                 <Space>
                     <Button onClick={() => showDetails(record)}>Mostrar</Button>
-                    {/* <Button onClick={() => editRecord(record)}>Editar</Button> */}
                     <BotonEditarOrden nombre={dataTicket.NombreCliente} actualizar={recibirRespuesta} record={record} />
                     <Button onClick={() => confirmDelete(record)}>Eliminar</Button>
                 </Space>
@@ -119,37 +81,117 @@ const RegistrarCliente = () => {
         },
     ];
 
+    // #region - - - - - - - - - - - - [ Efectos iniciales de carga y dependencias ( useEffects ) ] - - - - - - - - - - - - - - - - - -
+    // useEffect para cargar los datos de la colección 'ListaOrdenServicio' desde Firebase, filtrados por el nombre del cliente
+    useEffect(() => {
+        // Función para obtener los datos de la colección 'ListaOrdenServicio'
+        const fetchData = async () => {
+            const querySnapshot = await getDocs(collection(db, "ListaOrdenServicio")); // Obtiene los documentos de la colección 'ListaOrdenServicio'
+            const dataList = querySnapshot.docs.map(doc => ({
+                ...doc.data(), // Extrae los datos de cada documento
+                id: doc.id // Añade el ID del documento
+            }));
+
+            // Filtra los datos para obtener solo aquellos cuyo nombre del cliente coincida con el nombre en 'dataTicket'
+            const filteredDataList = dataList.filter(item => item.NombreCliente === dataTicket.NombreCliente);
+
+            setDataFirebase(filteredDataList); // Actualiza el estado con la lista de órdenes filtradas
+        };
+
+        fetchData(); // Llama a la función para cargar los datos filtrados
+        setConfirmacion(""); // Resetea la confirmación a una cadena vacía
+
+    }, [confimarcion]); // Dependencia de 'confimarcion' para ejecutar nuevamente el efecto cuando cambie
+    // #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+    // #region + + + + + + + + + + + + + [ Métodos ] + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+    // Función 'onFinish' que se ejecuta cuando el formulario se envía correctamente
+    const onFinish = async (values) => {
+        // Muestra un mensaje de carga mientras se realiza la operación de registro
+        const hide = message.loading('Registrando cliente...', 0);
+
+        try {
+            // Se agrega un nuevo documento a la colección 'ListaClientes' en Firebase
+            const docRef = await addDoc(collection(db, "ListaClientes"), {
+                CodCliente: values.codCliente,           // Código del cliente
+                NombreCliente: values.nombreCliente,     // Nombre del cliente
+                CI: values.ci,                           // Cédula de identidad
+                TelefonoCelular: values.telefono,        // Teléfono celular
+                Correo: values.correo,                   // Correo electrónico
+                Estado: values.estado,                   // Estado del cliente (activo, inactivo, etc.)
+                Domicilio: values.domicilio,             // Domicilio del cliente
+
+                NombreDispositivo: values.nombreDispositivo, // Nombre del dispositivo
+                Modelo: values.modelo,                    // Modelo del dispositivo
+                Marca: values.marca,                      // Marca del dispositivo
+                NumeroSerie: values.numeroSerie,          // Número de serie del dispositivo
+                FechaRecepcion: formatearFecha(values.fechaRecepcion.toDate()), // Fecha de recepción del dispositivo
+                DescripcionProblema: values.descripcionProblema, // Descripción del problema
+                NotasAdicionales: values.notasAdicionales,   // Notas adicionales
+                OtrosDatos: values.otrosDatosRelevantes,      // Otros datos relevantes
+                Diagnostico: values.diagnostico,             // Diagnóstico del dispositivo
+
+                PendienteRepuestos: values.pendienteRepuestos,  // Repuestos pendientes
+                PendienteReparar: values.pendienteReparar,      // Reparaciones pendientes
+                PendienteEntrega: values.pendienteEntrega,      // Entrega pendiente
+                PendientePagar: values.pendientePagar,          // Pago pendiente
+                PendienteOtro: values.pendienteOtro,            // Otros pendientes
+
+                IdCliente: dataTicket.id // ID del cliente relacionado con el ticket
+            });
+            // Oculta el mensaje de carga
+            hide();
+            // Muestra el modal de éxito
+            ModalExito();
+        } catch (error) {
+            console.error("Error adding document: ", error); // En caso de error, se muestra en la consola
+        }
+    };
+
+    // Función que se ejecuta si el formulario no se envía correctamente
+    const onFinishFailed = () => {
+        // Muestra un mensaje de error si el formulario no es válido
+        message.error('Por favor complete el formulario correctamente.');
+    };
+
+    // Función para formatear la fecha en el formato 'yyyy-mm-dd'
     function formatearFecha(fechaString) {
         const fecha = new Date(fechaString);
 
-        const dia = fecha.getDate().toString().padStart(2, '0');
-        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
-        const año = fecha.getFullYear();
+        const dia = fecha.getDate().toString().padStart(2, '0'); // Asegura que el día sea de dos dígitos
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses son base 0, por lo que sumamos 1
+        const año = fecha.getFullYear(); // Año en formato completo
 
-        return `${año}-${mes}-${dia}`;
+        return `${año}-${mes}-${dia}`; // Retorna la fecha en formato 'yyyy-mm-dd'
     }
 
+    // Función que muestra el modal de éxito después de guardar los datos
     const ModalExito = () => {
         Modal.success({
-            title: 'Registro de cliente',
-            content: 'Los datos del cliente se han guardado correctamente.',
-            onOk: () => { navigate('/sistema-servicios/mostrar-tickets'); }
+            title: 'Registro de cliente', // Título del modal
+            content: 'Los datos del cliente se han guardado correctamente.', // Mensaje dentro del modal
+            onOk: () => { navigate('/sistema-servicios/mostrar-tickets'); } // Navega a otra ruta después de hacer clic en 'Ok'
         });
     }
 
+    // Función que permite regresar a la lista de tickets
     const backList = () => {
-        navigate('/sistema-servicios/mostrar-tickets');
+        navigate('/sistema-servicios/mostrar-tickets'); // Navega a la pantalla de mostrar tickets
     }
 
 
 
+    // Función para mostrar los detalles de una orden de servicio
     const showDetails = async (record) => {
-        var DataOrdenRepuestos = [];
+        let DataOrdenRepuestos = []; // Inicializa un array vacío para almacenar los repuestos de la orden
 
         try {
+            // Referencia a la subcolección 'ListaRepuestos' dentro de una orden de servicio específica
             const subcollectionRef = collection(db, `ListaOrdenServicio/${record.id}/ListaRepuestos`);
             const subcollectionSnapshot = await getDocs(subcollectionRef);
 
+            // Crea una lista con los repuestos obtenidos de la subcolección
             let repuestosList = [];
             subcollectionSnapshot.forEach(subDoc => {
                 repuestosList.push({
@@ -157,18 +199,19 @@ const RegistrarCliente = () => {
                     ...subDoc.data()
                 });
             });
+
+            // Asigna la lista de repuestos a la variable global 'DataOrdenRepuestos'
             DataOrdenRepuestos = repuestosList;
-            // setDataOrdenRepuestos(repuestosList);
         } catch (error) {
-            console.error("Error fetching subcollection data: ", error);
+            console.error("Error fetching subcollection data: ", error); // Manejo de errores al obtener los datos
         }
 
+        // Muestra un modal con los detalles de la orden de servicio
         Modal.info({
             title: 'Detalles de la orden de servicio',
             width: 500,
             content: (
                 <div>
-                    {/* <img src={record.FotoEmpleado} alt="Empleado" style={{ width: '200px', marginLeft: '15%' }} /> */}
                     <p style={{ fontSize: "18px" }}><strong>Técnico encargado: </strong> {record.TecnicoEncargado}</p>
                     <p><strong>Código de orden:  </strong>{record.CodOrden}</p>
                     <p><strong>Fecha de recepción: </strong> {record.FechaReparacion}</p>
@@ -185,9 +228,8 @@ const RegistrarCliente = () => {
                             </div>
                         ))}
                     </div>
-                    <p></p>
                     <p> --------------------------------------------------------------- </p>
-                    <p><strong>Costo de repustos: </strong> {record.MontoRepuestos} Bs.</p>
+                    <p><strong>Costo de repuestos: </strong> {record.MontoRepuestos} Bs.</p>
                     <p><strong>Costo del servicio: </strong> {record.MontoServicio} Bs.</p>
                 </div>
             ),
@@ -195,6 +237,7 @@ const RegistrarCliente = () => {
         });
     };
 
+    // Función que se ejecuta cuando se confirma la eliminación de una orden de servicio
     const confirmDelete = (record) => {
         confirm({
             title: '¿Estás seguro de eliminar esta orden de servicio?',
@@ -203,132 +246,122 @@ const RegistrarCliente = () => {
             okType: 'danger',
             cancelText: 'Cancelar',
             onOk() {
-                //console.log('Eliminar:', record);
+                // Si se confirma, se ejecuta la función 'handleDelete'
                 handleDelete(record.id);
             },
             onCancel() { },
         });
     };
 
+    // Función para manejar la eliminación de la orden de servicio y sus repuestos asociados
     const handleDelete = async (id) => {
         try {
+            // Obtiene todos los repuestos asociados a la orden
             const subcollectionRef = collection(db, `ListaOrdenServicio/${id}/ListaRepuestos`);
             const subcollectionSnapshot = await getDocs(subcollectionRef);
             const dataList = subcollectionSnapshot.docs.map(doc => ({
                 ...doc.data(),
             }));
+
+            // Actualiza la lista de repuestos y elimina los repuestos de la subcolección
             actualizarRepuestos(dataList);
             subcollectionSnapshot.forEach(async (doc) => {
                 await deleteDoc(doc.ref);
-                //console.log("Document deleted from subcollection ListaRepuestos");
             });
 
+            // Elimina el documento de la orden de servicio
             const docRef = doc(db, "ListaOrdenServicio", id);
             await deleteDoc(docRef);
-            //console.log("Document deleted from collection ListaOrdenServicio");
 
+            // Actualiza la lista de órdenes de servicio
             actualizarListaOrdeServicio();
-
         } catch (error) {
-            console.error("Error deleting document: ", error);
+            console.error("Error deleting document: ", error); // Manejo de errores al eliminar los documentos
         }
     };
 
+    // Función de cambio para manejar la paginación, filtros, y ordenamiento
     const onChange = (pagination, filters, sorter, extra) => {
-        //console.log('params', pagination, filters, sorter, extra);
+        // Se pueden mostrar parámetros como 'pagination', 'filters', 'sorter', y 'extra' en la consola para depuración
+        // console.log('params', pagination, filters, sorter, extra);
     };
 
+    // Función para actualizar los repuestos en la base de datos.
     const actualizarRepuestos = async (data) => {
+        // Se generan promesas para cada item en el array 'data'.
         const promises = data.map(async (item) => {
-            const productRef = doc(db, "ListaRepuestos", item.id);
+            const productRef = doc(db, "ListaRepuestos", item.id); // Referencia al documento del repuesto.
 
             try {
+                // Se obtiene el documento del producto.
                 const productSnap = await getDoc(productRef);
 
+                // Si el producto existe, se actualiza la cantidad.
                 if (productSnap.exists()) {
-                    const currentCantidad = productSnap.data().Cantidad || 0;
-                    const newCantidad = currentCantidad + item.cantidadSeleccionada;
+                    const currentCantidad = productSnap.data().Cantidad || 0; // Se obtiene la cantidad actual (0 si no existe).
+                    const newCantidad = currentCantidad + item.cantidadSeleccionada; // Se calcula la nueva cantidad.
 
+                    // Actualiza la cantidad del producto en la base de datos.
                     await updateDoc(productRef, { Cantidad: newCantidad });
                 } else {
-                    console.log(`Producto con ID ${item.id} no encontrado.`);
+                    console.log(`Producto con ID ${item.id} no encontrado.`); // Mensaje si no se encuentra el producto.
                 }
             } catch (error) {
-                console.error(`Error al actualizar el producto con ID ${item.id}:`, error);
+                console.error(`Error al actualizar el producto con ID ${item.id}:`, error); // Manejo de errores.
             }
         });
+
         try {
+            // Se espera que todas las promesas se resuelvan.
             await Promise.all(promises);
-            console.log('Todos los repuestos han sido actualizados.');
+            console.log('Todos los repuestos han sido actualizados.'); // Mensaje de éxito.
         } catch (error) {
-            console.error('Error al actualizar los repuestos:', error);
+            console.error('Error al actualizar los repuestos:', error); // Manejo de errores al esperar las promesas.
         }
     };
 
+    // Función para obtener y filtrar la lista de órdenes de servicio.
     const actualizarListaOrdeServicio = () => {
         const fetchData = async () => {
+            // Se obtienen todos los documentos de la colección "ListaOrdenServicio".
             const querySnapshot = await getDocs(collection(db, "ListaOrdenServicio"));
+
+            // Se mapea el resultado para agregar el ID al documento.
             const dataList = querySnapshot.docs.map(doc => ({
                 ...doc.data(),
                 id: doc.id
             }));
+
+            // Filtra los datos para obtener solo las órdenes de servicio que coincidan con el cliente.
             const filteredDataList = dataList.filter(item => item.NombreCliente === dataTicket.NombreCliente);
 
+            // Se actualiza el estado con los datos filtrados.
             setDataFirebase(filteredDataList);
         };
-        fetchData();
+        fetchData(); // Se llama a la función para obtener y filtrar los datos.
     }
 
+    // Función para recibir y mostrar un mensaje de confirmación.
     const recibirRespuesta = (mensaje) => {
-        setConfirmacion(mensaje);
+        setConfirmacion(mensaje); // Actualiza el estado con el mensaje recibido.
     };
 
+    // Función para calcular el total de la factura.
     const calcularTotal = () => {
+        // Se recorre la lista de repuestos y servicios, sumando el monto de cada uno.
         return dataFirebase.reduce((acc, item) => {
-            const montoRepuesto = item.MontoRepuestos || 0; // Asignar 0 si es undefined o null
-            const montoServicio = item.MontoServicio || 0; // Asignar 0 si es undefined o null
-            return acc + montoRepuesto + montoServicio;
+            const montoRepuesto = item.MontoRepuestos || 0; // Se asigna 0 si el monto no está definido.
+            const montoServicio = item.MontoServicio || 0; // Se asigna 0 si el monto no está definido.
+            return acc + montoRepuesto + montoServicio; // Se devuelve la suma total.
         }, 0);
     };
+    // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const querySnapshot = await getDocs(collection(db, "ListaOrdenServicio"));
-            const dataList = querySnapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id
-            }));
-            const filteredDataList = dataList.filter(item => item.NombreCliente === dataTicket.NombreCliente);
-
-            setDataFirebase(filteredDataList);
-
-        };
-
-        fetchData();
-        // console.log("control");
-        setConfirmacion("");
-    }, [confimarcion]);
 
     const initialValues = {
         codCliente: numeroCli,
-        // nombreCliente: 'Juan Pérez',
-        // ci: '12345678',
-        // telefono: '0987654321',
         correo: '',
         estado: 'Activo',
-        // domicilio: 'Calle Falsa 123',
-
-        // nombreDispositivo: 'Laptop',
-        // modelo: 'XPS 13',
-        // marca: 'Dell',
-        // numeroSerie: '12345ABC',
-        // fechaRecepcion: dayjs('2023-06-01'),
-        // descripcionProblema: 'Pantalla no enciende',
-        // notasAdicionales: 'Cliente mencionó que ocurrió después de una actualización',
-        // otrosDatosRelevantes: 'Se intentó reiniciar varias veces',
-        // diagnostico: 'Pendiente',
-
-        // notasAdicionales: ' ',   
         otrosDatosRelevantes: ' ',
         diagnostico: ' ',
 
@@ -359,7 +392,6 @@ const RegistrarCliente = () => {
                 wrapperCol={{ span: 16 }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
-            // className="form-columns"
             >
                 <div className='parentRC'>
                     <div className='divRC1'>
@@ -406,10 +438,6 @@ const RegistrarCliente = () => {
                         <Form.Item
                             name="correo"
                             label="Correo"
-                        // rules={[
-                        //     { required: true, message: 'Por favor ingrese el correo electrónico' },
-                        //     { type: 'email', message: 'El correo no es válido' }
-                        // ]}
                         >
                             <Input />
                         </Form.Item>

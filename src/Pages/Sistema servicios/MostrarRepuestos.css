@@ -1,54 +1,57 @@
+/* Estilos para el botón de incremento */
 .BotIncrementar {
-    text-align: right;
-    margin-top: 10px;
-    margin-bottom: 15px;
-    width: 90.1%;
+    text-align: right; /* Alinea el texto a la derecha */
+    margin-top: 10px; /* Espacio superior de 10px */
+    margin-bottom: 15px; /* Espacio inferior de 15px */
+    width: 90.1%; /* Ancho del 90.1% */
 }
 
+/* Estilos para el contenedor principal de la sección "Mostrar Incremento" */
 .parentMostrarIncr {
-    display: grid;
-    grid-column-gap: 10px;
-    grid-row-gap: 10px;
-
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #f0f2f5;
-    border: 1px solid #000;
+    display: grid; /* Utiliza el modelo de diseño Grid */
+    grid-column-gap: 10px; /* Espacio entre columnas de 10px */
+    grid-row-gap: 10px; /* Espacio entre filas de 10px */
+    width: 90%; /* Ancho del 90% */
+    margin-left: auto; /* Centra el contenedor horizontalmente */
+    margin-right: auto; /* Centra el contenedor horizontalmente */
+    background-color: #f0f2f5; /* Color de fondo gris claro */
+    border: 1px solid #000; /* Borde de 1px sólido y negro */
 }
 
+/* Estilos para el título de la sección "Incremento" */
 .form-titleIncr {
-    margin-top: 2%;
-    margin-bottom: 20px;
-    display: grid;
-    justify-content: left;
-    margin-left: 10%;
+    margin-top: 2%; /* Espacio superior del 2% */
+    margin-bottom: 20px; /* Espacio inferior de 20px */
+    display: grid; /* Utiliza el modelo de diseño Grid */
+    justify-content: left; /* Alinea el contenido a la izquierda */
+    margin-left: 10%; /* Espacio izquierdo del 10% */
 }
 
-.TituloForm{
-    text-align: right;
-    width: 90.1%;
-    margin-top: -55px;
-    margin-bottom: 15px;
+/* Estilos para el título de formulario */
+.TituloForm {
+    text-align: right; /* Alinea el texto a la derecha */
+    width: 90.1%; /* Ancho del 90.1% */
+    margin-top: -55px; /* Espacio superior negativo de 55px */
+    margin-bottom: 15px; /* Espacio inferior de 15px */
 }
 
+/* Estilos para el contenedor principal de la sección "Mostrar Repuestos" */
 .parentMostrarRepuestos {
-    display: grid;
-    grid-column-gap: 10px;
-    grid-row-gap: 10px;
-
-    width: 95%;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #f0f2f5;
-    border: 1px solid #000;
+    display: grid; /* Utiliza el modelo de diseño Grid */
+    grid-column-gap: 10px; /* Espacio entre columnas de 10px */
+    grid-row-gap: 10px; /* Espacio entre filas de 10px */
+    width: 95%; /* Ancho del 95% */
+    margin-left: auto; /* Centra el contenedor horizontalmente */
+    margin-right: auto; /* Centra el contenedor horizontalmente */
+    background-color: #f0f2f5; /* Color de fondo gris claro */
+    border: 1px solid #000; /* Borde de 1px sólido y negro */
 }
 
+/* Estilos para el título de la sección "Repuestos" */
 .form-titleRepuestos {
-    margin-top: 2%;
-    margin-bottom: 20px;
-    display: grid;
-    justify-content: left;
-    margin-left: 2.5%;
+    margin-top: 2%; /* Espacio superior del 2% */
+    margin-bottom: 20px; /* Espacio inferior de 20px */
+    display: grid; /* Utiliza el modelo de diseño Grid */
+    justify-content: left; /* Alinea el contenido a la izquierda */
+    margin-left: 2.5%; /* Espacio izquierdo del 2.5% */
 }
-

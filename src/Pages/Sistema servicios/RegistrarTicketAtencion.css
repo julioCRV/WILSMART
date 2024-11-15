@@ -1,72 +1,63 @@
+/* Estilos globales para la página */
 html,
 body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+    height: 100%; /* La altura de la página es del 100% */
+    margin: 0; /* Elimina el margen predeterminado */
+    padding: 0; /* Elimina el relleno predeterminado */
 }
 
+/* Estilos para el título del formulario */
 .formTitulo {
-    grid-area: 2 / 1 / 3 / 2;
-    margin-right: 20%;
+    grid-area: 2 / 1 / 3 / 2; /* Define la posición en la grilla */
+    margin-right: 20%; /* Espacio a la derecha del 20% */
 }
 
+/* Estilos para los inputs y selects */
 input,
 select {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    box-sizing: border-box;
+    width: 100%; /* Ancho completo */
+    padding: 8px; /* Relleno de 8px */
+    margin-top: 5px; /* Espacio superior de 5px */
+    box-sizing: border-box; /* Asegura que el relleno no afecte el tamaño del elemento */
 }
 
+/* Estilos para los botones */
 button {
-    padding: 10px 20px;
-    cursor: pointer;
-
+    padding: 10px 20px; /* Relleno del botón */
+    cursor: pointer; /* Cambia el cursor al pasar por encima */
 }
 
+/* Estilos para un elemento con ancho completo */
 .full-width {
-    width: 100%;
+    width: 100%; /* Ancho completo */
 }
 
-/* .button-container {
-    margin-left: 10px;
-    width: 100%;
-    margin-top: 20px;
-           border: 1px solid #000;
-} */
-
+/* Estilos para el contenedor del ticket */
 .parentTicket {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 0.05fr;
-    grid-column-gap: 0px;
-    grid-row-gap: 0px;
-
-    /* display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(0.5, 0.1fr);
-    grid-column-gap: 10px;
-    grid-row-gap: 10px; */
-
-    width: 43%;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #f0f2f5;
-    border: 1px solid #000;
-    border-radius: 10px;
+    display: grid; /* Utiliza grid para disposición */
+    grid-template-columns: 1fr; /* Una columna de igual tamaño */
+    grid-template-rows: 1fr 0.05fr; /* Fila con tamaño dinámico */
+    grid-column-gap: 0px; /* Sin espacio entre columnas */
+    grid-row-gap: 0px; /* Sin espacio entre filas */
+    width: 43%; /* Ancho del 43% */
+    margin-left: auto; /* Centra el contenedor horizontalmente */
+    margin-right: auto; /* Centra el contenedor horizontalmente */
+    background-color: #f0f2f5; /* Color de fondo */
+    border: 1px solid #000; /* Borde negro */
+    border-radius: 10px; /* Bordes redondeados */
 }
 
+/* Estilos para la primera división dentro de parentTicket */
 .divTicket1 {
-    grid-area: 1 / 1 / 2 / 2;
-    padding: 5%;
-        /* border: 1px solid #000; */
+    grid-area: 1 / 1 / 2 / 2; /* Ocupa la primera fila y columna */
+    padding: 5%; /* Relleno del 5% */
 }
 
+/* Estilos para la segunda división dentro de parentTicket */
 .divTicket2 {
-    grid-area: 2 / 1 / 3 / 2;
-    display: grid;
-    justify-content: center;
-    align-items: center;
-    margin-left: 30px;
-        /* border: 1px solid #000; */
+    grid-area: 2 / 1 / 3 / 2; /* Ocupa la segunda fila y columna */
+    display: grid; /* Utiliza grid para disposición */
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+    margin-left: 30px; /* Espacio a la izquierda de 30px */
 }

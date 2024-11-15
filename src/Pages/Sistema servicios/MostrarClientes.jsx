@@ -7,10 +7,14 @@ import './MostrarRepuestos.css';
 import BotonVer from './VerCliente';
 
 const MostrarClientes = () => {
+    // Desestructuración de Modal para obtener el método confirm
     const { confirm } = Modal;
+    // Hook de React Router para navegación
     const navigate = useNavigate();
+    // Estado para almacenar los datos obtenidos de Firebase
     const [dataFirebase, setDataFirebase] = useState([]);
 
+    // Definición de las columnas para la tabla
     const columns = [
         {
             title: 'Código',
@@ -95,7 +99,6 @@ const MostrarClientes = () => {
                 <Space>
                     <Button onClick={() => navegarRegistrarCliente(record)}>Registrar ticket</Button>
                     <BotonVer record={record} />
-                    {/* <Button onClick={() => showDetails(record)}>Mostrar</Button> */}
                     <Button onClick={() => editRecord(record)}>Editar</Button>
                     <Button onClick={() => confirmDelete(record)}>Eliminar</Button>
 
@@ -104,103 +107,106 @@ const MostrarClientes = () => {
         },
     ];
 
-    const navegarRegistrarCliente = (record) => {
-        // console.log('Editar:', record);
-        navigate('/sistema-servicios/registrar-ticket', { state: { objetoProp: record } });
-        // Aquí puedes implementar la lógica para editar el registro
-    };
+    // #region - - - - - - - - - - - - [ Efectos iniciales de carga y dependencias ( useEffects ) ] - - - - - - - - - - - - - - - - - -
+    // useEffect para cargar los datos de clientes activos desde Firebase
+    useEffect(() => {
+        // Función asíncrona que obtiene los datos de la colección "ListaClientes" desde Firebase
+        const fetchData = async () => {
+            // Obtener los documentos de la colección "ListaClientes"
+            const querySnapshot = await getDocs(collection(db, "ListaClientes"));
 
-    // - - - - - - - - - - - - - - -  M   O   S   T   R   A   R  - - - - - - - - - - - - - - - -
-    const showDetails = (record) => {
-        Modal.info({
-            title: 'Detalles del repuesto',
-            content: (
-                <div>
-                    {/* <img src={record.FotoEmpleado} alt="Empleado" style={{ width: '200px', marginLeft: '15%' }} /> */}
-                    <p><strong>Cod.  </strong>{record.CodRepuesto}</p>
-                    <p><strong>Cantidad: </strong>{record.Cantidad}</p>
+            // Mapear los documentos obtenidos a un formato más adecuado, agregando el ID de cada documento
+            const dataList = querySnapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }));
 
-                    <p style={{ fontSize: "20px" }}><strong>{record.NombreRepuesto}</strong></p>
-                    <p><strong>Descripción: </strong> {record.Descripcion}</p>
-                    <p><strong>Categoría: </strong> {record.Categoria}</p>
-                    <p><strong>Estado: </strong> {record.Estado}</p>
-                    <p><strong>Proveedor: </strong> {record.Proveedor}</p>
-                    <p><strong>Costo unitario: </strong>{record.CostoUnitario}</p>
-                    <p><strong>Precio del repuestos: </strong>{record.PrecioRepuesto}</p>
-                    <p><strong>Fecha de ingreso: </strong> {record.Fecha}</p>
-                    <p><strong>Ubicación en almacén: </strong> {record.UbicacionAlmacen}</p>
-                </div>
-            ),
-            onOk() { },
-        });
-    };
+            // Filtrar los datos para obtener solo los clientes cuyo estado sea "Activo"
+            const filteredDataList = dataList.filter(item => item.Estado === "Activo");
 
+            // Almacenar los datos filtrados en el estado `dataFirebase`
+            setDataFirebase(filteredDataList);
+        };
+
+        // Llamada a la función asíncrona para obtener los datos
+        fetchData();
+    }, []); // Este efecto solo se ejecuta una vez cuando el componente se monta
+    // #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+    // #region + + + + + + + + + + + + + [ Métodos ] + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
     // - - - - - - - - - - - - - - -  E   D   I   T   A   R  - - - - - - - - - - - - - - - -
+    // Función para navegar a la página de editar cliente, pasando un objeto como estado
     const editRecord = (record) => {
-        //console.log('Editar:', record);
+        // Navega a la ruta '/sistema-servicios/editar-cliente' y pasa el objeto `record` como estado
         navigate('/sistema-servicios/editar-cliente', { state: { objetoProp: record } });
-        // Aquí puedes implementar la lógica para editar el registro
     };
 
     // - - - - - - - - - - - - - - -  E   L   I   M   I   N   A    R  - - - - - - - - - - - - - - - -
+    // Función para confirmar la eliminación de un cliente
     const confirmDelete = (record) => {
+        // Muestra una confirmación antes de proceder con la eliminación
         confirm({
             title: '¿Estás seguro de eliminar la información del cliente?',
             content: 'Esta acción no se puede deshacer.',
             okText: 'Eliminar',
-            okType: 'danger',
-            cancelText: 'Cancelar',
+            okType: 'danger', // El botón de eliminación tiene un estilo peligroso (rojo)
+            cancelText: 'Cancelar', // El botón de cancelación
             onOk() {
-                //console.log('Eliminar:', record);
+                // Si el usuario confirma la eliminación, se llama a la función `handleDelete`
                 handleDelete(record.id);
             },
-            onCancel() { },
+            onCancel() {
+                // Acción que se toma si el usuario cancela (en este caso no hace nada)
+            },
         });
     };
 
+
+    // Función para eliminar un cliente de la base de datos
     const handleDelete = async (id) => {
+        // Referencia al documento que se va a eliminar en la colección "ListaClientes" usando su ID
         const docRef = doc(db, "ListaClientes", id);
         try {
+            // Intentar eliminar el documento
             await deleteDoc(docRef);
-            //console.log("Document deleted");
-            actualizarClientes();
+            // console.log("Document deleted"); // Puedes descomentar esta línea si deseas verificar en la consola que se eliminó
+            actualizarClientes(); // Después de eliminar, se actualizan los clientes en la interfaz
         } catch (e) {
+            // Si ocurre un error, se muestra en la consola
             console.error("Error deleting document: ", e);
         }
     };
 
     // - - - - - - - - - - - - - - -  O T R A S     F U N C I O N A L I D A D E S  - - - - - - - - - - - - - - - -
+
+    // Función que se ejecuta cuando se cambia la paginación, filtros o el orden de los datos
     const onChange = (pagination, filters, sorter, extra) => {
-        //console.log('params', pagination, filters, sorter, extra);
+        // console.log('params', pagination, filters, sorter, extra); // Puedes descomentar esta línea para ver los parámetros de cambio en la consola
     };
 
+    // Función para actualizar la lista de clientes activos
     const actualizarClientes = async () => {
+        // Obtiene todos los documentos de la colección "ListaClientes"
         const querySnapshot = await getDocs(collection(db, "ListaClientes"));
+        // Mapea los documentos para agregar el ID y obtener los datos
         const dataList = querySnapshot.docs.map(doc => ({
             ...doc.data(),
             id: doc.id
         }));
-        // console.log(dataList);
+        // Filtra los datos para solo obtener los clientes con estado "Activo"
         const filteredDataList = dataList.filter(item => item.Estado === "Activo");
+        // Actualiza el estado local con los clientes activos
         setDataFirebase(filteredDataList);
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const querySnapshot = await getDocs(collection(db, "ListaClientes"));
-            const dataList = querySnapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id
-            }));
-            // console.log(dataList);
-            const filteredDataList = dataList.filter(item => item.Estado === "Activo");
+    // Función para navegar a la página de registrar ticket, pasando un objeto como estado
+    const navegarRegistrarCliente = (record) => {
+        // Navega a la ruta '/sistema-servicios/registrar-ticket' y pasa el objeto `record` como estado
+        navigate('/sistema-servicios/registrar-ticket', { state: { objetoProp: record } });
+    };
 
-            setDataFirebase(filteredDataList);
-
-
-        };
-        fetchData();
-    }, []);
+    // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
     return (
         <>

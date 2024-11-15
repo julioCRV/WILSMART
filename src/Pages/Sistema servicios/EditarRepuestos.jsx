@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, message, DatePicker, Select, Upload, Modal } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import React from 'react';
+import { Form, Input, Button, message, DatePicker, Select, Modal } from 'antd';
 import { doc, updateDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../../FireBase/fireBase';
+import { db } from '../../FireBase/fireBase';
 import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import './RegistrarRepuesto.css';
@@ -11,17 +9,20 @@ import './RegistrarRepuesto.css';
 const { Option } = Select;
 
 const EditarRepuesto = () => {
+    // Obtención de la ubicación actual y el objeto de repuesto desde la navegación
     const location = useLocation();
+    // Asignación de datos del repuesto desde la ubicación si están disponibles
     const dataRepuesto = location.state && location.state.objetoProp;
+    // Navegación programática a otras rutas
     const navigate = useNavigate();
 
-
-
-
+    // Función que maneja el envío del formulario para actualizar el repuesto
     const onFinish = async (values) => {
+        // Muestra un mensaje de carga mientras se actualiza el repuesto
         const hide = message.loading('Actualizando repuesto...', 0);
-        const docRef = doc(db, "ListaRepuestos", dataRepuesto.id);
+        const docRef = doc(db, "ListaRepuestos", dataRepuesto.id); // Referencia al documento que se desea actualizar
         try {
+            // Actualización del documento con los nuevos valores
             await updateDoc(docRef, {
                 CodRepuesto: values.codRepuesto,
                 NombreRepuesto: values.nombreRepuesto,
@@ -35,38 +36,40 @@ const EditarRepuesto = () => {
                 PrecioRepuesto: values.precio,
                 UbicacionAlmacen: values.ubicacion,
             });
-            //console.log("Document updated");
-            hide();
-            ModalExito();
+            hide(); // Ocultar mensaje de carga
+            ModalExito(); // Mostrar mensaje de éxito
         } catch (e) {
-            hide();
-            console.error("Error updating document: ", e);
+            hide(); // Ocultar mensaje de carga
+            console.error("Error updating document: ", e); // Manejo de errores
         }
     };
 
+    // Función para formatear la fecha en formato YYYY-MM-DD
     function formatearFecha(fechaString) {
         const fecha = new Date(fechaString);
-
         const dia = fecha.getDate().toString().padStart(2, '0');
         const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
         const año = fecha.getFullYear();
-
         return `${año}-${mes}-${dia}`;
     }
 
+    // Modal de éxito que se muestra después de la actualización exitosa
     const ModalExito = () => {
         Modal.success({
             title: 'Actualizar datos del repuesto',
             content: 'Los datos del repuesto se han actualizado correctamente.',
-            onOk: () => { navigate('/sistema-servicios/mostrar-repuestos'); }
+            onOk: () => {
+                navigate('/sistema-servicios/mostrar-repuestos'); // Redirige a la lista de repuestos
+            }
         });
     }
 
+    // Función para regresar a la lista de repuestos
     const backList = () => {
-        navigate('/sistema-servicios/mostrar-repuestos');
+        navigate('/sistema-servicios/mostrar-repuestos'); // Redirige a la lista de repuestos
     }
 
-    //console.log(dataRepuesto);
+    // Valores iniciales de el formulario de un repuesto
     const initialValues = {
         codRepuesto: dataRepuesto.CodRepuesto,
         nombreRepuesto: dataRepuesto.NombreRepuesto,
@@ -93,11 +96,10 @@ const EditarRepuesto = () => {
                 labelCol={{ span: 9 }}
                 wrapperCol={{ span: 22 }}
                 onFinish={onFinish}
-            // className="form-columns"
             >
                 <div className='parent2'>
                     <div className="div11">
-                    <Form.Item
+                        <Form.Item
                             name="codRepuesto"
                             label="Código"
                             rules={[{ required: true, message: 'Por favor ingrese un código' }]}
@@ -126,7 +128,7 @@ const EditarRepuesto = () => {
                             label="Fecha de ingreso"
                             rules={[{ required: true, message: 'Por favor seleccione la fecha de ingreso' }]}
                         >
-                            <DatePicker className='full-width'/>
+                            <DatePicker className='full-width' />
                         </Form.Item>
 
                         <Form.Item
@@ -152,15 +154,15 @@ const EditarRepuesto = () => {
                     </div>
 
                     <div className="div22">
-                       
-                    <Form.Item
+
+                        <Form.Item
                             name="estado"
                             label="Estado"
                             rules={[{ required: true, message: 'Por favor ingrese un estado' }]}
                         >
                             <Input />
                         </Form.Item>
-                        
+
                         <Form.Item
                             name="descripcion"
                             label="Descripción"

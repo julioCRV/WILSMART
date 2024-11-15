@@ -3,138 +3,20 @@ import { Modal, Form, Input, Select, DatePicker, Button, Table, InputNumber, Aut
 import { collection, getDocs, addDoc, doc, updateDoc, writeBatch } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import './RegistrarOrdenServicio.css'
-import { activate } from 'firebase/remote-config';
 import dayjs from 'dayjs';
 
-const { Option } = Select;
-
 const EditarOrdenServicio = ({ nombre, actualizar, record }) => {
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [form] = Form.useForm();
-    const { confirm } = Modal;
-    const [dataFirebase, setDataFirebase] = useState([]);
-    const [dataEmpleados, setDataEmpleados] = useState([]);
-    const [dataOrdenServicio, setDataOrdenServicio] = useState([]);
-    const [options, setOptions] = useState([]);
-    const [selectedOption, setSelectedOption] = useState(null);
-    const [costoTotal, setCostoTotal] = useState(0);
-
-    const handleSearch = (value) => {
-        if (value) {
-            const filtered = dataFirebase
-                .filter(item => item.NombreRepuesto.toLowerCase().includes(value.toLowerCase()))
-                .map(item => ({ value: item.NombreRepuesto }));
-            setOptions(filtered);
-        } else {
-            setOptions([]);
-        }
-    };
-
-    const onSelect = (value) => {
-        setSelectedOption(value);
-    };
-
-    const showModal = async () => {
-        form.resetFields();
-        try {
-            const subcollectionRef = collection(db, `ListaOrdenServicio/${record.id}/ListaRepuestos`);
-            const subcollectionSnapshot = await getDocs(subcollectionRef);
-
-            let repuestosList = [];
-            subcollectionSnapshot.forEach(subDoc => {
-                repuestosList.push({
-                    idRepuesto: subDoc.id,
-                    ...subDoc.data()
-                });
-            });
-            //console.log(repuestosList);
-            setDataOrdenServicio(repuestosList);
-        } catch (error) {
-            console.error("Error fetching subcollection data: ", error);
-        }
-        setCostoTotal(record.MontoRepuestos);
-        setIsModalVisible(true);
-    };
-
-    const handleCancel = () => {
-        setIsModalVisible(false);
-    };
-
-    const handleOk = () => {
-        form.submit();
-    };
-
-    const handleFinish = async (values) => {
-        const hide = message.loading('Actualizando orden de servicio...', 0);
-        const id = record.id;
-        try {
-            const docRef = doc(db, "ListaOrdenServicio", id); // Referencia al documento que deseas actualizar
-            await updateDoc(docRef, {
-                CodOrden: values.codOrden,
-                NombreCliente: nombre,
-                TecnicoEncargado: values.tecnicoEncargado,
-                FechaReparacion: formatearFecha(values.fechaReparacion.toDate()),
-                FechaEntrega: formatearFecha(values.fechaEntrega.toDate()),
-                MontoServicio: parseInt(values.costoServicio),
-                MontoRepuestos: costoTotal,
-                Garantia: values.garantia,
-            });
-            //console.log("Document updated with ID: ", docRef.id);
-
-            // Para actualizar la subcolección, primero obtenemos la referencia y luego actualizamos los documentos
-            const subcollectionRef = collection(db, `ListaOrdenServicio/${docRef.id}/ListaRepuestos`);
-
-            // Obtener los documentos existentes en la subcolección y eliminarlos
-            const existingDocsSnapshot = await getDocs(subcollectionRef);
-            const batch = writeBatch(db);
-
-            existingDocsSnapshot.forEach(docSnapshot => {
-                batch.delete(docSnapshot.ref);
-            });
-
-            await batch.commit();
-
-            // Añadir los nuevos documentos a la subcolección
-            await Promise.all(
-                dataOrdenServicio.map(async (repuesto) => {
-                    await addDoc(subcollectionRef, repuesto);
-                })
-            );
-            hide();
-            ModalExito();
-        } catch (error) {
-            hide();
-            console.error("Error updating document: ", error);
-        }
-    };
-
-    function formatearFecha(fechaString) {
-        const fecha = new Date(fechaString);
-
-        const dia = fecha.getDate().toString().padStart(2, '0');
-        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
-        const año = fecha.getFullYear();
-
-        return `${año}-${mes}-${dia}`;
-    }
-
-    const agregarLista = () => {
-        // if (options.length>0 && selectedOption) {
-        //     const filteredData = dataFirebase.filter(item => item.NombreRepuesto === selectedOption);
-        //     setDataOrdenServicio([...dataOrdenServicio, ...filteredData]);
-        // }
-        // setSelectedOption(null)
-        if (options.length > 0 && selectedOption) {
-            const filteredData = dataFirebase.filter(item => item.NombreRepuesto === selectedOption);
-            const newItems = filteredData.filter(item =>
-                !dataOrdenServicio.some(existingItem => existingItem.id === item.id)
-            );
-            if (newItems.length > 0) {
-                setDataOrdenServicio([...dataOrdenServicio, ...newItems]);
-            }
-        }
-    };
-
+    const { Option } = Select; // Define opciones para un menú desplegable de Ant Design.
+    const [isModalVisible, setIsModalVisible] = useState(false); // Controla la visibilidad de un modal.
+    const [form] = Form.useForm(); // Maneja los datos y validaciones de un formulario.
+    const { confirm } = Modal; // Muestra un cuadro de diálogo de confirmación.
+    const [dataFirebase, setDataFirebase] = useState([]); // Almacena datos obtenidos de Firebase.
+    const [dataEmpleados, setDataEmpleados] = useState([]); // Almacena datos de empleados.
+    const [dataOrdenServicio, setDataOrdenServicio] = useState([]); // Almacena datos de órdenes de servicio.
+    const [options, setOptions] = useState([]); // Almacena opciones disponibles para selección.
+    const [selectedOption, setSelectedOption] = useState(null); // Almacena la opción seleccionada por el usuario.
+    const [costoTotal, setCostoTotal] = useState(0); // Almacena el costo total calculado.   
+    //Definimos el contenido y el titulo de las columnas de la tabla
     const columns = [
         {
             title: 'Código',
@@ -181,89 +63,262 @@ const EditarOrdenServicio = ({ nombre, actualizar, record }) => {
         },
     ];
 
+    // #region - - - - - - - - - - - - [ Efectos iniciales de carga y dependencias ( useEffects ) ] - - - - - - - - - - - - - - - - - -
+    useEffect(() => {
+        handleIncrement(); // Llama a una función para realizar una acción cada vez que cambia `costoTotal`.
+    }, [costoTotal]);
+
+    useEffect(() => {
+        // Función para obtener datos de la colección "ListaRepuestos" en Firebase.
+        const fetchData = async () => {
+            const querySnapshot = await getDocs(collection(db, "ListaRepuestos")); // Obtiene los documentos de Firebase.
+            const dataList = querySnapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id,
+                cantidadSeleccionada: 0 // Inicializa la cantidad seleccionada en 0.
+            }));
+            setDataFirebase(dataList); // Almacena los datos obtenidos en el estado `dataFirebase`.
+        };
+        fetchData(); // Ejecuta la función de obtención de datos.
+
+        // Función para obtener datos de la colección "ListaEmpleados" en Firebase.
+        const fetchDataEmpleados = async () => {
+            const querySnapshot = await getDocs(collection(db, "ListaEmpleados")); // Obtiene los documentos de Firebase.
+            const dataList = querySnapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }));
+            setDataEmpleados(dataList); // Almacena los datos obtenidos en el estado `dataEmpleados`.
+        };
+        fetchDataEmpleados(); // Ejecuta la función de obtención de datos.
+    }, []); // Solo se ejecuta una vez al montar el componente.
+    // #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+    // #region + + + + + + + + + + + + + [ Métodos ] + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+
+    // Función para manejar la búsqueda de repuestos
+    const handleSearch = (value) => {
+        // Verifica si el valor de búsqueda no está vacío
+        if (value) {
+            // Filtra la lista de repuestos según el nombre y actualiza las opciones con los resultados encontrados
+            const filtered = dataFirebase
+                .filter(item => item.NombreRepuesto.toLowerCase().includes(value.toLowerCase())) // Filtra por nombre de repuesto, ignorando mayúsculas/minúsculas
+                .map(item => ({ value: item.NombreRepuesto })); // Mapea los resultados a un formato que contiene solo el nombre del repuesto
+            setOptions(filtered); // Actualiza el estado de opciones con los resultados filtrados
+        } else {
+            // Si el valor de búsqueda está vacío, limpia las opciones
+            setOptions([]);
+        }
+    };
+
+    // Función que maneja la selección de un repuesto
+    const onSelect = (value) => {
+        // Cuando un usuario selecciona un valor de la lista, se guarda el valor seleccionado
+        setSelectedOption(value);
+    };
+
+    // Función que abre el modal con los detalles de los repuestos asociados a la orden de servicio
+    const showModal = async () => {
+        // Resetea los campos del formulario antes de mostrar el modal
+        form.resetFields();
+        try {
+            // Obtiene los repuestos asociados a la orden de servicio desde la subcolección
+            const subcollectionRef = collection(db, `ListaOrdenServicio/${record.id}/ListaRepuestos`);
+            const subcollectionSnapshot = await getDocs(subcollectionRef);
+
+            let repuestosList = [];
+            // Recopila los datos de los repuestos en un arreglo
+            subcollectionSnapshot.forEach(subDoc => {
+                repuestosList.push({
+                    idRepuesto: subDoc.id,
+                    ...subDoc.data() // Desestructura los datos del documento para agregarlos al arreglo
+                });
+            });
+
+            setDataOrdenServicio(repuestosList); // Actualiza el estado con la lista de repuestos
+        } catch (error) {
+            // Muestra el error si ocurre
+            console.error("Error fetching subcollection data: ", error);
+        }
+        // Establece el costo total de los repuestos y muestra el modal
+        setCostoTotal(record.MontoRepuestos);
+        setIsModalVisible(true);
+    };
+
+    // Función para cerrar el modal sin realizar cambios
+    const handleCancel = () => {
+        // Cambia el estado para cerrar el modal
+        setIsModalVisible(false);
+    };
+
+    // Función para confirmar y enviar el formulario
+    const handleOk = () => {
+        // Al hacer clic en "OK", se envía el formulario
+        form.submit();
+    };
+
+    // Función que se ejecuta al finalizar el formulario y actualizar los datos
+    const handleFinish = async (values) => {
+        // Muestra un mensaje de carga mientras se actualiza la orden de servicio
+        const hide = message.loading('Actualizando orden de servicio...', 0);
+        const id = record.id; // Obtiene el ID de la orden de servicio a actualizar
+        try {
+            // Actualiza los datos de la orden de servicio en Firestore
+            const docRef = doc(db, "ListaOrdenServicio", id); // Referencia al documento de la orden de servicio
+            await updateDoc(docRef, {
+                CodOrden: values.codOrden,
+                NombreCliente: nombre,
+                TecnicoEncargado: values.tecnicoEncargado,
+                FechaReparacion: formatearFecha(values.fechaReparacion.toDate()), // Convierte las fechas
+                FechaEntrega: formatearFecha(values.fechaEntrega.toDate()),
+                MontoServicio: parseInt(values.costoServicio), // Convierte a número
+                MontoRepuestos: costoTotal, // Asigna el total de repuestos
+                Garantia: values.garantia, // Asigna la garantía
+            });
+
+            // Para actualizar la subcolección de repuestos asociados
+            const subcollectionRef = collection(db, `ListaOrdenServicio/${docRef.id}/ListaRepuestos`);
+
+            // Elimina los documentos existentes en la subcolección de repuestos
+            const existingDocsSnapshot = await getDocs(subcollectionRef);
+            const batch = writeBatch(db); // Crea un batch para eliminar todos los documentos en la subcolección
+
+            existingDocsSnapshot.forEach(docSnapshot => {
+                batch.delete(docSnapshot.ref); // Elimina cada documento en la subcolección
+            });
+
+            await batch.commit(); // Ejecuta el batch de eliminación
+
+            // Añadir los nuevos repuestos a la subcolección
+            await Promise.all(
+                dataOrdenServicio.map(async (repuesto) => {
+                    await addDoc(subcollectionRef, repuesto); // Agrega cada repuesto a la subcolección
+                })
+            );
+
+            hide(); // Oculta el mensaje de carga
+            ModalExito(); // Muestra un modal de éxito si la operación fue exitosa
+        } catch (error) {
+            hide(); // Oculta el mensaje de carga si ocurre un error
+            console.error("Error updating document: ", error); // Muestra el error en la consola
+        }
+    };
+
+    // Función para formatear la fecha en formato YYYY-MM-DD
+    function formatearFecha(fechaString) {
+        // Convierte la fecha string en un objeto Date
+        const fecha = new Date(fechaString);
+
+        // Extrae el día, mes y año
+        const dia = fecha.getDate().toString().padStart(2, '0'); // Asegura que el día tenga dos dígitos
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
+        const año = fecha.getFullYear(); // Obtiene el año completo
+
+        // Devuelve la fecha en el formato 'YYYY-MM-DD'
+        return `${año}-${mes}-${dia}`;
+    }
+
+    // Función para agregar un repuesto a la lista de la orden de servicio
+    const agregarLista = () => {
+        // Si hay opciones disponibles y una opción seleccionada, agrega el repuesto
+        if (options.length > 0 && selectedOption) {
+            // Filtra los datos de repuestos que coinciden con la opción seleccionada
+            const filteredData = dataFirebase.filter(item => item.NombreRepuesto === selectedOption);
+
+            // Filtra los elementos nuevos que no están ya en la lista de orden de servicio
+            const newItems = filteredData.filter(item =>
+                !dataOrdenServicio.some(existingItem => existingItem.id === item.id)
+            );
+
+            // Si hay repuestos nuevos, los agrega a la lista de orden de servicio
+            if (newItems.length > 0) {
+                setDataOrdenServicio([...dataOrdenServicio, ...newItems]);
+            }
+        }
+    };
+
+    // Función para mostrar una confirmación antes de eliminar un repuesto
     const confirmDelete = (record) => {
+        // Muestra un modal de confirmación para eliminar el repuesto
         confirm({
-            title: '¿Estás seguro de eliminar este respuesto?',
+            title: '¿Estás seguro de eliminar este repuesto?',
             content: 'Esta acción no se puede deshacer.',
-            okText: 'Eliminar',
-            okType: 'danger',
-            cancelText: 'Cancelar',
+            okText: 'Eliminar', // Texto del botón de confirmación
+            okType: 'danger', // Tipo de botón (peligroso)
+            cancelText: 'Cancelar', // Texto del botón de cancelación
             onOk() {
-                //console.log('Eliminar:', record);
+                // Si se confirma, llama a la función para eliminar el repuesto
                 handleDelete(record.id);
             },
             onCancel() { },
         });
     };
 
+
+
+    // Función para eliminar un repuesto de la lista de la orden de servicio
     const handleDelete = (id) => {
+        // Filtra los repuestos eliminando el que tiene el id especificado
         const updatedOrdenServicio = dataOrdenServicio.filter(item => item.id !== id);
+
+        // Calcula el costo total de los repuestos restantes en la lista
         const total = updatedOrdenServicio.reduce((acc, repuesto) => {
             return acc + (repuesto.PrecioRepuesto * repuesto.cantidadSeleccionada);
         }, 0);
+
+        // Actualiza el estado con los nuevos datos de la lista y el costo total
         setCostoTotal(total);
         setDataOrdenServicio(updatedOrdenServicio);
     };
 
-
+    // Función para incrementar o decrementar la cantidad seleccionada de un repuesto
     const handleIncrement = (key, incrementValue) => {
+        // Actualiza la cantidad seleccionada del repuesto especificado
         const updatedOrdenServicio = dataOrdenServicio.map((repuesto) => {
             if (repuesto.id === key) {
+                // Calcula la nueva cantidad, asegurándose de que esté dentro del rango permitido
                 const newNuevaCantidad = repuesto.cantidadSeleccionada + incrementValue;
                 const cantidadFinal = Math.min(Math.max(newNuevaCantidad, 0), repuesto.Cantidad);
                 return { ...repuesto, cantidadSeleccionada: cantidadFinal };
             }
             return repuesto;
         });
+
+        // Actualiza el estado con la nueva lista de repuestos
         setDataOrdenServicio(updatedOrdenServicio);
+
+        // Calcula el costo total de los repuestos actualizados
         const total = updatedOrdenServicio.reduce((acc, repuesto) => {
             return acc + (repuesto.PrecioRepuesto * repuesto.cantidadSeleccionada);
         }, 0);
+
+        // Actualiza el costo total
         setCostoTotal(total);
-
     };
 
-    useEffect(() => {
-        handleIncrement();
-    }, [costoTotal]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const querySnapshot = await getDocs(collection(db, "ListaRepuestos"));
-            const dataList = querySnapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id,
-                cantidadSeleccionada: 0,
-            }));
-            // console.log(dataList);
-            setDataFirebase(dataList);
-        };
-        fetchData();
-        const fetchDataEmpleados = async () => {
-            const querySnapshot = await getDocs(collection(db, "ListaEmpleados"));
-            const dataList = querySnapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id,
-                // cantidadSeleccionada: 0,
-            }));
-            // console.log(dataList);
-            setDataEmpleados(dataList);
-        };
-        fetchDataEmpleados();
-    }, []);
-
+    // Función que maneja los cambios de la tabla, como paginación y filtros
     const onChange = (pagination, filters, sorter, extra) => {
-        //console.log('params', pagination, filters, sorter, extra);
+        // Aquí se podrían manejar las actualizaciones relacionadas con la paginación y filtros
+        // console.log('params', pagination, filters, sorter, extra);
     };
 
+    // Función que muestra un modal de éxito al actualizar los datos de la orden de servicio
     const ModalExito = () => {
         Modal.success({
-            title: 'Actualizar datos del orden de servicio',
-            content: 'Los datos del orden de servicio se han actualizado correctamente.',
-            onOk: () => { actualizar("Si"); setDataOrdenServicio([]); setIsModalVisible(false); }
+            title: 'Actualizar datos del orden de servicio', // Título del modal
+            content: 'Los datos del orden de servicio se han actualizado correctamente.', // Mensaje de éxito
+            onOk: () => {
+                actualizar("Si");  // Ejecuta la función de actualización si el usuario acepta
+                setDataOrdenServicio([]); // Limpia la lista de orden de servicio
+                setIsModalVisible(false); // Cierra el modal
+            }
         });
-    }
+    };
+    // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
+    // Valores iniciales para el formulario de la orden de servicio
     const initialValues = {
         codOrden: record.CodOrden,
         nombre: record.NombreCliente,
