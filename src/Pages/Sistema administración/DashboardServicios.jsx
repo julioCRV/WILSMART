@@ -73,22 +73,33 @@ const columnsCaja = [
 ];
 
 const DashboardServicios = () => {
+    // Estado para almacenar los datos relacionados con las órdenes.
     const [dataOrden, setDataOrden] = useState([]);
-    const [dataCajaControl, setDataCajaControl] = useState([]);
+    // Estado para gestionar los datos del ranking de productos.
     const [dataRankingProductos, setDataRankingProductos] = useState([]);
+    // Estado para almacenar la información de los usuarios.
     const [dataUsuarios, setDataUsuario] = useState([]);
+    // Estado para almacenar la lista con información de cada repuesto.
     const [data, setData] = useState([]);
-    const [numeroVentas, setNumeroVentas] = useState(0);
-    const [numeroProductosVendidos, setNumeroProductosVendidods] = useState(0);
-
+    // Estado para manejar los datos relacionados con el inventario o caja de repuestos.
     const [cajaRepuestos, setCajaRepuestos] = useState([]);
 
+
+    // #region - - - - - - - - - - - - [ Efectos iniciales de carga y dependencias ( useEffects ) ] - - - - - - - - - - - - - - - - - 
     useEffect(() => {
+
+        // Define una función asíncrona para obtener los datos relacionados con las órdenes de servicio y sus repuestos.
         const fetchReportesVentas = async () => {
+            // Obtiene todos los documentos de la colección "ListaOrdenServicio" de la base de datos.
             const querySnapshot = await getDocs(collection(db, "ListaOrdenServicio"));
+
+            // Mapea cada documento de "ListaOrdenServicio" y obtiene los datos de la subcolección "ListaRepuestos".
             const dataList = await Promise.all(querySnapshot.docs.map(async doc => {
+                // Referencia a la subcolección "ListaRepuestos" dentro de cada documento de "ListaOrdenServicio".
                 const listaRepuestosRef = collection(db, `ListaOrdenServicio/${doc.id}/ListaRepuestos`);
+                // Obtiene todos los documentos de la subcolección "ListaRepuestos".
                 const listaRepuestosSnapshot = await getDocs(listaRepuestosRef);
+                // Mapea los documentos de "ListaRepuestos" para incluir su contenido y su ID.
                 const ListaRepuestos = listaRepuestosSnapshot.docs.map(repuestoDoc => ({
                     ...repuestoDoc.data(),
                     id: repuestoDoc.id
@@ -99,11 +110,12 @@ const DashboardServicios = () => {
                 };
             }));
 
+            // Combina todas las listas de repuestos de los documentos en un solo arreglo.
             const allRepuestos = dataList.reduce((acc, item) => {
                 return acc.concat(item.ListaRepuestos);
             }, []);
-            
-            // Contar la cantidad vendida de cada repuesto y agregar el precio unitario
+
+            // Calcula la cantidad total seleccionada y guarda el precio unitario para cada tipo de repuesto.
             const productCount = allRepuestos.reduce((acc, repuesto) => {
                 if (!acc[repuesto.NombreRepuesto]) {
                     acc[repuesto.NombreRepuesto] = {
@@ -115,9 +127,7 @@ const DashboardServicios = () => {
                 return acc;
             }, {});
 
-            // console.log(productCount);
-
-            // Convertir el objeto en un array de objetos para ordenarlo
+            // Convierte el objeto con el conteo de productos en un arreglo y lo ordena por cantidad vendida de mayor a menor.
             const ranking = Object.entries(productCount)
                 .map(([NombreRepuesto, data]) => ({
                     NombreRepuesto,
@@ -126,81 +136,119 @@ const DashboardServicios = () => {
                 }))
                 .sort((a, b) => b.cantidad - a.cantidad);
 
+            // Actualiza el estado con el ranking de productos según la cantidad vendida.
             setDataRankingProductos(ranking);
+
         };
 
+        // Define una función asíncrona para obtener los datos relacionados con las órdenes de servicio y sus repuestos.
         const fetchRepuestos = async () => {
+            // Obtiene todos los documentos de la colección "ListaOrdenServicio".
             const querySnapshot = await getDocs(collection(db, "ListaOrdenServicio"));
+
+            // Mapea cada documento de "ListaOrdenServicio" y obtiene los datos de la subcolección "ListaRepuestos".
             const dataList = await Promise.all(querySnapshot.docs.map(async doc => {
+                // Referencia a la subcolección "ListaRepuestos" dentro de cada documento de "ListaOrdenServicio".
                 const listaRepuestosRef = collection(db, `ListaOrdenServicio/${doc.id}/ListaRepuestos`);
+
+                // Obtiene todos los documentos de la subcolección "ListaRepuestos".
                 const listaRepuestosSnapshot = await getDocs(listaRepuestosRef);
+
+                // Mapea los documentos de "ListaRepuestos" para incluir su contenido y su ID.
                 const ListaRepuestos = listaRepuestosSnapshot.docs.map(repuestoDoc => ({
                     ...repuestoDoc.data(),
                     id: repuestoDoc.id
                 }));
 
+                // Devuelve los datos del documento actual junto con su lista de repuestos.
                 return {
                     ...doc.data(),
                     ListaRepuestos
                 };
             }));
 
+            // Actualiza el estado con la lista completa de datos obtenidos.
             setData(dataList);
+
+            // También actualiza el estado de las órdenes con la misma lista de datos.
             setDataOrden(dataList);
 
+            // Calcula diferentes métricas relacionadas con las órdenes de servicio y los repuestos.
             const cajaRepuestos = {
+                // Suma el total de reparaciones considerando el monto de los repuestos y el servicio.
                 TotalReparaciones: dataList.reduce((total, item) => total + item.MontoRepuestos + item.MontoServicio, 0),
+
+                // Suma el costo total de la mano de obra de todas las órdenes.
                 TotalCostoMano: dataList.reduce((total, item) => total + item.MontoServicio, 0),
+
+                // Calcula la ganancia total de los repuestos restando el costo de compra al precio de venta.
                 TotalGananciaRepuestos: dataList.reduce((total, item) => {
                     const totalRepuestos = item.ListaRepuestos.reduce((subTotal, repuesto) => {
                         return subTotal + (parseFloat(repuesto.PrecioRepuesto) * repuesto.cantidadSeleccionada - parseFloat(repuesto.PrecioCompra) * repuesto.cantidadSeleccionada);
                     }, 0);
                     return total + totalRepuestos;
                 }, 0),
+
+                // Cuenta la cantidad total de órdenes de servicio.
                 CantidadOrdenServicios: dataList.length,
+
+                // Cuenta la cantidad total de repuestos vendidos en todas las órdenes.
                 CantidadRepuestos: dataList.reduce((total, item) => {
                     const totalRepuestos = item.ListaRepuestos.reduce((subTotal, repuesto) => {
-                        return subTotal + repuesto.cantidadSeleccionada
+                        return subTotal + repuesto.cantidadSeleccionada;
                     }, 0);
-                    return total + totalRepuestos
+                    return total + totalRepuestos;
                 }, 0),
             };
 
-            setCajaRepuestos(cajaRepuestos) 
+            // Actualiza el estado con las métricas calculadas.
+            setCajaRepuestos(cajaRepuestos);
         };
 
+        // Define una función asíncrona para obtener los datos de los usuarios registrados en la base de datos.
         const fetchUsuarios = async () => {
+            // Obtiene todos los documentos de la colección "ListaClientes".
             const querySnapshot = await getDocs(collection(db, "ListaClientes"));
+
+            // Mapea cada documento de "ListaClientes" para obtener sus datos y su ID.
             const dataList = querySnapshot.docs.map(doc => ({
-              ...doc.data(),
-              id: doc.id
+                ...doc.data(),
+                id: doc.id
             }));
-      
+
+            // Clasifica los usuarios en activos e inactivos con base en el campo "Estado".
             const usuariosClasificados = dataList.reduce((acc, item) => {
-              if (item.Estado === "Activo") {
-                acc.usuariosActivos += 1;
-              } else if (item.Estado === "Inactivo") {
-                acc.usuariosInactivos += 1;
-              }
-              return acc;
+                if (item.Estado === "Activo") {
+                    acc.usuariosActivos += 1; // Incrementa el contador de usuarios activos.
+                } else if (item.Estado === "Inactivo") {
+                    acc.usuariosInactivos += 1; // Incrementa el contador de usuarios inactivos.
+                }
+                return acc;
             }, { usuariosActivos: 0, usuariosInactivos: 0 });
-            // console.log(usuariosClasificados);
+
+            // Actualiza el estado con los datos clasificados de usuarios.
             setDataUsuario(usuariosClasificados);
-          };
+        };
 
-        fetchRepuestos();
-        fetchUsuarios();
-        fetchReportesVentas();
+        // Llama a las funciones para obtener los datos necesarios.
+        fetchRepuestos(); // Obtiene los datos de repuestos y calcula métricas relacionadas.
+        fetchUsuarios(); // Obtiene los datos de usuarios y los clasifica según su estado.
+        fetchReportesVentas(); // Obtiene los datos relacionados con las ventas
+
     }, []);
+    // #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-    // console.log(dataCajaControl);
-
+    // #region + + + + + + + + + + + + + [ Métodos ] + + + + + + + + + + + + + + + + + + + +
+    // Procesa los datos para crear una estructura adecuada para el gráfico de líneas.
     const lineData = data.reduce((acc, producto) => {
+        // Busca si ya existe una entrada para la fecha actual en el acumulador.
         const existingEntry = acc.find(entry => entry.Fecha === producto.Fecha);
-    
+
         if (existingEntry) {
+            // Si ya existe, incrementa el contador de la cantidad para esa fecha.
             existingEntry.cantidad += 1;
         } else {
+            // Si no existe, agrega una nueva entrada con la fecha y la cantidad inicial de 1.
             acc.push({
                 Fecha: producto.Fecha,
                 cantidad: 1
@@ -209,20 +257,23 @@ const DashboardServicios = () => {
         return acc;
     }, []);
 
+    // Ordena los datos del gráfico por fecha para asegurar una secuencia cronológica.
     lineData.sort((a, b) => new Date(a.Fecha) - new Date(b.Fecha));
 
+    // Configuración del gráfico de líneas.
     const config = {
-        data: lineData,
-        xField: 'Fecha',
-        yField: 'cantidad',
-        smooth: true,
+        data: lineData, // Datos procesados para el gráfico.
+        xField: 'Fecha', // Campo para el eje X (fechas).
+        yField: 'cantidad', // Campo para el eje Y (cantidad).
+        smooth: true, // Suaviza las líneas del gráfico.
 
-        responsive: true,
-        // Opciones para ajustar el tamaño del gráfico en diferentes dispositivos
-        autoFit: true,
-        height: 400, // Altura inicial del gráfico
-        padding: 'auto', // Espaciado automático para el gráfico
+        responsive: true, // Habilita la capacidad de respuesta para diferentes tamaños de pantalla.
+        autoFit: true, // Ajusta automáticamente el tamaño del gráfico al contenedor.
+        height: 400, // Define la altura inicial del gráfico.
+        padding: 'auto', // Aplica un espaciado automático alrededor del gráfico.
     };
+
+    // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
@@ -320,22 +371,18 @@ const DashboardServicios = () => {
                         </Col>
                     </Row>
 
-
-                    {/* <Row gutter={16}> */}
                     <Col xs={24} sm={24} md={24} lg={24}>
                         <Card title="Tendencias de ordenes de servicio">
                             <Line {...config} />
                         </Card>
                     </Col>
-                    {/* </Row> */}
 
-                    {/* <Row gutter={16}> */}
                     <Col xs={24} sm={24} md={24} lg={24}>
                         <Card title="Repuestos por demanda">
                             <Table columns={columns} dataSource={dataRankingProductos} pagination={false} scroll={{ x: 'max-content' }} />
                         </Card>
                     </Col>
-                    {/* </Row> */}
+
                     <Col xs={24} sm={24} md={24} lg={24}>
                         <Card title="Estados de orden de servicios">
                             <Table columns={columnsCaja} dataSource={dataOrden} pagination={false} scroll={{ x: 'max-content' }} />

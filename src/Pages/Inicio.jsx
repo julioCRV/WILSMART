@@ -4,21 +4,32 @@ import { Card, Typography, Row, Col } from 'antd';
 const { Title, Paragraph } = Typography;
 import './Inicio.css'
 
-const HomePage = () => {
+// Componente funcional que representa la página de inicio de la plataforma
+const PaginaInicio = () => {
   return (
-    <div >
+    <div>
+      {/* Imagen del logo principal con un estilo básico */}
       <img src="/assets/logoW1.jpg" alt="Imagen de bienvenida" style={{ width: '100px' }} />
+      
+      {/* Título de bienvenida que describe la utilidad de la plataforma */}
       <Title level={4}>
-        ¡Bienvenido a WilSmart! <br /> Tu plataforma personalizada para impulsar la gestión de nuestra tienda y ofrecer el mejor servicio <br /> a nuestros clientes.
+        ¡Bienvenido a WilSmart! <br /> 
+        Tu plataforma personalizada para impulsar la gestión de nuestra tienda 
+        y ofrecer el mejor servicio <br /> a nuestros clientes.
       </Title>
 
+      {/* Contenedor que organiza las opciones principales de la página */}
       <div className='cardDisenio'>
+        {/* Distribución en filas y columnas usando el sistema de grillas de Ant Design */}
         <Row gutter={16}>
+          
+          {/* Primera opción: Sistema de Ventas */}
           <Col md={8}>
-            {/* <Link to="/sistema-ventas"> */}
             <Link to="/iniciar-sesión/ventas">
-              <Card title="Sistema de Ventas" >
+              {/* Tarjeta con título e imagen representativa */}
+              <Card title="Sistema de Ventas">
                 <img src="/assets/logoVentas.png" alt="Ventas" style={{ maxWidth: '50%', height: 'auto' }} />
+                {/* Descripción del sistema */}
                 <Paragraph>
                   Gestiona tus compras y ventas de manera eficiente con nuestro sistema de ventas.
                 </Paragraph>
@@ -26,10 +37,10 @@ const HomePage = () => {
             </Link>
           </Col>
 
+          {/* Segunda opción: Sistema de Administración */}
           <Col md={8}>
-            {/* <Link to="/sistema-administración"> */}
             <Link to="/iniciar-sesión/administración">
-              <Card title="Sistema de Administración" >
+              <Card title="Sistema de Administración">
                 <img src="/assets/logoAdministracion.png" alt="Administración" style={{ maxWidth: '50%', height: 'auto' }} />
                 <Paragraph>
                   Controla y organiza tus procesos administrativos con nuestro sistema especializado.
@@ -38,10 +49,10 @@ const HomePage = () => {
             </Link>
           </Col>
 
+          {/* Tercera opción: Sistema de Servicios */}
           <Col xs={24} sm={24} md={8}>
-            {/* <Link to="/sistema-servicios"> */}
             <Link to="/iniciar-sesión/servicios">
-              <Card title="Sistema de Servicios" >
+              <Card title="Sistema de Servicios">
                 <img src="/assets/logoServicios.png" alt="Servicios" style={{ maxWidth: '40%', height: 'auto' }} />
                 <Paragraph>
                   Ofrece servicios de alta calidad a tus clientes utilizando nuestro sistema de servicios.
@@ -51,23 +62,8 @@ const HomePage = () => {
           </Col>
         </Row>
       </div>
-
     </div>
   );
 };
 
-export default HomePage;
-
-
-{/* import { Link } from 'react-router-dom';
-
-// ...
-
-<Link to="/ruta-de-ventas">
-  <Card title="Sistema de Ventas" style={{ width: 300, margin: '15px', backgroundColor: '#f0f0f0' }}>
-    {/* Contenido de la card de Ventas */}
-//   </Card>
-// </Link>
-
-// ... */}
-
+export default PaginaInicio;

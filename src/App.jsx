@@ -12,7 +12,7 @@ import IniciarSesionV from './Pages/Sistema ventas/IniciarSesionVentas';
 import IniciarSesionS from './Pages/Sistema servicios/IniciarSesionServicios';
 import Recargar from './components/Recargar'
 
-//  V  E  N  T  A  S
+//  R U T A S    D E    V  E  N  T  A  S
 import NavbarSisVentas from './components/NavbarSistemaVentas';
 import InicioSisVentas from './components/InicioVentas';
 import RegistrarProducto from './Pages/Sistema ventas/RegistrarProducto';
@@ -24,7 +24,7 @@ import ReporteVentas from './Pages/Sistema ventas/ReporteVentas';
 import ModalAperturaCaja from './Pages/Sistema ventas/ModalAperturaCaja';
 import EstadoCaja from './Pages/Sistema ventas/EstadoCaja';
 
-//  A  D  M  I  N  I  S  T  R  A  C  I  Ó  N 
+//  R U T A S    D E    A  D  M  I  N  I  S  T  R  A  C  I  Ó  N 
 import NavbarSisAdministracion from './components/NavbarSistemaAdministracion';
 import InicioSisAdministracion from './components/InicioAdministracion';
 import RegistroEmpleado from './Pages/Sistema administración/RegistroEmpleado';
@@ -33,7 +33,7 @@ import MostrarEmpleado from './Pages/Sistema administración/MostrarPersonal';
 import MostrarDashboard from './Pages/Sistema administración/MostrarDashboard';
 import GenerarCredenciales from './Pages/Sistema administración/GenerarCredenciales';
 
-//  S  E  R  V  I  C  I  O  S
+//  R U T A S    D E    S  E  R  V  I  C  I  O  S
 import NavbarSisServicios from './components/NavbarSistemaServicios';
 import InicioSisServicios from './components/InicioServicios';
 import RegistrarRepuesto from './Pages/Sistema servicios/RegistrarRepuesto';
@@ -49,78 +49,103 @@ import MostrarClientesPerdidos from './Pages/Sistema servicios/MostrarClientesPe
 import MostrarRegistrarClientes from './Pages/Sistema servicios/RegistrarClienteNuevo';
 
 function App() {
+  // Estado `rol`: Guarda el rol del usuario. Se inicializa con el valor de 'saveRol' almacenado en sessionStorage (si existe).
   const [rol, setRol] = useState(sessionStorage.getItem('saveRol'));
+  // Estado `nombre`: Almacena el nombre del usuario. Inicialmente se deja vacío hasta que el usuario inicie sesión.
   const [nombre, setNombre] = useState("");
-  const [respuest, setRespuesta] = useState("")
+  // Estado `respuest`: Guarda el estado de respuesta (o confirmación) del usuario en ciertas acciones.
+  // Puede utilizarse para activar o modificar funcionalidades en el componente según la respuesta.
+  const [respuest, setRespuesta] = useState("");
+  // Estado `mostrarRutas`: Controla la visibilidad de ciertas rutas o componentes.
+  // Por defecto es `false` y se establece en `true` cuando se cumplen condiciones específicas.
   const [mostrarRutas, setMostrarRutas] = useState(false);
 
+  // #region - - - - - - - - - - - - [ Efectos iniciales de carga y dependencias ( useEffects ) ] - - - - - - - - - - - - - - - - - 
+  // --> Cargar rol desde sessionStorage al montar el componente
   useEffect(() => {
+    // Al iniciar, se obtiene el rol guardado en el sessionStorage bajo la clave 'saveRol'
+    // y se actualiza el estado `rol` del componente.
     setRol(sessionStorage.getItem('saveRol'));
   }, [rol]);
 
-  const handleLogin = (userData) => {
-    setRol(userData.sistemaAsignado);
-    setNombre(userData.Nombre);
-    // if (sessionStorage.getItem('saveRol') == null) {
-    //   sessionStorage.setItem('saveRol', userData.rol)
-    // }
-  };
-
-  // const handleLoginVentas = (userData) => {
-  //   setRol(userData.sistemaAsignado);
-  //   setMostrarRutas(true);
-  //   // if (sessionStorage.getItem('saveRol') == null) {
-  //   //   sessionStorage.setItem('saveRol', userData.rol)
-  //   // }
-  // };
-
-// console.log(rol);
-
-  const handleLogout = (userData) => {
-    // console.log(userData);
-    // console.log('lo logro señor');
-    setRol(null);
-    sessionStorage.removeItem('saveRol');
-    sessionStorage.removeItem('id');
-    sessionStorage.removeItem('nombre')
-    // if (sessionStorage.getItem('saveRol') == null) {
-    //   sessionStorage.setItem('saveRol', userData.rol)
-    // }
-  };
-
-  const confirmacion = (estado) => {
-    setRespuesta(estado);
-  };
-
+  // --> Obtener y filtrar documentos en función de la respuesta
   useEffect(() => {
+    // Este efecto se activa cuando la variable `respuest` cambia.
     if (respuest === "si") {
+      // Si `respuest` es "si", muestra rutas adicionales activando `setMostrarRutas`.
       setMostrarRutas(true);
+
+      // Función asincrónica para obtener los datos de la colección 'HistorialAperturaCaja'.
       const fetchData = async () => {
+        // Obtiene todos los documentos de la colección
         const querySnapshot = await getDocs(collection(db, "HistorialAperturaCaja"));
+        // Convierte los documentos en un arreglo de objetos con datos e ID.
         const dataList = querySnapshot.docs.map(doc => ({
           ...doc.data(),
           id: doc.id,
         }));
-
+        // Filtra la lista para obtener solo los documentos con Estado === true.
         const listSeleccionada = dataList.filter((item) => item.Estado === true);
+        // Guarda el ID del primer elemento en `sessionStorage` con la clave 'id'.
         sessionStorage.setItem('id', listSeleccionada[0].id);
       };
+
+      // Llama a la función `fetchData` para cargar los datos.
       fetchData();
     }
-    setRespuesta("")
+
+    // Resetea la variable `respuest` para evitar reactivaciones no deseadas del efecto.
+    setRespuesta("");
   }, [respuest]);
-// 
+
+  // ---> Verificar existencia de ID de caja para mostrar rutas
   useEffect(() => {
+    // Obtiene el ID guardado en `sessionStorage` bajo la clave 'id'.
     const idCaja = sessionStorage.getItem('id');
+
     if (idCaja != null) {
+      // Si el ID existe, activa la visualización de rutas adicionales.
       setMostrarRutas(true);
     } else {
+      // Si no hay un ID, revisa si hay un nombre guardado en `sessionStorage`.
       const nombre = sessionStorage.getItem('nombre');
       if (nombre != null) {
+        // En caso de que exista un nombre, puede usarse para mostrar rutas
+        // (la línea está comentada pero es una opción futura).
         // setMostrarRutas(true);
       }
     }
   }, []);
+  // #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+  // #region + + + + + + + + + + + + + [ Métodos de manejo de sesión y confirmación de usuario ] + + + + + + + + + + + + + + + + + + + +
+  // Método `handleLogin`: Configura el rol y el nombre del usuario al iniciar sesión
+  const handleLogin = (userData) => {
+    // Almacena en el estado `rol` el sistema asignado al usuario
+    setRol(userData.sistemaAsignado);
+    // Almacena en el estado `nombre` el nombre del usuario
+    setNombre(userData.Nombre);
+  };
+
+  // Método `handleLogout`: Limpia el estado y elimina los datos de la sesión al cerrar sesión
+  const handleLogout = () => {
+    // Elimina el rol del usuario del estado
+    setRol(null);
+    // Remueve datos específicos de `sessionStorage` relacionados con el usuario
+    sessionStorage.removeItem('saveRol'); // Elimina el rol guardado en `sessionStorage`
+    sessionStorage.removeItem('id'); // Elimina el ID guardado en `sessionStorage`
+    sessionStorage.removeItem('nombre'); // Elimina el nombre guardado en `sessionStorage`
+  };
+
+  // Método `confirmacion`: Actualiza el estado `respuest` con el estado proporcionado
+  const confirmacion = (estado) => {
+    // Cambia el valor de `respuest` según el estado recibido
+    setRespuesta(estado);
+  };
+
+  // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
+
 
   return (
     <div className='App'>
@@ -189,18 +214,23 @@ function App() {
   );
 }
 
+// Componente `SistemaVentas`
+// Este componente representa el sistema de ventas de la aplicación.
+// Muestra el navbar específico para ventas y define rutas para las diferentes vistas de ventas.
 function SistemaVentas({ logout }) {
+
+  // `handleLogout`: Maneja el cierre de sesión para el sistema de ventas.
+  // Llama a la función `logout` pasada como prop, pasando el rol del usuario como parámetro.
   const handleLogout = (userData) => {
-    // console.log(userData);
     logout(userData.rol);
-    // if (sessionStorage.getItem('saveRol') == null) {
-    //   sessionStorage.setItem('saveRol', userData.rol)
-    // }
   };
 
   return (
     <div>
+      {/* NavbarSisVentas: Navbar específico para el sistema de ventas, recibe la función `handleLogout` para cerrar sesión */}
       <NavbarSisVentas logout={handleLogout} />
+
+      {/* Definición de rutas específicas para el sistema de ventas */}
       <Routes>
         <Route path='/' element={<InicioSisVentas />} />
         <Route path='/registrar-producto' element={<RegistrarProducto />}></Route>
@@ -211,23 +241,30 @@ function SistemaVentas({ logout }) {
         <Route path='/mostrar-reportes' element={<ReporteVentas />}></Route>
         <Route path='/estado-caja' element={<EstadoCaja />}></Route>
         <Route path='/recargar' element={<Recargar />}></Route>
+
+        {/* Ruta comodín: Redirige cualquier ruta desconocida a la página de inicio */}
         <Route path='*' element={<Navigate to="/" />} />
       </Routes>
     </div>
   );
 }
 
+// Componente `SistemaAdministracion`
+// Este componente representa el sistema de administración de la aplicación.
+// Muestra el navbar específico para administración y define rutas para las vistas de administración.
 function SistemaAdministracion({ logout }) {
+
+  // `handleLogout`: Maneja el cierre de sesión para el sistema de administración.
   const handleLogout = (userData) => {
-    // console.log(userData);
     logout(userData.rol);
-    // if (sessionStorage.getItem('saveRol') == null) {
-    //   sessionStorage.setItem('saveRol', userData.rol)
-    // }
   };
+
   return (
     <div>
+      {/* NavbarSisAdministracion: Navbar específico para el sistema de administración */}
       <NavbarSisAdministracion logout={handleLogout} />
+
+      {/* Definición de rutas específicas para el sistema de administración */}
       <Routes>
         <Route path='/' element={<InicioSisAdministracion />} />
         <Route path='/registro-empleado' element={<RegistroEmpleado />}></Route>
@@ -235,23 +272,30 @@ function SistemaAdministracion({ logout }) {
         <Route path='/editar-empleado' element={<EditarEmpleado />}></Route>
         <Route path='/mostrar-dashboard' element={<MostrarDashboard />}></Route>
         <Route path='/generar-credenciales' element={<GenerarCredenciales />}></Route>
+
+        {/* Ruta comodín: Redirige cualquier ruta desconocida a la página de inicio */}
         <Route path='*' element={<Navigate to="/" />} />
       </Routes>
     </div>
   );
 }
 
+// Componente `SistemaServicios`
+// Este componente representa el sistema de servicios de la aplicación.
+// Muestra el navbar específico para servicios y define rutas para las vistas de servicios.
 function SistemaServicios({ logout }) {
-  // console.log("hhhhhhhhhhhhhhhhhhhhhh");
+
+  // `handleLogout`: Maneja el cierre de sesión para el sistema de servicios.
   const handleLogout = (userData) => {
-    // console.log(userData);
     logout(userData.rol);
-    // if (sessionStorage.getItem('saveRol') == null) {
-    // }
   };
+
   return (
     <div>
+      {/* NavbarSisServicios: Navbar específico para el sistema de servicios */}
       <NavbarSisServicios logout={handleLogout} />
+
+      {/* Definición de rutas específicas para el sistema de servicios */}
       <Routes>
         <Route path='/' element={<InicioSisServicios />} />
         <Route path='/registro-repuesto' element={<RegistrarRepuesto />}></Route>
@@ -265,11 +309,12 @@ function SistemaServicios({ logout }) {
         <Route path='/registrar-clientePerdido' element={<RegistrarClientePerdido />}></Route>
         <Route path='/mostrar-clientesPerdidos' element={<MostrarClientesPerdidos />}></Route>
         <Route path='/mostrar-registrarClientes' element={<MostrarRegistrarClientes />}></Route>
+
+        {/* Ruta comodín: Redirige cualquier ruta desconocida a la página de inicio */}
         <Route path='*' element={<Navigate to="/" />} />
       </Routes>
     </div>
   );
 }
-
 
 export default App

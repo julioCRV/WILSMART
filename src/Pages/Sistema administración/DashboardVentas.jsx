@@ -1,14 +1,12 @@
-import { Layout, Breadcrumb, Row, Col, Card, Statistic, Table, Button, Select } from 'antd';
+import { Layout, Row, Col, Card, Statistic, Table, Button, Select } from 'antd';
 import { Column, Line, Pie } from '@ant-design/charts';
-import { DollarOutlined, ShoppingCartOutlined, UserOutlined, BarChartOutlined, RiseOutlined, ConsoleSqlOutlined } from '@ant-design/icons';
+import { DollarOutlined, ShoppingCartOutlined, BarChartOutlined, RiseOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
-import ButtonGenerador from './GeneradorCVS';
 import dayjs from 'dayjs';
 import './MostrarDashboard.css';
 const { Option } = Select;
-
 
 const { Header, Content, Footer } = Layout;
 
@@ -173,146 +171,138 @@ const columnsProducto = [
   // },
 ];
 
-const columnVentas = [
-  {
-    title: 'Numero venta',
-    dataIndex: 'id',
-    key: 'name',
-    width: '100px',
-    render: (text, record, index) => `${index + 1}`,
-  },
-  {
-    title: 'Nombre encargado',
-    dataIndex: 'NombreEmpleado',
-    key: 'category',
-  },
-  {
-    title: 'Fecha',
-    dataIndex: 'Fecha',
-    key: 'category',
-    defaultSortOrder: 'descend',
-    sorter: (a, b) => dayjs(a.Fecha).unix() - dayjs(b.Fecha).unix(),
-  },
-  {
-    title: 'Hora',
-    dataIndex: 'Hora',
-    key: 'category',
-  },
-  {
-    title: 'Producto',
-    dataIndex: 'MontoInicialCaja',
-    render: (text) => `Bs   ${text}`,
-    key: 'sales',
-  },
-  {
-    title: 'Total ventas',
-    dataIndex: 'TotalVentas',
-    render: (text) => `Bs   ${text}`,
-    key: 'sales',
-  },
-];
-
 const DashboardVentas = () => {
   const [dataCaja, setDataCaja] = useState([]);
   const [dataCajaControl, setDataCajaControl] = useState([]);
   const [dataCajaControlOriginal, setDataCajaControlOriginal] = useState([]);
   const [dataRankingProductos, setDataRankingProductos] = useState([]);
-  const [dataUsuarios, setDataUsuario] = useState([]);
   const [data, setData] = useState([]);
   const [numeroVentas, setNumeroVentas] = useState(0);
   const [numeroProductosVendidos, setNumeroProductosVendidods] = useState(0);
   const [dataProductos, setDataProductos] = useState([]);
   const [dataProductosOriginal, setDataProductosOriginal] = useState([]);
-  const [dataVentas, setDataVentas] = useState([]);
 
+  // #region - - - - - - - - - - - - [ Efectos iniciales de carga y dependencias ( useEffects ) ] - - - - - - - - - - - - - - - - - 
   useEffect(() => {
+    // --> Define una función asíncrona para obtener los datos del historial de apertura de caja.
     const fetchCaja = async () => {
+      // Obtiene todos los documentos de la colección "HistorialAperturaCaja".
       const querySnapshot = await getDocs(collection(db, "HistorialAperturaCaja"));
+      // Mapea los documentos para obtener los datos y su ID.
       const dataList = querySnapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id
       }));
 
-      //Montos sumatorios para totales
+      // Calcula los montos sumatorios para las ventas y las ganancias.
       const cajaDinero = {
-        TotalVentas: dataList.reduce((total, item) => total + item.TotalVentas, 0),
-        TotalGanancias: dataList.reduce((total, item) => total + item.TotalGanancias, 0)
+        TotalVentas: dataList.reduce((total, item) => total + item.TotalVentas, 0), // Suma total de ventas.
+        TotalGanancias: dataList.reduce((total, item) => total + item.TotalGanancias, 0) // Suma total de ganancias.
       };
+
+      // Actualiza el estado con los totales calculados.
       setDataCaja(cajaDinero);
 
+      // Añade un total de ventas global al final de la lista de datos.
       dataList.push(getTotalVentas(dataList));
 
+      // Actualiza el estado con los datos de control de caja (incluyendo los totales).
       setDataCajaControl(dataList);
       setDataCajaControlOriginal(dataList);
     };
 
+
+    // --> Define una función asíncrona para obtener los reportes de ventas.
     const fetchReportesVentas = async () => {
+      // Obtiene todos los documentos de la colección "ReportesVentas".
       const querySnapshot = await getDocs(collection(db, "ReportesVentas"));
+      // Mapea los documentos de "ReportesVentas" y extrae los datos.
       const dataList = querySnapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id
       }));
-      setNumeroVentas(dataList.length)
+
+      // Actualiza el estado con el número total de ventas.
+      setNumeroVentas(dataList.length);
+
+      // Crea un array de productos combinando los productos de todos los reportes de ventas.
       const productosArray = dataList.map(item =>
         item.productos.map(producto => ({
           ...producto,
-          Fecha: item.Fecha
+          Fecha: item.Fecha // Añade la fecha de la venta a cada producto.
         }))
       ).flat();
 
+      // Actualiza el estado con el array de productos.
       setData(productosArray);
 
-      const totalProductosVendidos = productosArray.reduce((total, item) => total + item.CantidadVendida, 0)
-      setNumeroProductosVendidods(totalProductosVendidos)
+      // Calcula el total de productos vendidos sumando la cantidad de todos los productos.
+      const totalProductosVendidos = productosArray.reduce((total, item) => total + item.CantidadVendida, 0);
+      setNumeroProductosVendidods(totalProductosVendidos);
 
-
-      // Contar la cantidad vendida de cada producto y agregar el precio unitario
+      // Contabiliza la cantidad de cada producto vendido y agrega el precio unitario.
       const productCount = productosArray.reduce((acc, producto) => {
         if (!acc[producto.NombreProducto]) {
           acc[producto.NombreProducto] = {
             cantidad: 0,
-            PrecioUnitario: producto.PrecioUnitario
+            PrecioUnitario: producto.PrecioUnitario // Guarda el precio unitario para cada producto.
           };
         }
+        // Suma la cantidad vendida de cada producto.
         acc[producto.NombreProducto].cantidad += producto.CantidadVendida;
         return acc;
       }, {});
 
-      // Convertir el objeto en un array de objetos para ordenarlo
+      // Convierte el objeto en un array de objetos y los ordena según la cantidad vendida.
       const ranking = Object.entries(productCount)
         .map(([NombreProducto, data]) => ({
           NombreProducto,
           cantidad: data.cantidad,
-          PrecioUnitario: parseInt(data.PrecioUnitario) * data.cantidad
+          PrecioUnitario: parseInt(data.PrecioUnitario) * data.cantidad // Calcula el precio total por cantidad.
         }))
-        .sort((a, b) => b.cantidad - a.cantidad);
+        .sort((a, b) => b.cantidad - a.cantidad); // Ordena los productos de mayor a menor cantidad vendida.
 
+      // Actualiza el estado con el ranking de productos.
       setDataRankingProductos(ranking);
     };
 
+
+    // Define una función asíncrona para obtener los productos de la base de datos.
     const fetchProductos = async () => {
+      // Obtiene todos los documentos de la colección "ListaProductos".
       const querySnapshot = await getDocs(collection(db, "ListaProductos"));
+
+      // Mapea los documentos de "ListaProductos" y extrae los datos.
       const dataList = querySnapshot.docs.map(doc => ({
         ...doc.data(),
-        id: doc.id
+        id: doc.id // Agrega el id del documento a cada producto.
       }));
+
+      // Actualiza el estado con los datos de los productos obtenidos.
       setDataProductos(dataList);
+
+      // Guarda una copia original de los productos.
       setDataProductosOriginal(dataList);
     };
 
+    // Llama a las funciones para obtener productos, caja y reportes de ventas.
     fetchProductos();
     fetchCaja();
     fetchReportesVentas();
+
   }, []);
+  // #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  // console.log(dataCajaControl);
-
-  // Procesar los datos para el gráfico de línea
+  // #region + + + + + + + + + + + + + [ Métodos ] + + + + + + + + + + + + + + + + + + + +
+  // Procesa los datos para crear el gráfico de línea
   const lineData = data.reduce((acc, producto) => {
+    // Busca si ya existe una entrada con la misma fecha
     const existingEntry = acc.find(entry => entry.Fecha === producto.Fecha);
     if (existingEntry) {
+      // Si existe, suma la cantidad vendida
       existingEntry.CantidadVendida += producto.CantidadVendida;
     } else {
+      // Si no existe, agrega una nueva entrada con la fecha y cantidad vendida
       acc.push({
         Fecha: producto.Fecha,
         CantidadVendida: producto.CantidadVendida
@@ -321,13 +311,15 @@ const DashboardVentas = () => {
     return acc;
   }, []);
 
+  // Ordena los datos por fecha ascendente
   lineData.sort((a, b) => new Date(a.Fecha) - new Date(b.Fecha));
 
+  // Configura las opciones del gráfico de línea
   const config = {
-    data: lineData,
-    xField: 'Fecha',
-    yField: 'CantidadVendida',
-    smooth: true,
+    data: lineData, // Datos a mostrar en el gráfico
+    xField: 'Fecha', // Campo para el eje X (fecha)
+    yField: 'CantidadVendida', // Campo para el eje Y (cantidad vendida)
+    smooth: true, // Hace que la línea sea suave
     meta: {
       CantidadVendida: {
         alias: 'Cantidad Vendida', // Nombre personalizado para el eje Y
@@ -335,17 +327,17 @@ const DashboardVentas = () => {
     },
     // Configuración de responsividad
     responsive: true,
-    // Opciones para ajustar el tamaño del gráfico en diferentes dispositivos
-    autoFit: true,
+    autoFit: true, // Ajusta el tamaño automáticamente en diferentes dispositivos
     height: 400, // Altura inicial del gráfico
     padding: 'auto', // Espaciado automático para el gráfico
   };
 
+  // Función para obtener el total de ventas
   const getTotalVentas = (listaDatos) => {
-    // Calcula el total de ventas
+    // Suma el total de ventas de todos los elementos en listaDatos
     const totalVentasSumado = listaDatos.reduce((acumulador, item) => acumulador + item.TotalVentas, 0);
 
-    // Crea la fila de totales
+    // Crea una fila con los totales, dejando los demás campos vacíos
     const filaTotal = {
       Estado: "",
       Fecha: "",
@@ -359,50 +351,62 @@ const DashboardVentas = () => {
       TotalIngresoCaja: "",
       TotalPagado: "",
       TotalRetiroCaja: "",
-      TotalVentas: totalVentasSumado,
-      id: "total"  // Usamos un id personalizado para identificar esta fila como total
+      TotalVentas: totalVentasSumado, // Asigna el total calculado
+      id: "total" // Id personalizado para identificar esta fila como total
     };
 
-    // Agrega la fila total al final de dataList
+    // Devuelve la fila con los totales
     return filaTotal;
   }
 
-  // *** ------- ANALISIS DE DATOS DE CAJA Y PRODUCTOS --------- ****
-  const [frecuencia, setFrecuencia] = useState('mensual');
-  const [mes, setMes] = useState(null);
-  const [trimestre, setTrimestre] = useState(null);
-  const [semestre, setSemestre] = useState(null);
-  const [anio, setAnio] = useState(null);
 
+  // *** ------- ANALISIS DE DATOS DE CAJA Y PRODUCTOS --------- ****
+
+  // Estados para controlar la frecuencia y los valores de filtrado
+  const [frecuencia, setFrecuencia] = useState('mensual'); // Frecuencia seleccionada: mensual, trimestral, etc.
+  const [mes, setMes] = useState(null); // Estado para el mes
+  const [trimestre, setTrimestre] = useState(null); // Estado para el trimestre
+  const [semestre, setSemestre] = useState(null); // Estado para el semestre
+  const [anio, setAnio] = useState(null); // Estado para el año
+
+  // Función para manejar el cambio de frecuencia de filtrado
   const handleFrecuenciaChange = (value) => {
-    setFrecuencia(value);
-    setMes(null); // Limpiar otros valores al cambiar la opción
+    setFrecuencia(value); // Actualiza la frecuencia
+    setMes(null); // Limpiar valores relacionados
     setTrimestre(null);
     setSemestre(null);
     setAnio(null);
   };
 
+  // Función para manejar el cambio de mes
   const handleMesChange = (value) => {
-    setMes(value);
-    let mesActual = parseInt(value);
+    setMes(value); // Asignar el mes seleccionado
+    let mesActual = parseInt(value); // Convertir a número entero
+
+    // Filtrar los datos de caja por mes y año 2024
     const datosFiltradoMes = dataCajaControlOriginal.filter(item => {
       const mes = dayjs(item.Fecha).month();
       const anio = dayjs(item.Fecha).year();
       return mes === mesActual && anio === 2024;
     });
+
+    // Filtrar los productos por mes y año 2024
     const datosFiltradoMesProduct = dataProductosOriginal.filter(item => {
       const fecha = dayjs(item.Fecha, "YYYY/MM/DD");
       const mes = fecha.month();
       const anio = fecha.year();
       return mes === mesActual && anio === 2024;
     });
+
+    // Actualizar los estados con los datos filtrados
     setDataProductos(datosFiltradoMesProduct);
-    datosFiltradoMes.push(getTotalVentas(datosFiltradoMes))
-    setDataCajaControl(datosFiltradoMes)
+    datosFiltradoMes.push(getTotalVentas(datosFiltradoMes)); // Agregar total de ventas
+    setDataCajaControl(datosFiltradoMes); // Actualizar los datos de caja
   };
 
+  // Función para manejar el cambio de trimestre
   const handleTrimestreChange = (value) => {
-    setTrimestre(value);
+    setTrimestre(value); // Asignar el trimestre seleccionado
 
     // Definir los rangos de meses para cada trimestre
     const trimestres = {
@@ -415,12 +419,14 @@ const DashboardVentas = () => {
     // Obtener los meses del trimestre seleccionado
     const mesesTrimestre = trimestres[value];
 
+    // Filtrar los datos de caja por los meses del trimestre y año 2024
     const datosFiltradoCaja = dataCajaControlOriginal.filter(item => {
       const mes = dayjs(item.Fecha).month();
       const anio = dayjs(item.Fecha).year();
       return mesesTrimestre.includes(mes) && anio === 2024;
     });
 
+    // Filtrar los productos por los meses del trimestre y año 2024
     const datosFiltradoProductos = dataProductosOriginal.filter(item => {
       const fecha = dayjs(item.Fecha, "YYYY/MM/DD");
       const mes = fecha.month();
@@ -428,29 +434,33 @@ const DashboardVentas = () => {
       return mesesTrimestre.includes(mes) && anio === 2024;
     });
 
+    // Actualizar los estados con los datos filtrados
     setDataProductos(datosFiltradoProductos);
-    datosFiltradoCaja.push(getTotalVentas(datosFiltradoCaja));
-    setDataCajaControl(datosFiltradoCaja);
+    datosFiltradoCaja.push(getTotalVentas(datosFiltradoCaja)); // Agregar total de ventas
+    setDataCajaControl(datosFiltradoCaja); // Actualizar los datos de caja
   };
 
+  // Función para manejar el cambio de semestre
   const handleSemestreChange = (value) => {
-    setSemestre(value);
+    setSemestre(value); // Asignar el semestre seleccionado
 
-    // Definir los rangos de meses para cada trimestre
+    // Definir los rangos de meses para cada semestre
     const semestres = {
-      1: [0, 1, 2, 3, 4, 5], // Primer semestre: Enero (0), Febrero (1), Marzo (2), Abril (3), Mayo (4), Junio (5)
-      2: [6, 7, 8, 9, 10, 11], // Segundo semestre: Julio (6), Agosto (7), Septiembre (8), Octubre (9), Noviembre (10), Diciembre (11)
+      1: [0, 1, 2, 3, 4, 5], // Primer semestre: Enero (0) a Junio (5)
+      2: [6, 7, 8, 9, 10, 11], // Segundo semestre: Julio (6) a Diciembre (11)
     };
 
-    // Obtener los meses del trimestre seleccionado
+    // Obtener los meses del semestre seleccionado
     const mesesSemestre = semestres[value];
 
+    // Filtrar los datos de caja por los meses del semestre y año 2024
     const datosFiltradoCaja = dataCajaControlOriginal.filter(item => {
       const mes = dayjs(item.Fecha).month();
       const anio = dayjs(item.Fecha).year();
       return mesesSemestre.includes(mes) && anio === 2024;
     });
 
+    // Filtrar los productos por los meses del semestre y año 2024
     const datosFiltradoProductos = dataProductosOriginal.filter(item => {
       const fecha = dayjs(item.Fecha, "YYYY/MM/DD");
       const mes = fecha.month();
@@ -458,37 +468,44 @@ const DashboardVentas = () => {
       return mesesSemestre.includes(mes) && anio === 2024;
     });
 
+    // Actualizar los estados con los datos filtrados
     setDataProductos(datosFiltradoProductos);
-    datosFiltradoCaja.push(getTotalVentas(datosFiltradoCaja));
-    setDataCajaControl(datosFiltradoCaja);
+    datosFiltradoCaja.push(getTotalVentas(datosFiltradoCaja)); // Agregar total de ventas
+    setDataCajaControl(datosFiltradoCaja); // Actualizar los datos de caja
   }
 
+  // Función para manejar el cambio de año
   const handleAnualChange = (anioSeleccionado) => {
-    setAnio(anioSeleccionado);
+    setAnio(anioSeleccionado); // Asignar el año seleccionado
 
+    // Filtrar los datos de caja por el año seleccionado
     const datosFiltradoCajaAnual = dataCajaControlOriginal.filter(item => {
       const anio = dayjs(item.Fecha).year();
       return anio === anioSeleccionado;
     });
 
+    // Filtrar los productos por el año seleccionado
     const datosFiltradoProductosAnual = dataProductosOriginal.filter(item => {
       const anio = dayjs(item.Fecha, "YYYY/MM/DD").year();
       return anio === anioSeleccionado;
     });
 
+    // Actualizar los estados con los datos filtrados
     setDataProductos(datosFiltradoProductosAnual);
-    datosFiltradoCajaAnual.push(getTotalVentas(datosFiltradoCajaAnual));
-    setDataCajaControl(datosFiltradoCajaAnual);
+    datosFiltradoCajaAnual.push(getTotalVentas(datosFiltradoCajaAnual)); // Agregar total de ventas
+    setDataCajaControl(datosFiltradoCajaAnual); // Actualizar los datos de caja
   };
 
-  // Generar años para seleccionar, por ejemplo desde 2020 hasta el año actual
+  // Generación de los años disponibles para seleccionar (del año actual hacia atrás)
   const añosDisponibles = [];
   const añoActual = new Date().getFullYear();
   for (let i = añoActual; i >= 2020; i--) {
-    añosDisponibles.push(i);
+    añosDisponibles.push(i); // Agregar cada año al array
   }
 
-  //////////////// -------- COMPARATIVAS ---------------- \\\\\\\\\\\\\\\\\\\\\\\\
+
+  ////////////// -------- COMPARATIVAS DE PERIODOS ---------------- \\\\\\\\\\\\\\\\\\\\\\\\
+
   // Datos de ventas por semestre
   const [ventasPeriodo, setVentasPeriodo] = useState(0);
   const [ventas2periodo, setVentas2periodo] = useState(0);
@@ -566,76 +583,79 @@ const DashboardVentas = () => {
     padding: 'auto',
   };
 
+  // Estado para almacenar la frecuencia, mes, trimestre, semestre y año del segundo conjunto de filtros.
   const [frecuencia2, setFrecuencia2] = useState('mensual');
   const [mes2, setMes2] = useState(null);
   const [trimestre2, setTrimestre2] = useState(null);
   const [semestre2, setSemestre2] = useState(null);
   const [anio2, setAnio2] = useState(null);
 
+  // Estado para almacenar la frecuencia, mes, trimestre, semestre y año del tercer conjunto de filtros.
   const [frecuencia3, setFrecuencia3] = useState('mensual');
   const [mes3, setMes3] = useState(null);
   const [trimestre3, setTrimestre3] = useState(null);
   const [semestre3, setSemestre3] = useState(null);
   const [anio3, setAnio3] = useState(null);
 
+
+  // handleFrecuenciaChange2: Actualiza la frecuencia seleccionada y restablece los valores de mes, trimestre, semestre y año para el segundo conjunto de filtros.
   const handleFrecuenciaChange2 = (value) => {
     setFrecuencia2(value);
-    setMes2(null); // Limpiar otros valores al cambiar la opción
+    setMes2(null);
     setTrimestre2(null);
     setSemestre2(null);
     setAnio2(null);
   };
 
+  // handleFrecuenciaChange3: Similar al anterior, pero para el tercer conjunto de filtros. Restablece los valores de mes, trimestre, semestre y año.
   const handleFrecuenciaChange3 = (value) => {
     setFrecuencia3(value);
-    setMes3(null); // Limpiar otros valores al cambiar la opción
+    setMes3(null);
     setTrimestre3(null);
     setSemestre3(null);
     setAnio3(null);
   };
 
+  // Maneja el cambio de mes para el segundo conjunto de filtros
   const handleMesChange2 = (value, option) => {
     let mesActual = parseInt(value);
+    // Filtra los datos por el mes y año seleccionados
     const datosFiltradoMes = dataCajaControlOriginal.filter(item => {
       const mes = dayjs(item.Fecha).month();
       const anio = dayjs(item.Fecha).year();
       return mes === mesActual && anio === 2024;
     });
 
+    // Actualiza el nombre del mes, el valor de ventas y ganancias para el primer periodo
     setNombre1(option.children);
     setMes2(value);
-    const sumaVentas = datosFiltradoMes.reduce((acumulado, item) => {
-      return acumulado + item.TotalVentas;
-    }, 0);
-    const sumaGanacias = datosFiltradoMes.reduce((acumulado, item) => {
-      return acumulado + item.TotalGanancias;
-    }, 0);
+    const sumaVentas = datosFiltradoMes.reduce((acumulado, item) => acumulado + item.TotalVentas, 0);
+    const sumaGanacias = datosFiltradoMes.reduce((acumulado, item) => acumulado + item.TotalGanancias, 0);
     setVentasPeriodo(sumaVentas);
     setGanancia1(sumaGanacias);
   };
 
+  // Maneja el cambio de mes para el tercer conjunto de filtros
   const handleMesChange3 = (value, option) => {
     let mesActual = parseInt(value);
+    // Filtra los datos por el mes y año seleccionados
     const datosFiltradoMes = dataCajaControlOriginal.filter(item => {
       const mes = dayjs(item.Fecha).month();
       const anio = dayjs(item.Fecha).year();
       return mes === mesActual && anio === 2024;
     });
 
+    // Actualiza el nombre del mes, el valor de ventas y ganancias para el segundo periodo
     setNombre2(option.children);
     setMes3(value);
-    const sumaVentas = datosFiltradoMes.reduce((acumulado, item) => {
-      return acumulado + item.TotalVentas;
-    }, 0);
-    const sumaGanacias = datosFiltradoMes.reduce((acumulado, item) => {
-      return acumulado + item.TotalGanancias;
-    }, 0);
+    const sumaVentas = datosFiltradoMes.reduce((acumulado, item) => acumulado + item.TotalVentas, 0);
+    const sumaGanacias = datosFiltradoMes.reduce((acumulado, item) => acumulado + item.TotalGanancias, 0);
     setGanancia2(sumaGanacias);
     setVentas2periodo(sumaVentas);
   };
 
+  // Maneja el cambio de trimestre para el segundo conjunto de filtros
   const handleTrimestreChange2 = (value, option) => {
-
     // Definir los rangos de meses para cada trimestre
     const trimestres = {
       1: [0, 1, 2], // Primer trimestre: Enero (0), Febrero (1), Marzo (2)
@@ -647,24 +667,23 @@ const DashboardVentas = () => {
     // Obtener los meses del trimestre seleccionado
     const mesesTrimestre = trimestres[value];
 
+    // Filtra los datos por los meses del trimestre y año seleccionado
     const datosFiltradoCaja = dataCajaControlOriginal.filter(item => {
       const mes = dayjs(item.Fecha).month();
       const anio = dayjs(item.Fecha).year();
       return mesesTrimestre.includes(mes) && anio === 2024;
     });
 
+    // Actualiza el nombre del trimestre, el valor de ventas y ganancias para el primer periodo
     setNombre1(option.children);
     setTrimestre2(value);
-    const sumaVentas = datosFiltradoCaja.reduce((acumulado, item) => {
-      return acumulado + item.TotalVentas;
-    }, 0);
-    const sumaGanacias = datosFiltradoCaja.reduce((acumulado, item) => {
-      return acumulado + item.TotalGanancias;
-    }, 0);
+    const sumaVentas = datosFiltradoCaja.reduce((acumulado, item) => acumulado + item.TotalVentas, 0);
+    const sumaGanacias = datosFiltradoCaja.reduce((acumulado, item) => acumulado + item.TotalGanancias, 0);
     setVentasPeriodo(sumaVentas);
     setGanancia1(sumaGanacias);
   };
 
+  // Maneja el cambio de trimestre para el tercer conjunto de filtros
   const handleTrimestreChange3 = (value, option) => {
     // Definir los rangos de meses para cada trimestre
     const trimestres = {
@@ -677,127 +696,130 @@ const DashboardVentas = () => {
     // Obtener los meses del trimestre seleccionado
     const mesesTrimestre = trimestres[value];
 
+    // Filtra los datos por los meses del trimestre y año seleccionado
     const datosFiltradoCaja = dataCajaControlOriginal.filter(item => {
       const mes = dayjs(item.Fecha).month();
       const anio = dayjs(item.Fecha).year();
       return mesesTrimestre.includes(mes) && anio === 2024;
     });
 
+    // Actualiza el nombre del trimestre, el valor de ventas y ganancias para el segundo periodo
     setNombre2(option.children);
     setTrimestre3(value);
-    const sumaVentas = datosFiltradoCaja.reduce((acumulado, item) => {
-      return acumulado + item.TotalVentas;
-    }, 0);
-    const sumaGanacias = datosFiltradoCaja.reduce((acumulado, item) => {
-      return acumulado + item.TotalGanancias;
-    }, 0);
+    const sumaVentas = datosFiltradoCaja.reduce((acumulado, item) => acumulado + item.TotalVentas, 0);
+    const sumaGanacias = datosFiltradoCaja.reduce((acumulado, item) => acumulado + item.TotalGanancias, 0);
     setGanancia2(sumaGanacias);
     setVentas2periodo(sumaVentas);
   };
 
+  // Maneja el cambio de semestre para el segundo conjunto de filtros
   const handleSemestreChange2 = (value, option) => {
-    // Definir los rangos de meses para cada trimestre
+    // Definir los rangos de meses para cada semestre
     const semestres = {
       1: [0, 1, 2, 3, 4, 5], // Primer semestre: Enero (0), Febrero (1), Marzo (2), Abril (3), Mayo (4), Junio (5)
       2: [6, 7, 8, 9, 10, 11], // Segundo semestre: Julio (6), Agosto (7), Septiembre (8), Octubre (9), Noviembre (10), Diciembre (11)
     };
 
-    // Obtener los meses del trimestre seleccionado
+    // Obtener los meses del semestre seleccionado
     const mesesSemestre = semestres[value];
 
+    // Filtra los datos por los meses del semestre y año seleccionado
     const datosFiltradoCaja = dataCajaControlOriginal.filter(item => {
       const mes = dayjs(item.Fecha).month();
       const anio = dayjs(item.Fecha).year();
       return mesesSemestre.includes(mes) && anio === 2024;
     });
 
+    // Actualiza el nombre del semestre, el valor de ventas y ganancias para el primer periodo
     setNombre1(option.children);
     setSemestre2(value);
-    const sumaVentas = datosFiltradoCaja.reduce((acumulado, item) => {
-      return acumulado + item.TotalVentas;
-    }, 0);
-    const sumaGanacias = datosFiltradoCaja.reduce((acumulado, item) => {
-      return acumulado + item.TotalGanancias;
-    }, 0);
+    const sumaVentas = datosFiltradoCaja.reduce((acumulado, item) => acumulado + item.TotalVentas, 0);
+    const sumaGanacias = datosFiltradoCaja.reduce((acumulado, item) => acumulado + item.TotalGanancias, 0);
     setGanancia1(sumaGanacias);
     setVentasPeriodo(sumaVentas);
-  }
+  };
 
+  // Maneja el cambio de semestre para el tercer conjunto de filtros
   const handleSemestreChange3 = (value, option) => {
-    // Definir los rangos de meses para cada trimestre
+    // Definir los rangos de meses para cada semestre
     const semestres = {
       1: [0, 1, 2, 3, 4, 5], // Primer semestre: Enero (0), Febrero (1), Marzo (2), Abril (3), Mayo (4), Junio (5)
       2: [6, 7, 8, 9, 10, 11], // Segundo semestre: Julio (6), Agosto (7), Septiembre (8), Octubre (9), Noviembre (10), Diciembre (11)
     };
 
-    // Obtener los meses del trimestre seleccionado
+    // Obtener los meses del semestre seleccionado
     const mesesSemestre = semestres[value];
 
+    // Filtra los datos por los meses del semestre y año seleccionado
     const datosFiltradoCaja = dataCajaControlOriginal.filter(item => {
       const mes = dayjs(item.Fecha).month();
       const anio = dayjs(item.Fecha).year();
       return mesesSemestre.includes(mes) && anio === 2024;
     });
 
+    // Actualiza el nombre del semestre, el valor de ventas y ganancias para el segundo periodo
     setNombre2(option.children);
     setSemestre3(value);
-    const sumaVentas = datosFiltradoCaja.reduce((acumulado, item) => {
-      return acumulado + item.TotalVentas;
-    }, 0);
-    const sumaGanacias = datosFiltradoCaja.reduce((acumulado, item) => {
-      return acumulado + item.TotalGanancias;
-    }, 0);
+    const sumaVentas = datosFiltradoCaja.reduce((acumulado, item) => acumulado + item.TotalVentas, 0);
+    const sumaGanacias = datosFiltradoCaja.reduce((acumulado, item) => acumulado + item.TotalGanancias, 0);
     setGanancia2(sumaGanacias);
     setVentas2periodo(sumaVentas);
-  }
+  };
 
+  // Maneja el cambio de año para el segundo conjunto de filtros
   const handleAnualChange2 = (anioSeleccionado, option) => {
+    // Filtra los datos para el año seleccionado
     const datosFiltradoCajaAnual = dataCajaControlOriginal.filter(item => {
       const anio = dayjs(item.Fecha).year();
       return anio === anioSeleccionado;
     });
 
+    // Actualiza el nombre del año y los valores de ventas y ganancias para el primer periodo
     setNombre1(option.children);
     setAnio2(anioSeleccionado);
-    const sumaVentas = datosFiltradoCajaAnual.reduce((acumulado, item) => {
-      return acumulado + item.TotalVentas;
-    }, 0);
-    const sumaGanacias = datosFiltradoCajaAnual.reduce((acumulado, item) => {
-      return acumulado + item.TotalGanancias;
-    }, 0);
+    const sumaVentas = datosFiltradoCajaAnual.reduce((acumulado, item) => acumulado + item.TotalVentas, 0);
+    const sumaGanacias = datosFiltradoCajaAnual.reduce((acumulado, item) => acumulado + item.TotalGanancias, 0);
     setGanancia1(sumaGanacias);
     setVentasPeriodo(sumaVentas);
   };
 
+  // Maneja el cambio de año para el tercer conjunto de filtros
   const handleAnualChange3 = (anioSeleccionado, option) => {
+    // Filtra los datos para el año seleccionado
     const datosFiltradoCajaAnual = dataCajaControlOriginal.filter(item => {
       const anio = dayjs(item.Fecha).year();
       return anio === anioSeleccionado;
     });
 
+    // Actualiza el nombre del año y los valores de ventas y ganancias para el segundo periodo
     setNombre2(option.children);
     setAnio3(anioSeleccionado);
-    const sumaVentas = datosFiltradoCajaAnual.reduce((acumulado, item) => {
-      return acumulado + item.TotalVentas;
-    }, 0);
-    const sumaGanacias = datosFiltradoCajaAnual.reduce((acumulado, item) => {
-      return acumulado + item.TotalGanancias;
-    }, 0);
+    const sumaVentas = datosFiltradoCajaAnual.reduce((acumulado, item) => acumulado + item.TotalVentas, 0);
+    const sumaGanacias = datosFiltradoCajaAnual.reduce((acumulado, item) => acumulado + item.TotalGanancias, 0);
     setGanancia2(sumaGanacias);
     setVentas2periodo(sumaVentas);
   };
-  console.log(nombre2)
+
+  // Limpia las comparaciones y restablece los valores de los filtros
   const LimpiarComparaciones = () => {
+    // Restaura las frecuencias a "mensual" para ambos periodos
     handleFrecuenciaChange2("mensual");
     handleFrecuenciaChange3("mensual");
+
+    // Restaura las ventas y ganancias a 0
     setVentasPeriodo(0);
     setVentas2periodo(0);
+
+    // Restaura los nombres y las ganancias a un valor vacío
     setNombre1(" ");
     setNombre2(" ");
     setGanancia1(" ");
     setGanancia2(" ");
-  }
-  console.log(ganancia1);
+  };
+
+
+  // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ padding: '0 50px', marginTop: '10px' }}>
@@ -862,15 +884,12 @@ const DashboardVentas = () => {
             </Col>
           </Row>
 
-          {/* <Row gutter={16}> */}
           <Col xs={24} sm={24} md={24} lg={24}>
             <Card title="Tendencias de ventas">
               <Line {...config} />
             </Card>
           </Col>
-          {/* </Row> */}
 
-          {/* <Row gutter={16}> */}
           <Col xs={24} sm={24} md={24} lg={24}>
             <Card title="Ventas por producto">
               <Table columns={columns} dataSource={dataRankingProductos} pagination={false} scroll={{ x: 'max-content', y: '200px' }} />
@@ -878,7 +897,6 @@ const DashboardVentas = () => {
           </Col>
 
           <h2> Estados de caja y productos</h2>
-          {/* </Row> */}
           <Col xs={24} sm={24} md={24} lg={24}>
             <Card >
               <div style={{ margin: '10px 0', alignContent: 'right', textAlign: 'center' }}>

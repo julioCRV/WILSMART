@@ -1,21 +1,23 @@
+/* Estilos para la sección de contenido principal */
 .site-layout-content {
-    background: #fff;
-    padding: 24px;
-    margin: 0;
-    min-height: 280px;
-  }
-  
-  .header {
-    position: fixed;
-    z-index: 1;
-    width: 100%;
-  }
-  
-  .logo {
-    float: left;
-    width: 120px;
-    height: 31px;
-    margin: 16px 24px 16px 0;
-    background: rgba(255, 255, 255, 0.3);
-  }
-  
+  background: #fff; /* Fondo blanco */
+  padding: 24px; /* Espaciado interno de 24px */
+  margin: 0; /* Sin márgenes exteriores */
+  min-height: 280px; /* Altura mínima de 280px para el contenido */
+}
+
+/* Estilos para el encabezado, que debe quedar fijo en la parte superior */
+.header {
+  position: fixed; /* Hace que el encabezado se quede fijo en la pantalla */
+  z-index: 1; /* Asegura que el encabezado esté por encima de otros elementos */
+  width: 100%; /* Ocupa todo el ancho de la página */
+}
+
+/* Estilos para el logo dentro del encabezado */
+.logo {
+  float: left; /* Hace que el logo flote hacia la izquierda */
+  width: 120px; /* Ancho del logo */
+  height: 31px; /* Altura del logo */
+  margin: 16px 24px 16px 0; /* Espaciado alrededor del logo */
+  background: rgba(255, 255, 255, 0.3); /* Fondo semi-transparente en blanco */
+}

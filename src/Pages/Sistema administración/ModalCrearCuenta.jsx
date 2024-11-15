@@ -1,67 +1,73 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Button, Select, Space, message } from 'antd';
+import React, { useState } from 'react';
+import { Modal, Form, Input, Button, message } from 'antd';
 import { auth, db } from '../../FireBase/fireBase';
-import { collection, getDocs, addDoc, doc, deleteDoc,setDoc} from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
-const { Option } = Select;
-
 const ModalCrearCuenta = ({ record, desabilitar, actualizar }) => {
+    // Declaración de los estados para controlar la visibilidad del modal y el formulario
     const [visible, setVisible] = useState(false);
-    const [form] = Form.useForm();
+    const [form] = Form.useForm(); // Inicializa el formulario
+    const initialValues = { correo: record.CorreoElectrónico, nombreEmpleado: record.Nombre }; // Establece los valores iniciales para el formulario
 
+    // Función para mostrar el modal y resetear los campos del formulario
     const showModal = () => {
-        form.resetFields();
-        setVisible(true);
+        form.resetFields(); // Resetea los campos del formulario
+        setVisible(true); // Muestra el modal
     };
 
+    // Función para cancelar la acción y cerrar el modal
     const handleCancel = () => {
-        setVisible(false);
+        setVisible(false); // Oculta el modal
     };
 
+    // ------------------ REGISTRAR CREDENCIALES ---------------------------
 
-    //------------------ REGISTRAR  CREDENCIALES---------------------------
+    // Función para manejar el registro de credenciales
     const handleRegister = () => {
+        // Valida los campos del formulario antes de proceder con el registro
         form.validateFields()
             .then(values => {
-                // Lógica para manejar el registro
+                // Si la validación es exitosa, registra las credenciales
                 registrarCredenciales(values);
-                setVisible(false);
-                actualizar("Si");
-                message.success("¡Cuenta creada exitosamente!");
+                setVisible(false); // Cierra el modal
+                actualizar("Si"); // Actualiza la lista o vista según el caso
+                message.success("¡Cuenta creada exitosamente!"); // Muestra un mensaje de éxito
             })
             .catch(info => {
-                // console.log('Validation Failed:', info);
+                console.log('Validation Failed:', info); // Si la validación falla, muestra un mensaje de error
             });
     };
 
+    // Función para crear un usuario con Firebase Auth
     const signUp = (values) => {
+        // Crea un nuevo usuario con el correo y la contraseña proporcionados
         createUserWithEmailAndPassword(auth, values.correo, values.contraseña)
             .then((userCredential) => {
-                // console.log(userCredential.user);
+                console.log(userCredential.user); // Muestra los detalles del usuario creado
             })
             .catch((error) => {
-                console.error(error);
+                console.error(error); // Muestra un error si la creación del usuario falla
             });
     };
 
+    // Función para registrar las credenciales en Firestore
     const registrarCredenciales = async (values) => {
         try {
-            const docRef = doc(db, "ListaCredenciales", record.id);
+            const docRef = doc(db, "ListaCredenciales", record.id); // Obtiene el documento de credenciales por el ID del registro
             await setDoc(docRef, {
-                Nombre: record.Nombre,
-                Correo: record.CorreoElectrónico,
-                EstadoCuenta: "Activo",
-                SistemaAsignado: "Ninguno",
+                Nombre: record.Nombre, // Guarda el nombre del empleado
+                Correo: record.CorreoElectrónico, // Guarda el correo electrónico del empleado
+                EstadoCuenta: "Activo", // Establece el estado de la cuenta como activo
+                SistemaAsignado: "Ninguno", // Inicializa el sistema asignado como "Ninguno"
             });
-            signUp(values);
-            // console.log("Document written with ID: ", values.id);
+            signUp(values); // Llama a la función para crear el usuario con Firebase Auth
         } catch (e) {
-            console.error("Error adding document: ", e);
+            console.error("Error adding document: ", e); // Muestra un error si falla al agregar el documento en Firestore
         }
     };
 
-    const initialValues = { correo: record.CorreoElectrónico,  nombreEmpleado: record.Nombre}
+
     return (
         <>
 
@@ -94,7 +100,7 @@ const ModalCrearCuenta = ({ record, desabilitar, actualizar }) => {
                         label="Nombre de usuario"
                         rules={[{ required: true, message: 'Por favor su nombre de usuario' }]}
                     >
-                        <Input disabled/>
+                        <Input disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -104,17 +110,6 @@ const ModalCrearCuenta = ({ record, desabilitar, actualizar }) => {
                     >
                         <Input type="email" disabled />
                     </Form.Item>
-
-                    {/* <Form.Item
-                        name="sistemaAsignado"
-                        label="Sistema designado"
-                        rules={[{ required: true, message: 'Por favor ingrese su estado civil' }]}
-                    >
-                        <Select placeholder="Seleccione un sistema">
-                            <Option value="sistemaVentas">Sistema de ventas</Option>
-                            <Option value="sistemaServicios">Sistema de servicios</Option>
-                        </Select>
-                    </Form.Item> */}
 
                     <Form.Item
                         name="contraseña"

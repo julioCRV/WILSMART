@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Input, Button, message, DatePicker, Select, Upload, Modal } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { doc, updateDoc } from "firebase/firestore";
@@ -11,92 +11,74 @@ import './RegistroEmpleado.css';
 const { Option } = Select;
 
 const EditarEmpleado = () => {
+    // Obtiene la ubicación actual, que es útil para obtener parámetros de la URL o el estado.
     const location = useLocation();
+    // Extrae el objeto 'objetoProp' del estado pasado a través de la navegación en la URL.
     const DataEmpleado = location.state && location.state.objetoProp;
+    // Inicializa un estado que controla si una imagen ha sido subida.
     const [imageUploaded, setImageUploaded] = useState(false);
+    // Función que permite navegar a diferentes rutas dentro de la aplicación.
     const navigate = useNavigate();
 
-    //console.log(DataEmpleado.fechaNacimiento);
+    // #region + + + + + + + + + + + + + [ Métodos ] + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+    // Objeto de configuración para la validación de la carga de imágenes
     const verificarImagen = {
         beforeUpload: (file) => {
-
+            // Obtener la extensión del archivo y convertirla a minúsculas
             let extension = file.name.split('.');
             extension = extension[extension.length - 1].toLowerCase();
+
+            // Verifica si la extensión es distinta a 'jpg' o 'png'
             if (extension != 'jpg' && extension != 'png') {
                 message.error('Solo se permite archivos jpg y png.');
-                return true;
+                return true;  // Bloquea la carga del archivo
             } else if (file.size > 6000000) {
+                // Si el archivo es mayor de 6MB
                 message.error('El tamaño de la imagen no puede exceder 6MB');
             } else if (file.size < 1000) {
+                // Si el archivo es menor de 1KB
                 message.error('El tamaño de la imagen no puede ser menor a 1 KB');
             } else {
+                // Si todo es correcto, se marca la imagen como subida y se muestra mensaje de éxito
                 setImageUploaded(true);
                 message.success(`${file.name} subido correctamente.`);
-                return false;
+                return false;  // Permite la carga del archivo
             }
-            return true;
+            return true;  // Bloquea la carga si alguna condición no se cumple
         },
         onRemove: () => {
             // Lógica para manejar la eliminación de la imagen
-            setImageUploaded(false);
-            message.warning('Imagen eliminada.');
+            setImageUploaded(false);  // Resetea el estado de imagen cargada
+            message.warning('Imagen eliminada.');  // Muestra un mensaje de advertencia
         },
     };
 
-
+    // Función que se ejecuta al finalizar el formulario
     const onFinish = async (values) => {
-        //console.log('Received values of form: ', values);
-        // console.log(values.imagen);
-
+        // Obtiene el archivo de imagen desde el formulario
         const imagen = values.foto[0].originFileObj;
-        // try {
-        //     // Sube la imagen a Cloud Storage
-        //     const storageRef = ref(storage, `imagenes/${imagen.name}`);
-        //     await uploadBytes(storageRef, imagen);
 
-        //     // Obtiene la URL de descarga de la imagen
-        //     const url = await getDownloadURL(storageRef);
-
-        //     const docRef = await addDoc(collection(db, "ListaEmpleados"), {
-        //         Nombre: values.nombreCompleto,
-        //         FechaNacimiento: formatearFecha(values.fechaNacimiento.toDate()),
-        //         CI: values.ci,
-        //         Genero: values.genero,
-        //         EstadoCivil: values.estadoCivil,
-        //         NumeroTeléfono: values.telefono,
-        //         FotoEmpleado: url,
-        //         CorreoElectrónico: values.email,
-        //         PuestoOcargo: values.puesto,
-        //         Salario: values.salario,
-        //         DirecciónDeDomicilio: values.direccion
-        //     });
-        //     console.log("Document written with ID: ", docRef.id);
-        //     ModalExito();
-        // } catch (error) {
-        //     console.error("Error adding document: ", error);
-        // }
-
+        // Obtiene la referencia al documento en Firestore basado en el ID del empleado
         const docRef = doc(db, "ListaEmpleados", DataEmpleado.id);
-        try {
 
-            // Declarar url con un valor inicial
+        try {
+            // Inicializa la variable de la URL de la imagen
             let url = '';
 
+            // Si el nombre del archivo es 'imagenEmpleado.jpg', usa la URL existente del empleado
             if (imagen.name === 'imagenEmpleado.jpg') {
-                // Si el nombre de la imagen es 'imagenEmpleado.jpg', obtén la URL del DataEmpleado
                 url = DataEmpleado.FotoEmpleado;
             } else {
-                // Sube la imagen a Cloud Storage
+                // Si el nombre no es 'imagenEmpleado.jpg', sube la imagen a Firebase Storage
                 const storageRef = ref(storage, `imagenes/${imagen.name}`);
                 await uploadBytes(storageRef, imagen);
 
-                // Obtiene la URL de descarga de la imagen
+                // Obtiene la URL de descarga de la imagen subida
                 url = await getDownloadURL(storageRef);
             }
 
-            // Aquí puedes utilizar la variable url con el valor correspondiente
-
-
+            // Actualiza el documento del empleado en Firestore con los datos del formulario
             await updateDoc(docRef, {
                 Nombre: values.nombreCompleto,
                 FechaNacimiento: formatearFecha(values.fechaNacimiento.toDate()),
@@ -104,66 +86,78 @@ const EditarEmpleado = () => {
                 Genero: values.genero,
                 EstadoCivil: values.estadoCivil,
                 NumeroTeléfono: values.telefono,
-                FotoEmpleado: url,
+                FotoEmpleado: url,  // Asigna la URL de la imagen
                 CorreoElectrónico: values.email,
                 PuestoOcargo: values.puesto,
                 Salario: values.salario,
                 DirecciónDeDomicilio: values.direccion
             });
-            //console.log("Document updated");
+
+            // Muestra un modal de éxito al actualizar los datos
             ModalExito();
         } catch (e) {
+            // Si ocurre algún error, lo muestra en la consola
             console.error("Error updating document: ", e);
         }
     };
 
+    // Función para formatear la fecha al formato 'año/mes/día'
     function formatearFecha(fechaString) {
         const fecha = new Date(fechaString);
 
+        // Extrae el día, mes y año de la fecha
         const dia = fecha.getDate().toString().padStart(2, '0');
-        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses son base 0, sumamos 1
         const año = fecha.getFullYear();
 
+        // Retorna la fecha en formato 'año/mes/día'
         return `${año}/${mes}/${dia}`;
     }
 
+    // Función que muestra un modal de éxito cuando los datos del empleado se actualizan correctamente
     const ModalExito = () => {
         Modal.success({
-            title: 'Actualizar datos del empleado',
-            content: 'Los datos del empleado se han actualizado correctamente.',
-            onOk: () => { navigate('/sistema-administración/mostrar-empleados'); } // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
+            title: 'Actualizar datos del empleado',  // Título del modal
+            content: 'Los datos del empleado se han actualizado correctamente.',  // Mensaje dentro del modal
+            onOk: () => {
+                navigate('/sistema-administración/mostrar-empleados');  // Redirige a la ruta de mostrar empleados cuando se presiona "OK"
+            }
         });
     }
 
+    // Función que navega hacia la lista de empleados
     const backList = () => {
-        navigate('/sistema-administración/mostrar-empleados');
+        navigate('/sistema-administración/mostrar-empleados');  // Redirige a la ruta de mostrar empleados
     }
 
+    // Valores iniciales del formulario, prellenando con los datos del empleado desde `DataEmpleado`
     const initialValues = {
-        nombreCompleto: DataEmpleado.Nombre,
-        fechaNacimiento: dayjs(DataEmpleado.FechaNacimiento),
-        ci: DataEmpleado.CI,
-        genero: DataEmpleado.Genero,
-        estadoCivil: DataEmpleado.EstadoCivil,
-        telefono: DataEmpleado.NumeroTeléfono,
-        foto: [
+        nombreCompleto: DataEmpleado.Nombre,  // Nombre del empleado
+        fechaNacimiento: dayjs(DataEmpleado.FechaNacimiento),  // Fecha de nacimiento del empleado, formateada con dayjs
+        ci: DataEmpleado.CI,  // Número de cédula de identidad
+        genero: DataEmpleado.Genero,  // Género del empleado
+        estadoCivil: DataEmpleado.EstadoCivil,  // Estado civil del empleado
+        telefono: DataEmpleado.NumeroTeléfono,  // Teléfono del empleado
+        foto: [  // Información de la foto del empleado
             {
-                uid: 'rc-upload-1717606230863-15',
-                name: 'imagenEmpleado.jpg',
-                lastModified: 1717602102812,
-                lastModifiedDate: new Date('Wed Jun 05 2024 11:41:42 GMT-0400 (hora de Bolivia)'),
-                originFileObj: new File([''], 'imagenEmpleado.jpg', { type: 'image/jpeg' }),
-                percent: 0,
-                size: 4642,
-                type: 'image/jpeg',
-                url: DataEmpleado.FotoEmpleado
+                uid: 'rc-upload-1717606230863-15',  // Identificador único para el archivo
+                name: 'imagenEmpleado.jpg',  // Nombre del archivo
+                lastModified: 1717602102812,  // Última fecha de modificación del archivo (en formato timestamp)
+                lastModifiedDate: new Date('Wed Jun 05 2024 11:41:42 GMT-0400 (hora de Bolivia)'),  // Fecha de modificación en formato de fecha legible
+                originFileObj: new File([''], 'imagenEmpleado.jpg', { type: 'image/jpeg' }),  // Objeto `File` vacío con nombre 'imagenEmpleado.jpg'
+                percent: 0,  // Porcentaje de carga del archivo (inicialmente 0)
+                size: 4642,  // Tamaño del archivo en bytes
+                type: 'image/jpeg',  // Tipo MIME del archivo
+                url: DataEmpleado.FotoEmpleado  // URL de la foto del empleado
             }
         ],
-        email: DataEmpleado.CorreoElectrónico,
-        puesto: DataEmpleado.PuestoOcargo,
-        salario: DataEmpleado.Salario,
-        direccion: DataEmpleado.DirecciónDeDomicilio,
+        email: DataEmpleado.CorreoElectrónico,  // Correo electrónico del empleado
+        puesto: DataEmpleado.PuestoOcargo,  // Puesto o cargo del empleado
+        salario: DataEmpleado.Salario,  // Salario del empleado
+        direccion: DataEmpleado.DirecciónDeDomicilio,  // Dirección del empleado
     };
+
+    // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
     return (
         <div >
@@ -176,7 +170,6 @@ const EditarEmpleado = () => {
                 labelCol={{ span: 9 }}
                 wrapperCol={{ span: 22 }}
                 onFinish={onFinish}
-            // className="form-columns"
             >
                 <div className='parent2'>
                     <div className="div11">

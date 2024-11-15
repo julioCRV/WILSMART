@@ -1,53 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Button, Select, Space, message } from 'antd';
-import { auth, db } from '../../FireBase/fireBase';
-import { doc, updateDoc} from "firebase/firestore";
+import { db } from '../../FireBase/fireBase';
+import { doc, updateDoc } from "firebase/firestore";
 const { Option } = Select;
 
 const ModalCrearCredenciales = ({ record, desabilitar, actualizar }) => {
+    // Definición del estado 'visible' para controlar la visibilidad del modal y el estado del formulario.
     const [visible, setVisible] = useState(false);
-    const [form] = Form.useForm();
+    const [form] = Form.useForm(); // Inicializa el formulario
+    const initialValues = { correo: record.CorreoElectrónico, nombreEmpleado: record.Nombre }; // Establece los valores iniciales del formulario con los datos del registro
 
+    // Función que se ejecuta al mostrar el modal
     const showModal = () => {
-        form.resetFields();
-        setVisible(true);
+        form.resetFields(); // Resetea los campos del formulario a sus valores iniciales
+        setVisible(true); // Muestra el modal
     };
 
+    // Función para manejar el cierre del modal
     const handleCancel = () => {
-        setVisible(false);
+        setVisible(false); // Oculta el modal
     };
 
+    // ------------------ REGISTRAR CREDENCIALES ---------------------------
 
-    //------------------ REGISTRAR  CREDENCIALES---------------------------
+    // Función que maneja el registro de credenciales
     const handleRegister = () => {
+        // Valida los campos del formulario antes de realizar el registro
         form.validateFields()
             .then(values => {
-                // Lógica para manejar el registro
+                // Si la validación es exitosa, actualiza las credenciales
                 actualizarCredenciales(values);
-                setVisible(false);
-                actualizar("Si");
+                setVisible(false); // Cierra el modal
+                actualizar("Si"); // Actualiza la lista o la vista de alguna manera
             })
             .catch(info => {
-                // console.log('Validation Failed:', info);
+                console.log('Validation Failed:', info); // Muestra un mensaje si la validación falla
             });
     };
 
+    // Función para actualizar las credenciales en la base de datos
     const actualizarCredenciales = async (values) => {
         try {
-            const docRef = doc(db, "ListaCredenciales", record.id);
+            const docRef = doc(db, "ListaCredenciales", record.id); // Obtiene el documento con el ID correspondiente
             await updateDoc(docRef, {
-                SistemaAsignado: values.sistemaAsignado
+                SistemaAsignado: values.sistemaAsignado // Actualiza el campo 'SistemaAsignado' con el valor seleccionado
             });
-            message.success('Credenciales registradas exitosamente.');
-            // console.log("Document updated with ID: ", record.id);
+            message.success('Credenciales registradas exitosamente.'); // Muestra mensaje de éxito
         } catch (e) {
-            console.error("Error updating document: ", e);
-            message.error('Error al registrar las credenciales.');
-
+            console.error("Error updating document: ", e); // Muestra el error en consola en caso de fallo
+            message.error('Error al registrar las credenciales.'); // Muestra mensaje de error
         }
     };
 
-    const initialValues = { correo: record.CorreoElectrónico, nombreEmpleado: record.Nombre }
     return (
         <>
             <Button type="default" disabled={desabilitar} onClick={showModal}>
@@ -100,17 +104,6 @@ const ModalCrearCredenciales = ({ record, desabilitar, actualizar }) => {
                             <Option value="Sistema de servicios">Sistema de servicios</Option>
                         </Select>
                     </Form.Item>
-
-                    {/* <Form.Item
-                        name="contraseña"
-                        label="Contraseña"
-                        rules={[{ required: true, message: 'Por favor ingrese su contraseña' },
-                        { min: 6, message: 'La contraseña debe tener al menos 6 caracteres' }
-                        ]}
-
-                    >
-                        <Input.Password />
-                    </Form.Item> */}
                 </Form>
             </Modal>
         </>

@@ -1,83 +1,72 @@
-/* .form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  } */
-
-/* .contenedorForm {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #f0f2f5; 
-    width: 80%;
-    padding-top: 30px;
-  } */
-
+/* Estilos para el título del formulario */
 .form-title {
-  margin-top: 2%;
-  margin-bottom: 20px;
-  display: grid;
-  justify-content: left; 
-  margin-left: 10%;
+  margin-top: 2%; /* Margen superior del título */
+  margin-bottom: 20px; /* Margen inferior */
+  display: grid; /* Usa grid para el título */
+  justify-content: left; /* Alineación del contenido a la izquierda */
+  margin-left: 10%; /* Desplaza el título 10% desde el borde izquierdo */
 }
 
+/* Estilos generales para los campos de entrada y selectores */
 input,
 select {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  box-sizing: border-box;
+  width: 100%; /* Hace que los elementos ocupen todo el ancho disponible */
+  padding: 8px; /* Añade un relleno interno */
+  margin-top: 5px; /* Margen superior para separarlos de otros elementos */
+  box-sizing: border-box; /* Incluye el padding y borde dentro del tamaño total */
 }
 
+/* Estilos para los botones */
 button {
-  padding: 10px 20px;
-  cursor: pointer;
-
+  padding: 10px 20px; /* Espaciado dentro del botón */
+  cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
 }
 
+/* Estilos para los elementos con clase .full-width */
 .full-width {
-  width: 100%;
+  width: 100%; /* Hace que el elemento ocupe todo el ancho disponible */
 }
 
+/* Estilos para el contenedor de botones */
 .button-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-right: 11px;
-  width: 100%;
-  margin-top: 20px;
+  display: flex; /* Usa flexbox para organizar los botones */
+  align-items: center; /* Centra los elementos verticalmente */
+  justify-content: space-between; /* Distribuye el espacio entre los botones */
+  margin-right: 11px; /* Margen derecho */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  margin-top: 20px; /* Margen superior para separarlo de otros elementos */
 }
 
+/* Estilos para el contenedor de grid con dos columnas */
 .parent2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(0.5, 0.1fr);
-  grid-column-gap: 10px;
-  grid-row-gap: 10px;
-  
-  width: 80%;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: #f0f2f5;
-  border: 1px solid #000;
+  display: grid; /* Usa grid para organizar los elementos */
+  grid-template-columns: repeat(2, 1fr); /* Dos columnas de tamaño igual */
+  grid-template-rows: repeat(0.5, 0.1fr); /* Define filas de altura ajustada */
+  grid-column-gap: 10px; /* Espacio entre columnas */
+  grid-row-gap: 10px; /* Espacio entre filas */
+  width: 80%; /* Ancho del contenedor al 80% de su elemento padre */
+  margin-left: auto; /* Centra el contenedor horizontalmente */
+  margin-right: auto; /* Centra el contenedor horizontalmente */
+  background-color: #f0f2f5; /* Color de fondo gris claro */
+  border: 1px solid #000; /* Borde negro de 1px */
 }
 
+/* Estilos para el primer bloque dentro de grid */
 .div11 {
-  grid-area: 1 / 1 / 2 / 2;
-  padding: 5%;
-  /* border: 1px solid #000; */
+  grid-area: 1 / 1 / 2 / 2; /* Asigna el área de la primera celda en el grid */
+  padding: 5%; /* Añade espacio alrededor del contenido */
 }
 
+/* Estilos para el segundo bloque dentro de grid */
 .div22 {
-  grid-area: 1 / 2 / 2 / 3;
-  padding: 5%;
-  /* border: 1px solid #000;  */
+  grid-area: 1 / 2 / 2 / 3; /* Asigna el área de la segunda celda en el grid */
+  padding: 5%; /* Añade espacio alrededor del contenido */
 }
 
+/* Estilos para el tercer bloque dentro de grid */
 .div33 {
-  grid-area: 2 / 1 / 3 / 3;
-  display: grid;
-  justify-content: center; /* Centrar horizontalmente */
-  align-items: center; /* Centrar verticalmente */
-  /* border: 1px solid #000; */
+  grid-area: 2 / 1 / 3 / 3; /* Asigna el área de la tercera celda en el grid */
+  display: grid; /* Usa grid dentro de este div */
+  justify-content: center; /* Centra el contenido horizontalmente */
+  align-items: center; /* Centra el contenido verticalmente */
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Input, Button, message, DatePicker, Select, Upload, Modal } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { collection, addDoc } from "firebase/firestore";
@@ -7,74 +7,93 @@ import { db, storage } from '../../FireBase/fireBase';
 import { useNavigate } from 'react-router-dom';
 import './RegistroEmpleado.css';
 
-const { Option } = Select;
-
 const RegistroEmpleado = () => {
-
+  // Se extrae la opción del componente Select de Ant Design para su uso en listas de selección
+  const { Option } = Select;
+  // Estado para controlar si la imagen ha sido subida correctamente
   const [imageUploaded, setImageUploaded] = useState(false);
+  // Hook de React Router para navegar entre las diferentes rutas de la aplicación
   const navigate = useNavigate();
 
+
+  // Definición de la función para verificar las imágenes cargadas
   const verificarImagen = {
+    // Función que se ejecuta antes de cargar la imagen
     beforeUpload: (file) => {
 
+      // Se obtiene la extensión del archivo y se verifica si es jpg o png
       let extension = file.name.split('.');
       extension = extension[extension.length - 1].toLowerCase();
+
+      // Verifica que la extensión sea válida (jpg o png)
       if (extension != 'jpg' && extension != 'png') {
         message.error('Solo se permite archivos jpg y png.');
-        return true;
-      } else if (file.size > 6000000) {
+        return true; // Si no es válido, se retorna true para evitar la carga
+      }
+      // Verifica que el tamaño del archivo no exceda los 6MB
+      else if (file.size > 6000000) {
         message.error('El tamaño de la imagen no puede exceder 6MB');
-      } else if (file.size < 1000) {
+      }
+      // Verifica que el tamaño del archivo no sea menor a 1 KB
+      else if (file.size < 1000) {
         message.error('El tamaño de la imagen no puede ser menor a 1 KB');
-      } else {
+      }
+      // Si todo es válido, se marca la imagen como subida correctamente
+      else {
         setImageUploaded(true);
         message.success(`${file.name} subido correctamente.`);
-        return false;
+        return false; // Retorna false para permitir la carga
       }
-      return true;
+      return true; // Si alguna condición falla, se retorna true para evitar la carga
     },
+
+    // Función que se ejecuta cuando la imagen es eliminada
     onRemove: () => {
-      // Lógica para manejar la eliminación de la imagen
-      setImageUploaded(false);
+      setImageUploaded(false); // Resetea el estado de la imagen subida
       message.warning('Imagen eliminada.');
     },
   };
 
+  // Función que se ejecuta al enviar el formulario
   const onFinish = async (values) => {
     const hide = message.loading('Registrando empleado...', 0);
-    // se guarda en una variable la imagen del array de foto con el objeto del archivo original
+
+    // Se obtiene la imagen cargada desde el formulario
     const imagen = values.foto[0].originFileObj;
+
     try {
-      // se sube la imagen a Cloud Storage de firebase para almcenar las imagenes en la ruta designada
+      // Se sube la imagen a Firebase Cloud Storage
       const storageRef = ref(storage, `imagenes/empleados/${imagen.name}`);
       await uploadBytes(storageRef, imagen);
-      // se obtiene la URL de la imagen subida para guardar en la lista de empleados
+
+      // Se obtiene la URL de la imagen subida
       const url = await getDownloadURL(storageRef);
-      // se guarda los datos del empleado en la "ListaEmpleados" de la base de datos con los datos proporcionados
+
+      // Se guarda la información del empleado en Firebase Firestore
       const docRef = await addDoc(collection(db, "ListaEmpleados"), {
-        Nombre: values.nombreCompleto, // Nombre del empleado
-        FechaNacimiento: formatearFecha(values.fechaNacimiento.toDate()), // Fecha de nacimiento formateada
-        CI: values.ci, // CI del empleado
-        Genero: values.genero, // Género del empleado
-        EstadoCivil: values.estadoCivil, // Estado civil del empleado
-        NumeroTeléfono: values.telefono, // Número de teléfono del empleado
-        FotoEmpleado: url, // URL de la foto del empleado
-        CorreoElectrónico: values.email, // Correo electrónico del empleado
-        PuestoOcargo: values.puesto, // Puesto o cargo del empleado
-        Salario: values.salario, // Salario del empleado
-        DirecciónDeDomicilio: values.direccion, // Dirección de domicilio del empleado
+        Nombre: values.nombreCompleto,
+        FechaNacimiento: formatearFecha(values.fechaNacimiento.toDate()),
+        CI: values.ci,
+        Genero: values.genero,
+        EstadoCivil: values.estadoCivil,
+        NumeroTeléfono: values.telefono,
+        FotoEmpleado: url,
+        CorreoElectrónico: values.email,
+        PuestoOcargo: values.puesto,
+        Salario: values.salario,
+        DirecciónDeDomicilio: values.direccion,
       });
-      // se muestro un modal de éxito si el documento se agrega correctamente
+
+      // Se muestra el mensaje de éxito
       hide();
       ModalExito();
     } catch (error) {
       hide();
-      // si ocurre un error al agregar el documento, lo imprimo en la consola
-      console.error("Error adding document: ", error);
+      console.error("Error adding document: ", error); // En caso de error, se imprime en consola
     }
   };
 
-
+  // Función para formatear la fecha en el formato deseado (año/mes/día)
   function formatearFecha(fechaString) {
     const fecha = new Date(fechaString);
 
@@ -84,31 +103,20 @@ const RegistroEmpleado = () => {
 
     return `${año}/${mes}/${dia}`;
   }
+
+  // Modal de éxito que se muestra tras un registro exitoso
   const ModalExito = () => {
     Modal.success({
       title: 'Registro de Empleado',
       content: 'Los datos del empleado se han guardado correctamente.',
-      onOk: () => { navigate('/sistema-administración/mostrar-empleados'); } // Cambia '/otra-ruta' por la ruta a la que quieres redirigir
+      onOk: () => { navigate('/sistema-administración/mostrar-empleados'); } // Redirige a la vista de empleados
     });
   }
 
+  // Función para regresar a la página de administración de empleados
   const backHome = () => {
     navigate('/sistema-administración');
   }
-
-  //   const initialValues = {
-  //     nombreCompleto: "Javier López",
-  //     ci: "8765432",
-  //     genero: "Masculino",
-  //     estadoCivil: "Casado",
-  //     telefono: "987654321",
-  //     email: "javier@example.com",
-  //     puesto: "Técnico en Reparación de Celulares",
-  //     salario: "4500",
-  //     direccion: "Calle de la Reparación, Edificio TechFix, Local 101, Ciudad Digital",
-  // };
-
-
 
   return (
     <div >
@@ -117,11 +125,9 @@ const RegistroEmpleado = () => {
       <Form
         name="registro_empleado"
         layout="horizontal"
-        // initialValues={initialValues}
         labelCol={{ span: 9 }}
         wrapperCol={{ span: 22 }}
         onFinish={onFinish}
-      // className="form-columns"
       >
         <div className='parent2'>
           <div className="div11">

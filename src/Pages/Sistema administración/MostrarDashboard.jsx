@@ -1,19 +1,22 @@
 import { Layout, Breadcrumb } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ButtonGenerador from './GeneradorCVS';
 import MostrarVentas from './DashboardVentas';
 import MostrarServicios from './DashboardServicios'
 import './MostrarDashboard.css';
 import './Vistas.css';
 
-const { Header, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
 
 const MostrarDashboard = () => {
-  const [activeTab, setActiveTab] = useState('Ventas');
+  // Estado para gestionar la pestaña activa
+  const [activeTab, setActiveTab] = useState('Ventas'); // Inicializa la pestaña activa en 'Ventas'
 
+  // Función que maneja el cambio de pestaña al hacer clic
   const handleTabClick = (tab) => {
-    setActiveTab(tab);
+    setActiveTab(tab); // Establece la nueva pestaña activa
   };
+
 
   return (
     <Layout style={{ minHeight: '100vh' }}>

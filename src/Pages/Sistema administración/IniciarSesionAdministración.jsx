@@ -12,49 +12,61 @@ import '../IniciarSesion.css';
 
 function InicarSesion({ login }) {
   const navigate = useNavigate();
-
   const [showError, setShowError] = useState(false);
 
+  // #region - - - - - - - - - - - - [ Efectos iniciales de carga y dependencias ( useEffects ) ] - - - - - - - - - - - - - - - - - -
+  // useEffect que controla el estado 'showError' y oculta el error después de un tiempo
+  useEffect(() => {
+    // Verifica si el estado 'showError' es verdadero (si se debe mostrar el error)
+    if (showError) {
+      // Establece un temporizador para ocultar el error después de 1500 milisegundos (1.5 segundos)
+      const timer = setTimeout(() => {
+        setShowError(false); // Oculta el error al cambiar 'showError' a false
+      }, 1500); // 1500 milisegundos = 1.5 segundos
+
+      // Retorna una función de limpieza que se ejecuta cuando el componente se desmonta
+      return () => clearTimeout(timer); // Limpia el temporizador para evitar efectos secundarios
+    }
+  }, [showError]); // El efecto se ejecuta cada vez que 'showError' cambia
+  // #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  // #region + + + + + + + + + + + + + [ Métodos ] + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+  // Función 'onFinish' que maneja el envío del formulario
   const onFinish = (values) => {
-    // Simulación de verificación de credenciales
+    // Se asegura de que el nombre de usuario tenga el formato adecuado con un dominio de correo
     const { username, password } = {
       ...values,
-      username: values.username.includes('@') ? values.username : `${values.username}@gmail.com`,
+      username: values.username.includes('@') ? values.username : `${values.username}@gmail.com`, // Si el usuario no incluye '@', se añade automáticamente '@gmail.com'
     };
+
+    // Intenta autenticar al usuario con email y contraseña
     signInWithEmailAndPassword(auth, username, password)
       .then((userCredential) => {
-        // console.log(userCredential.user);
-        // console.log("Puede ingresar");
-        if(userCredential.user.email === "administrador@gmail.com"){
-          login({ sistemaAsignado: userCredential.user.email });
-          sessionStorage.setItem('saveRol', userCredential.user.email);
-          navigate('/sistema-administración');
-          message.success('Inicio de sesión exitoso, ¡bienvenido!');
-          setShowError(false);
-        }else{
-          message.info("No cuenta con acceso a este sistema.")
+        // Si el email del usuario es "administrador@gmail.com", se procede con el login
+        if (userCredential.user.email === "administrador@gmail.com") {
+          login({ sistemaAsignado: userCredential.user.email }); // Llama a la función de login con el email del usuario
+          sessionStorage.setItem('saveRol', userCredential.user.email); // Guarda el rol del usuario en el sessionStorage
+          navigate('/sistema-administración'); // Redirige al sistema de administración
+          message.success('Inicio de sesión exitoso, ¡bienvenido!'); // Muestra mensaje de éxito
+          setShowError(false); // Oculta cualquier mensaje de error
+        } else {
+          // Si el email no es el del administrador, muestra un mensaje informando que no tiene acceso
+          message.info("No cuenta con acceso a este sistema.");
         }
-     
+
       })
       .catch((error) => {
+        // Si ocurre un error durante la autenticación, muestra un mensaje de error
         setShowError(true);
-        // console.error(error);
+        console.error(error); // Registra el error en la consola para depuración
       });
   };
 
+  // Función 'backHome' para redirigir al usuario a la página de inicio
   const backHome = () => {
-    navigate('/')
+    navigate('/'); // Redirige al home
   }
-
-  useEffect(() => {
-    if (showError) {
-      const timer = setTimeout(() => {
-        setShowError(false);
-      }, 1500); // 5000 milisegundos = 5 segundos
-
-      return () => clearTimeout(timer); // Limpia el temporizador si el componente se desmonta
-    }
-  }, [showError]);
+  // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
   return (
     <div className='parent-login'>
@@ -93,9 +105,6 @@ function InicarSesion({ login }) {
 
           <Form.Item>
             <button style={{ marginTop: 20, width: 150 }} type="primary" htmlType="submit" block>Ingresar</button>
-            {/* <Button type="primary" htmlType="submit" block on>
-              Ingresar  
-            </Button> */}
           </Form.Item>
 
         </Form>
