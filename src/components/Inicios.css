@@ -1,4 +1,4 @@
+/* Estilo para las tarjetas de ventas - EcardVentas */
 .EcardVentas {
-    padding: 0 10%; 
-    /* border: 1px solid #000; */
+    padding: 0 10%; /* Aplica un relleno horizontal de 10% a ambos lados de la tarjeta */
 }

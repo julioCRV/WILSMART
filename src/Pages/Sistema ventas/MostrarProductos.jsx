@@ -7,10 +7,13 @@ import dayjs from 'dayjs';
 import './MostrarProducto.css'
 
 const MostrarProducto = () => {
+  // Desestructuración del objeto Modal para obtener la función confirm, usada para mostrar modales de confirmación
   const { confirm } = Modal;
+  // Usamos useNavigate de React Router para poder realizar redirecciones de la navegación
   const navigate = useNavigate();
+  // Declaramos el estado para almacenar los datos que provienen de Firebase
   const [dataFirebase, setDataFirebase] = useState([]);
-
+  //Definimos los datos de la tabla
   const columns = [
     {
       title: 'Nombre',
@@ -79,95 +82,75 @@ const MostrarProducto = () => {
       key: 'actions',
       render: (text, record) => (
         <Space>
-          {/* <Button onClick={() => showDetails(record)}>Mostrar</Button> */}
           <Button onClick={() => editRecord(record)}>Editar</Button>
-          <Button   style={{ border: '1px solid red', color: 'red' }} onClick={() => confirmDelete(record)}>Eliminar</Button>
+          <Button style={{ border: '1px solid red', color: 'red' }} onClick={() => confirmDelete(record)}>Eliminar</Button>
         </Space>
       ),
     },
   ];
 
-  const showDetails = (record) => {
-    Modal.info({
-      title: 'Detalles del Registro',
-      content: (
-        <div>
-          <img src={record.FotoEmpleado} alt="Empleado" style={{ width: '200px', marginLeft: '15%' }} />
-          <p>{record.Nombre}</p>
-          <p>{record.PuestoOcargo}</p>
-          <p>Salario: {record.Salario}</p>
+  // useEffect se ejecuta cuando el componente se monta (por la dependencia vacía [])
+  useEffect(() => {
+    // Función asíncrona para obtener los productos de la colección "ListaProductos" en Firebase
+    const fetchData = async () => {
+      // Realizamos una consulta a la colección "ListaProductos" en Firestore
+      const querySnapshot = await getDocs(collection(db, "ListaProductos"));
+      // Mapeamos los documentos obtenidos y los agregamos al estado con el id del documento
+      const dataList = querySnapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id // Agregamos el id del documento a los datos
+      }));
+      // Actualizamos el estado con la lista de productos
+      setDataFirebase(dataList);
+    };
+    fetchData(); // Llamamos la función para obtener los datos de Firebase
+  }, []); // Dependencia vacía para que se ejecute solo una vez al montar el componente
 
-          <p>Fecha nacimiento: {record.FechaNacimiento}</p>
-          <p>C.I.: {record.CI}</p>
-          <p>Género: {record.Genero}</p>
-          <p>Estado civil: {record.EstadoCivil}</p>
-          <p>Número de teléfono{record.NumeroTeléfono}</p>
-          <p>Correo electrónico{record.CorreoElectrónico}</p>
-          <p>Dirección de domicilio: {record.DirecciónDeDomicilio}</p>
-        </div>
-      ),
-      onOk() { },
-    });
-  };
-
+  // Función para editar un producto. Redirige a la página de edición pasando el producto como estado.
   const editRecord = (record) => {
-    //console.log('Editar:', record);
     navigate('/sistema-ventas/editar-producto', { state: { objetoProp: record } });
-    // Aquí puedes implementar la lógica para editar el registro
   };
 
+  // Función para eliminar un producto de Firestore usando su ID
   const handleDelete = async (id) => {
-    const docRef = doc(db, "ListaProductos", id);
+    const docRef = doc(db, "ListaProductos", id); // Referencia al documento en Firebase
     try {
-      await deleteDoc(docRef);
-      //console.log("Document deleted");
-      actualizarListaProductos();
+      await deleteDoc(docRef); // Elimina el documento de Firestore
+      actualizarListaProductos(); // Actualiza la lista de productos después de la eliminación
     } catch (e) {
-      console.error("Error deleting document: ", e);
+      console.error("Error deleting document: ", e); // Muestra error si falla la eliminación
     }
   };
 
+  // Función de confirmación de eliminación de producto. Se muestra un modal de confirmación.
   const confirmDelete = (record) => {
     confirm({
-      title: '¿Estás seguro de eliminar este producto?',
-      content: 'Esta acción no se puede deshacer.',
-      okText: 'Eliminar',
-      okType: 'danger',
-      cancelText: 'Cancelar',
+      title: '¿Estás seguro de eliminar este producto?', // Título del modal
+      content: 'Esta acción no se puede deshacer.', // Contenido del modal
+      okText: 'Eliminar', // Texto del botón de confirmación
+      okType: 'danger', // Estilo del botón de confirmación
+      cancelText: 'Cancelar', // Texto del botón de cancelación
       onOk() {
-        //console.log('Eliminar:', record);
-        handleDelete(record.id);
+        handleDelete(record.id); // Llama a handleDelete si el usuario confirma la eliminación
       },
-      onCancel() { },
+      onCancel() { }, // No hace nada al cancelar
     });
   };
 
+  // Función que maneja cambios en la tabla, como paginación, filtros o clasificación (sin implementación en este código)
   const onChange = (pagination, filters, sorter, extra) => {
-    //console.log('params', pagination, filters, sorter, extra);
+    //console.log('params', pagination, filters, sorter, extra); // Aquí podrías manejar cambios si lo necesitas
   };
 
+  // Función para actualizar la lista de productos obtenida desde Firebase
   const actualizarListaProductos = async () => {
-    const querySnapshot = await getDocs(collection(db, "ListaProductos"));
+    const querySnapshot = await getDocs(collection(db, "ListaProductos")); // Obtiene los productos de la colección
     const dataList = querySnapshot.docs.map(doc => ({
       ...doc.data(),
-      id: doc.id
+      id: doc.id // Mapea los productos añadiendo su id
     }));
-    // console.log(dataList);
-    setDataFirebase(dataList);
+    setDataFirebase(dataList); // Actualiza el estado con la nueva lista de productos
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const querySnapshot = await getDocs(collection(db, "ListaProductos"));
-      const dataList = querySnapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id
-      }));
-      // console.log(dataList);
-      setDataFirebase(dataList);
-    };
-    fetchData();
-  }, []);
 
   return (
     <>

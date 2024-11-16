@@ -6,10 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import './MostrarProducto.css'
 
 const MostrarProducto = () => {
-    const { confirm } = Modal;
-    const navigate = useNavigate();
-    const [dataFirebase, setDataFirebase] = useState([]);
-
+    // Importación del método "confirm" de Modal y configuración de estados y navegación
+    const { confirm } = Modal; // Desestructuración para usar la función "confirm" del componente Modal
+    const navigate = useNavigate(); // Hook de React Router para manejar la navegación entre rutas
+    const [dataFirebase, setDataFirebase] = useState([]); // Estado para almacenar los datos obtenidos de Firebase, inicializado como un arreglo vacío
+    //Definición de datos para la tabla
     const columns = [
         {
             title: 'Imagen',
@@ -17,7 +18,7 @@ const MostrarProducto = () => {
             render: (imageUrl) => <img src={imageUrl} alt="Empleado" style={{ width: '50px' }} />,
             // defaultSortOrder: 'descend',
             // sorter: (a, b) => a.name.localeCompare(b.name),
-          },
+        },
         {
             title: 'Nombre',
             dataIndex: 'NombreProducto',
@@ -63,92 +64,97 @@ const MostrarProducto = () => {
         },
     ];
 
+    // useEffect: Cargar lista de productos desde Firestore
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Obtener documentos de la colección "ListaProductos" en Firestore
+                const querySnapshot = await getDocs(collection(db, "ListaProductos"));
+
+                // Mapear los documentos para agregar propiedades adicionales
+                const dataList = querySnapshot.docs.map(doc => ({
+                    ...doc.data(), // Datos del documento
+                    id: doc.id, // ID del documento
+                    nuevaCantidad: 0, // Nueva propiedad inicializada en 0
+                    cantidadIncrementada: 0, // Otra nueva propiedad inicializada en 0
+                }));
+
+                setDataFirebase(dataList); // Actualizar el estado con la lista obtenida
+            } catch (error) {
+                console.error("Error fetching data from Firestore: ", error); // Manejo de errores
+            }
+        };
+
+        fetchData(); // Llamar a la función para obtener los datos al montar el componente
+    }, []);
+
+    // Función para incrementar la cantidad de un producto
     const handleIncrement = (key, incrementValue) => {
         const updatedProductos = dataFirebase.map((producto) => {
+            // Verifica si el producto actual coincide con el ID proporcionado (key)
             if (producto.id === key) {
                 const newNuevaCantidad = producto.cantidadIncrementada + incrementValue;
+                // Actualiza el valor de "cantidadIncrementada" asegurándose de que no sea negativo
                 return { ...producto, cantidadIncrementada: newNuevaCantidad >= 0 ? newNuevaCantidad : 0 };
             }
-            return producto;
+            return producto; // Retorna el producto sin cambios si no coincide el ID
         });
-        setDataFirebase(updatedProductos);
+        setDataFirebase(updatedProductos); // Actualiza el estado con la nueva lista de productos
     };
 
+    // Función para calcular y actualizar la nueva cantidad de un producto
     const handleActualizar = (key) => {
         const updatedProductos = dataFirebase.map((producto) => {
+            // Verifica si el producto actual coincide con el ID proporcionado (key)
             if (producto.id === key) {
+                // Calcula la nueva cantidad sumando la cantidad inicial y la cantidad incrementada
                 return { ...producto, nuevaCantidad: parseInt(producto.Cantidad) + producto.cantidadIncrementada };
             }
-            return producto;
+            return producto; // Retorna el producto sin cambios si no coincide el ID
         });
-        setDataFirebase(updatedProductos);
+        setDataFirebase(updatedProductos); // Actualiza el estado con la nueva lista de productos
     };
 
+    // Función para manejar cambios en la tabla (filtros, paginación, ordenación)
     const onChange = (pagination, filters, sorter, extra) => {
-        //console.log('params', pagination, filters, sorter, extra);
+        // Por ahora no realiza ninguna acción, pero se pueden agregar manejadores aquí
+        // console.log('params', pagination, filters, sorter, extra);
     };
 
-    // const handleSaveAll = async () => {
-    //     const batch = db.batch(); 
-    //     dataFirebase.forEach((item) => {
-    //         const productRef = doc(db, "ListaProductos", item.id);
-    //         if(item.nuevaCantidad != 0){
-    //             batch.update(productRef, { cantidad: item.nuevaCantidad });
-    //         }
-    //     });
-
-    //     await batch.commit(); 
-    //     console.log('Todos los productos han sido actualizados en Firebase.');
-    // };
-
+    // Función para guardar los cambios en Firestore
     const handleSaveAll = async () => {
+        // Genera un array de promesas para actualizar solo los productos con cantidades modificadas
         const promises = dataFirebase.map((item) => {
-            const productRef = doc(db, "ListaProductos", item.id);
-            if (item.nuevaCantidad !== 0) {
-                return updateDoc(productRef, { Cantidad: item.nuevaCantidad });
+            const productRef = doc(db, "ListaProductos", item.id); // Referencia al documento en Firestore
+            if (item.nuevaCantidad !== 0) { // Solo actualiza productos con cambios en la cantidad
+                return updateDoc(productRef, { Cantidad: item.nuevaCantidad }); // Actualiza el campo "Cantidad"
             }
-            return null;
-        }).filter(promise => promise !== null);
+            return null; // Ignora productos sin cambios
+        }).filter(promise => promise !== null); // Filtra las promesas nulas
 
         try {
             await Promise.all(promises); // Espera a que todas las actualizaciones se completen
-            //console.log('Todos los productos han sido actualizados en Firebase.');
         } catch (error) {
-            console.error('Error al actualizar los productos:', error);
+            console.error('Error al actualizar los productos:', error); // Manejo de errores
         }
     };
 
+    // Función para mostrar una confirmación antes de guardar los cambios
     const confirmDelete = () => {
         confirm({
-            title: 'Confirmar guardado',
-            content: '¿Está seguro de guardar las modificaciones?',
-            okText: 'Guardar',
-            okType: 'ghost',
-            cancelText: 'Cancelar',
+            title: 'Confirmar guardado', // Título del modal
+            content: '¿Está seguro de guardar las modificaciones?', // Mensaje del modal
+            okText: 'Guardar', // Texto del botón de confirmación
+            okType: 'ghost', // Estilo del botón de confirmación
+            cancelText: 'Cancelar', // Texto del botón de cancelación
             onOk() {
-                handleSaveAll();
-                message.success('¡Productos incrementados con éxito!');
-                navigate('/sistema-ventas/mostrar-productos');
+                handleSaveAll(); // Llama a la función para guardar todos los cambios
+                message.success('¡Productos incrementados con éxito!'); // Mensaje de éxito
+                navigate('/sistema-ventas/mostrar-productos'); // Navega a la lista de productos
             },
-            onCancel() { },
+            onCancel() { }, // No realiza ninguna acción si se cancela
         });
     };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const querySnapshot = await getDocs(collection(db, "ListaProductos"));
-            const dataList = querySnapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id,
-                nuevaCantidad: 0,
-                cantidadIncrementada: 0,
-            }));
-            // console.log(dataList);
-            setDataFirebase(dataList);
-        };
-        fetchData();
-    }, []);
-
 
     return (
         <div>

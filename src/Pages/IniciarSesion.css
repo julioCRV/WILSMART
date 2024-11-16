@@ -1,88 +1,94 @@
+/* .filled-icon: Estilo para los iconos llenos, con un ancho de 20px */
 .filled-icon {
-    width: 20px;
+    width: 20px; /* El icono tiene un ancho de 20px */
 }
 
+/* .input: Estilo para los campos de entrada, con altura de 35px y un ancho fijo de 300px */
 .input {
-    height: 35px;
-    width: 300px;
-
+    height: 35px; /* La altura del campo de entrada es de 35px */
+    width: 300px; /* El ancho del campo de entrada es de 300px */
 }
 
+/* .cardLogin: Estilo para la tarjeta de inicio de sesión, con un tamaño fijo de 400px por 350px */
 .cardLogin {
-    width: 400px;
-    height: 350px;
+    width: 400px; /* La tarjeta tiene un ancho de 400px */
+    height: 350px; /* La tarjeta tiene una altura de 350px */
 }
 
+/* .parent-login: Contenedor de tipo grid con dos columnas y dos filas */
 .parent-login {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 0.2fr 2fr;
-    grid-column-gap: 20px;
-    grid-row-gap: 10px;
+    display: grid; /* Usa grid para organizar los elementos dentro del contenedor */
+    grid-template-columns: repeat(2, 1fr); /* Dos columnas de igual tamaño */
+    grid-template-rows: 0.2fr 2fr; /* Dos filas: la primera ocupa 0.2fr y la segunda ocupa 2fr */
+    grid-column-gap: 20px; /* Añade un espacio de 20px entre las columnas */
+    grid-row-gap: 10px; /* Añade un espacio de 10px entre las filas */
 }
 
+/* html, body: Estilos globales para el cuerpo y html de la página */
 html,
 body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+    height: 100%; /* Asegura que tanto html como body ocupen toda la altura disponible */
+    margin: 0; /* Elimina los márgenes predeterminados */
+    padding: 0; /* Elimina los padding predeterminados */
 }
 
+/* .div1-logo: Contenedor para el logo, ocupa la primera fila y abarca ambas columnas */
 .div1-logo {
-    grid-area: 1 / 1 / 2 / 3;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /* border: 1px solid #000; */
-    padding: 10px;
-    /* Opcional: para dar algo de espacio alrededor de los elementos */
+    grid-area: 1 / 1 / 2 / 3; /* Define que el logo ocupa la primera fila y las dos primeras columnas */
+    display: flex; /* Usa flexbox para alinear el contenido */
+    justify-content: space-between; /* Espacia los elementos del logo de manera equitativa */
+    align-items: center; /* Alinea los elementos verticalmente al centro */
+    padding: 10px; /* Añade un padding de 10px */
 }
 
-
+/* .div2-login: Contenedor para el formulario de inicio de sesión, ocupa la primera columna de la segunda fila */
 .div2-login {
-    grid-area: 2 / 1 / 3 / 2;
-    padding-left: 30%;
-    padding-top: 12%;
-    /* border: 1px solid #000; */
-    display: grid;
-    justify-content: center;
-    align-items: center;
+    grid-area: 2 / 1 / 3 / 2; /* Define que el formulario ocupa la segunda fila y la primera columna */
+    padding-left: 30%; /* Añade un padding izquierdo del 30% */
+    padding-top: 12%; /* Añade un padding superior del 12% */
+    display: grid; /* Usa grid para organizar el contenido dentro del formulario */
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
 }
 
+/* .div3-card: Contenedor para la tarjeta de login, ocupa la segunda columna de la segunda fila */
 .div3-card {
-    grid-area: 2 / 2 / 3 / 3;
-    padding-top: 12%;
-    /* border: 1px solid #000; */
+    grid-area: 2 / 2 / 3 / 3; /* Define que la tarjeta ocupa la segunda fila y la segunda columna */
+    padding-top: 12%; /* Añade un padding superior del 12% */
 }
 
-/* Media query para pantallas más pequeñas */
+/* Media query para pantallas más pequeñas (máximo de 768px de ancho) */
 @media (max-width: 768px) {
+    /* .parent-login: Cambia el layout para pantallas pequeñas, con una sola columna */
     .parent-login {
-        /* border: 1px solid black; */
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
-        grid-column-gap: 0;
-        grid-row-gap: 10px;
+        grid-template-columns: 1fr; /* Cambia a una sola columna */
+        grid-template-rows: auto; /* Las filas se ajustan al contenido */
+        grid-column-gap: 0; /* Elimina el espacio entre columnas */
+        grid-row-gap: 10px; /* Mantiene el espacio de 10px entre filas */
     }
 
+    /* .div1-logo: Ajusta la posición y alineación del logo para pantallas pequeñas */
     .div1-logo {
-        grid-area: auto;
-        justify-content: space-between;
+        grid-area: auto; /* Deja que el contenedor ocupe la posición automática */
+        justify-content: space-between; /* Mantiene el espaciado entre los elementos */
     }
 
+    /* .div2-login: Ajusta el padding y la alineación del formulario */
     .div2-login {
-        grid-area: auto;
-        padding-left: 0;
-        padding-top: 0;
+        grid-area: auto; /* Deja que el formulario ocupe la posición automática */
+        padding-left: 0; /* Elimina el padding izquierdo */
+        padding-top: 0; /* Elimina el padding superior */
     }
 
+    /* .div3-card: Ajusta la posición y el padding de la tarjeta */
     .div3-card {
-        grid-area: auto;
-        padding-top: 0;
+        grid-area: auto; /* Deja que la tarjeta ocupe la posición automática */
+        padding-top: 0; /* Elimina el padding superior */
     }
 
+    /* .cardLogin: Ajusta el tamaño de la tarjeta para pantallas pequeñas */
     .cardLogin {
-        width: auto;
-        height: auto;
+        width: auto; /* La tarjeta ahora ocupa el ancho automático */
+        height: auto; /* La tarjeta ahora ocupa la altura automática */
     }
 }

@@ -1,73 +1,73 @@
+/* Estilos globales y específicos para tipografía, enlaces, botones y medios */
+
+/* Estilos globales para el documento */
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* Define la familia tipográfica */
+  line-height: 1.5; /* Establece la altura de línea para mejorar la legibilidad */
+  font-weight: 400; /* Define el peso de la fuente como normal */
 
-  color-scheme: light dark;
-  color: rgba(6, 6, 6, 0.87);
-  background-color: #242424;
+  color-scheme: light dark; /* Soporta esquemas de color claro y oscuro */
+  color: rgba(6, 6, 6, 0.87); /* Color del texto principal */
+  background-color: #242424; /* Color de fondo oscuro */
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none; /* Evita la síntesis de fuentes */
+  text-rendering: optimizeLegibility; /* Optimiza la legibilidad del texto */
+  -webkit-font-smoothing: antialiased; /* Mejora la suavidad de las fuentes en WebKit */
+  -moz-osx-font-smoothing: grayscale; /* Mejora la suavidad de las fuentes en macOS */
 }
 
+/* Estilos para los enlaces */
 a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+  font-weight: 500; /* Peso de fuente para los enlaces */
+  color: #646cff; /* Color principal de los enlaces */
+  text-decoration: inherit; /* Hereda la decoración del texto */
 }
 a:hover {
-  color: #535bf2;
+  color: #535bf2; /* Color al pasar el mouse sobre el enlace */
 }
 
-/* body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-} */
-
+/* Estilos para el título h1 */
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-  color: black;
+  font-size: 3.2em; /* Tamaño de fuente para h1 */
+  line-height: 1.1; /* Espaciado de línea para h1 */
+  color: black; /* Color de texto de h1 */
 }
 
+/* Estilos para el título h2 */
 h2 {
-  color: black;
+  color: black; /* Color de texto de h2 */
 }
 
+/* Estilos para los botones */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+  border-radius: 8px; /* Bordes redondeados para los botones */
+  border: 1px solid transparent; /* Sin borde visible por defecto */
+  padding: 0.6em 1.2em; /* Relleno interno del botón */
+  font-size: 1em; /* Tamaño de fuente para el texto del botón */
+  font-weight: 500; /* Peso de fuente para el texto del botón */
+  font-family: inherit; /* Hereda la familia tipográfica del elemento principal */
+  background-color: #1a1a1a; /* Color de fondo oscuro para el botón */
+  cursor: pointer; /* Cambia el cursor cuando se pasa sobre el botón */
+  transition: border-color 0.25s; /* Transición suave para el cambio de borde */
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #646cff; /* Color de borde al pasar el mouse sobre el botón */
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 4px auto -webkit-focus-ring-color; /* Resalta el botón cuando está enfocado */
 }
 
+/* Estilos específicos cuando el esquema de color preferido es claro */
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: #213547; /* Color de texto para el esquema claro */
+    background-color: #ffffff; /* Color de fondo blanco */
   }
   a:hover {
-    color: #747bff;
+    color: #747bff; /* Color del enlace al pasar el mouse en esquema claro */
   }
   button {
-    background-color: #f9f9f9;
+    background-color: #f9f9f9; /* Fondo blanco para el botón en esquema claro */
   }
 }

@@ -1,7 +1,8 @@
+/* Estilo para el menú horizontal en pantallas pequeñas (max-width: 768px) */
 @media (max-width: 768px) {
     .ant-menu-horizontal {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        display: flex; /* Cambia el comportamiento del contenedor a flexbox */
+        flex-direction: column; /* Ordena los elementos en una columna */
+        align-items: center; /* Centra los elementos horizontalmente */
     }
 }

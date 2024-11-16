@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Input, Button, message, DatePicker, Select, Upload, Modal } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { doc, updateDoc } from "firebase/firestore";
@@ -8,93 +8,70 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import './RegistrarProducto.css';
 
-const { Option } = Select;
-
 const EditarProducto = () => {
+    // Importación de opciones de Select
+    const { Option } = Select;
+    // Manejo de la ubicación y navegación
     const location = useLocation();
     const dataProducto = location.state && location.state.objetoProp;
-    const [imageUploaded, setImageUploaded] = useState(false);
-    const navigate = useNavigate();
+    const [imageUploaded, setImageUploaded] = useState(false); // Estado para rastrear si se subió la imagen
+    const navigate = useNavigate(); // Para manejar la navegación
 
-    // console.log(dataProducto.fechaNacimiento);
+    // Verificaciones para la imagen antes de subirla
     const verificarImagen = {
         beforeUpload: (file) => {
+            let extension = file.name.split('.'); // Divide el nombre del archivo para obtener la extensión
+            extension = extension[extension.length - 1].toLowerCase(); // Obtén la extensión en minúsculas
 
-            let extension = file.name.split('.');
-            extension = extension[extension.length - 1].toLowerCase();
-            if (extension != 'jpg' && extension != 'png') {
+            // Verificación de extensión
+            if (extension !== 'jpg' && extension !== 'png') {
                 message.error('Solo se permite archivos jpg y png.');
                 return true;
-            } else if (file.size > 6000000) {
+            }
+            // Verificación de tamaño máximo
+            else if (file.size > 6000000) {
                 message.error('El tamaño de la imagen no puede exceder 6MB');
-            } else if (file.size < 1000) {
+            }
+            // Verificación de tamaño mínimo
+            else if (file.size < 1000) {
                 message.error('El tamaño de la imagen no puede ser menor a 1 KB');
-            } else {
-                setImageUploaded(true);
+            }
+            // Si pasa todas las verificaciones
+            else {
+                setImageUploaded(true); // Marca la imagen como subida
                 message.success(`${file.name} subido correctamente.`);
                 return false;
             }
-            return true;
+            return true; // Cancela la subida si alguna verificación falla
         },
         onRemove: () => {
             // Lógica para manejar la eliminación de la imagen
-            setImageUploaded(false);
+            setImageUploaded(false); // Resetea el estado de la imagen
             message.warning('Imagen eliminada.');
         },
     };
 
-
+    // Manejo del envío del formulario
     const onFinish = async (values) => {
-        // console.log('Received values of form: ', values);
-        // console.log(values.imagen);
+        const imagen = values.imagen[0].originFileObj; // Obtén la imagen del formulario
+        const docRef = doc(db, "ListaProductos", dataProducto.id); // Referencia al documento en la base de datos
 
-        const imagen = values.imagen[0].originFileObj;
-        // try {
-        //     // Sube la imagen a Cloud Storage
-        //     const storageRef = ref(storage, `imagenes/${imagen.name}`);
-        //     await uploadBytes(storageRef, imagen);
-
-        //     // Obtiene la URL de descarga de la imagen
-        //     const url = await getDownloadURL(storageRef);
-
-        //     const docRef = await addDoc(collection(db, "ListaProductos"), {
-        //         Nombre: values.nombreCompleto,
-        //         FechaNacimiento: formatearFecha(values.fechaNacimiento.toDate()),
-        //         CI: values.ci,
-        //         Genero: values.genero,
-        //         EstadoCivil: values.estadoCivil,
-        //         NumeroTeléfono: values.telefono,
-        //         FotoEmpleado: url,
-        //         CorreoElectrónico: values.email,
-        //         PuestoOcargo: values.puesto,
-        //         Salario: values.salario,
-        //         DirecciónDeDomicilio: values.direccion
-        //     });
-        //     console.log("Document written with ID: ", docRef.id);
-        //     ModalExito();
-        // } catch (error) {
-        //     console.error("Error adding document: ", error);
-        // }
-
-        const docRef = doc(db, "ListaProductos", dataProducto.id);
         try {
-
-            // Declarar url con un valor inicial
-            let url = '';
+            let url = ''; // Inicializa la variable URL
 
             if (imagen.name === 'imagenProducto.jpg') {
-                // Si el nombre de la imagen es 'imagenEmpleado.jpg', obtén la URL del dataProducto
+                // Si la imagen tiene un nombre predeterminado, usa la URL del dataProducto
                 url = dataProducto.Imagen;
             } else {
-                // Sube la imagen a Cloud Storage
+                // Sube la imagen al almacenamiento en la nube
                 const storageRef = ref(storage, `imagenes/productos/${imagen.name}`);
                 await uploadBytes(storageRef, imagen);
 
-                // Obtiene la URL de descarga de la imagen
+                // Obtén la URL de descarga
                 url = await getDownloadURL(storageRef);
             }
 
-            // Aquí puedes utilizar la variable url con el valor correspondiente
+            // Actualiza el documento con los nuevos valores
             await updateDoc(docRef, {
                 NombreProducto: values.nombreProducto,
                 Cantidad: values.cantidad,
@@ -102,61 +79,68 @@ const EditarProducto = () => {
                 Fecha: formatearFecha(values.fecha.toDate()),
                 Precio: values.precio,
                 PrecioCompra: values.precioCompra,
-                Imagen: url,
+                Imagen: url, // URL actualizada o mantenida
                 Marca: values.marca,
                 Descripcion: values.descripcion,
             });
-            // console.log("Document updated");
+
+            // Mostrar modal de éxito
             ModalExito();
         } catch (e) {
-            console.error("Error updating document: ", e);
+            console.error("Error al actualizar el documento: ", e);
         }
     };
 
+    // Función para formatear fechas
     function formatearFecha(fechaString) {
         const fecha = new Date(fechaString);
 
-        const dia = fecha.getDate().toString().padStart(2, '0');
-        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son base 0, por lo que sumamos 1
-        const año = fecha.getFullYear();
+        const dia = fecha.getDate().toString().padStart(2, '0'); // Día con ceros a la izquierda
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Mes con ceros a la izquierda
+        const año = fecha.getFullYear(); // Año completo
 
-        return `${año}/${mes}/${dia}`;
+        return `${año}/${mes}/${dia}`; // Retorna en formato 'aaaa/mm/dd'
     }
 
+    // Modal de éxito
     const ModalExito = () => {
         Modal.success({
             title: 'Actualizar datos del producto',
             content: 'Los datos del producto se han actualizado correctamente.',
-            onOk: () => { navigate('/sistema-ventas/mostrar-productos'); }
+            onOk: () => {
+                navigate('/sistema-ventas/mostrar-productos'); // Navega de vuelta a la lista de productos
+            },
         });
-    }
+    };
 
+    // Navegar de regreso a la lista de productos
     const backList = () => {
-        navigate('/sistema-ventas/mostrar-productos');
-    }
+        navigate('/sistema-ventas/mostrar-productos'); // Redirecciona a la página de productos
+    };
 
+    // Valores iniciales del formulario, basados en los datos recibidos
     const initialValues = {
-        nombreProducto: dataProducto.NombreProducto,
-        cantidad: dataProducto.Cantidad,
-        categoria: dataProducto.Categoria,
-        fecha: dayjs(dataProducto.Fecha),
-        precio: dataProducto.Precio,
-        precioCompra: dataProducto.PrecioCompra,
+        nombreProducto: dataProducto.NombreProducto, // Nombre del producto
+        cantidad: dataProducto.Cantidad, // Cantidad disponible
+        categoria: dataProducto.Categoria, // Categoría del producto
+        fecha: dayjs(dataProducto.Fecha), // Fecha, convertida a formato `dayjs`
+        precio: dataProducto.Precio, // Precio del producto
+        precioCompra: dataProducto.PrecioCompra, // Precio de compra
         imagen: [
             {
-                uid: 'rc-upload-1717606230863-15',
-                name: 'imagenProducto.jpg',
-                lastModified: 1717602102812,
-                lastModifiedDate: new Date('Wed Jun 05 2024 11:41:42 GMT-0400 (hora de Bolivia)'),
-                originFileObj: new File([''], 'imagenProducto.jpg', { type: 'image/jpeg' }),
-                percent: 0,
-                size: 4642,
-                type: 'image/jpeg',
-                url: dataProducto.Imagen
-            }
+                uid: 'rc-upload-1717606230863-15', // Identificador único del archivo
+                name: 'imagenProducto.jpg', // Nombre predeterminado de la imagen
+                lastModified: 1717602102812, // Marca de tiempo de última modificación
+                lastModifiedDate: new Date('Wed Jun 05 2024 11:41:42 GMT-0400 (hora de Bolivia)'), // Fecha de última modificación
+                originFileObj: new File([''], 'imagenProducto.jpg', { type: 'image/jpeg' }), // Objeto del archivo original
+                percent: 0, // Progreso de subida (0 ya que es predeterminado)
+                size: 4642, // Tamaño del archivo en bytes
+                type: 'image/jpeg', // Tipo MIME del archivo
+                url: dataProducto.Imagen, // URL actual de la imagen
+            },
         ],
-        marca: dataProducto.Marca,
-        descripcion: dataProducto.Descripcion
+        marca: dataProducto.Marca, // Marca del producto
+        descripcion: dataProducto.Descripcion, // Descripción del producto
     };
 
     return (
@@ -170,7 +154,6 @@ const EditarProducto = () => {
                 labelCol={{ span: 9 }}
                 wrapperCol={{ span: 22 }}
                 onFinish={onFinish}
-            // className="form-columns"
             >
                 <div className='parent2'>
                     <div className="div11">

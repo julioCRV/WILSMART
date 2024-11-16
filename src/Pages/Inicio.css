@@ -1,20 +1,23 @@
+/* .ant-col: El estilo para las columnas de Ant Design, actualmente con el margen inferior comentado */
 .ant-col {
-  /* margin-bottom: 10px; */
+  /* margin-bottom: 10px;  El margen inferior está comentado, pero originalmente añadía un espacio de 10px debajo de cada columna */
 }
 
+/* .ant-card: Estilo para las tarjetas de Ant Design, con margen inferior y centrado de contenido */
 .ant-card {
-  margin-bottom: 20px;
-  justify-content: center;
-  align-items: center;
-  background-color: #f0f0f0;
-  height: 90%;
-  width: auto;
-  /* border: 1px solid #000; */
+  margin-bottom: 20px; /* Añade un margen inferior de 20px para separar las tarjetas entre sí */
+  justify-content: center; /* Centra el contenido horizontalmente dentro de la tarjeta */
+  align-items: center; /* Centra el contenido verticalmente dentro de la tarjeta */
+  background-color: #f0f0f0; /* Establece un fondo de color gris claro (#f0f0f0) para las tarjetas */
+  height: 90%; /* Establece que la tarjeta tenga una altura del 90% de su contenedor */
+  width: auto; /* Establece el ancho automático de la tarjeta, ajustándose al contenido */
 }
 
-@media (min-width: 768px) and (max-width:1820px) {
+/* Media query para pantallas con un ancho entre 768px y 1820px */
+@media (min-width: 768px) and (max-width: 1820px) {
+  /* .cardDisenio: Estilo aplicado a las tarjetas en pantallas medianas a grandes, con márgenes laterales */
   .cardDisenio {
-    margin-right: 10%;
-    margin-left: 10%;
+    margin-right: 10%; /* Añade un margen derecho del 10% */
+    margin-left: 10%;  /* Añade un margen izquierdo del 10% */
   }
 }

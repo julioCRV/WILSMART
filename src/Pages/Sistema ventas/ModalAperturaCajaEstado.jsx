@@ -1,65 +1,88 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Button, DatePicker, message } from 'antd';
+import { Modal, Form, Input, Button, message } from 'antd';
 import { collection, addDoc, doc, getDoc } from "firebase/firestore";
-import { useNavigate } from 'react-router-dom';
 import { db } from '../../FireBase/fireBase';
 
 const ModalAperturaCaja = ({ confirmacion, nombre }) => {
-    const [form] = Form.useForm();
-    const navigate = useNavigate();
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
-    const [montoInicial, setMontoInicial] = useState(0);
-    const [dataCaja, setDataCaja] = useState([]);
+    const [form] = Form.useForm();  // Inicializa el formulario con Ant Design Form
+    const [isModalVisible, setIsModalVisible] = useState(false);  // Estado para controlar la visibilidad del primer modal
+    const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);  // Estado para controlar la visibilidad del modal de confirmación
+    const [montoInicial, setMontoInicial] = useState(0);  // Estado para almacenar el monto inicial de la caja
+    const [dataCaja, setDataCaja] = useState([]);  // Estado para almacenar la información de la caja
 
+    //Obtención de datos de caja desde firestore al montar el componente
+    useEffect(() => {
+        const idCaja = sessionStorage.getItem('id');  // Obtiene el ID de la caja desde sessionStorage
+        if (idCaja != null) {  // Si el ID de la caja existe en sessionStorage
+            // Función asíncrona para obtener los datos de la caja desde Firestore
+            const fetchData2 = async () => {
+                const docRef = doc(db, "HistorialAperturaCaja", idCaja);  // Referencia al documento de Firestore de HistorialAperturaCaja
+                const docSnap = await getDoc(docRef);  // Obtiene el documento de Firestore
+
+                if (docSnap.exists()) {  // Si el documento existe
+                    const data = { ...docSnap.data(), id: docSnap.id };  // Extrae los datos y agrega el ID
+                    setDataCaja(data);  // Establece los datos de la caja en el estado
+                } else {
+                    console.log("No such document!");  // Muestra un mensaje si el documento no existe
+                }
+            };
+            fetchData2();  // Llama a la función para obtener los datos de la caja
+        }
+    }, []);  // El efecto se ejecuta una sola vez cuando el componente se monta
+
+    // Función que maneja la validación del formulario y muestra el modal de confirmación si es válido
     const handleOk = () => {
-        form.validateFields()
+        form.validateFields()  // Valida los campos del formulario
             .then((values) => {
-                setMontoInicial(values.montoInicial);
-                setIsConfirmModalVisible(true);
+                setMontoInicial(values.montoInicial);  // Establece el monto inicial de la caja
+                setIsConfirmModalVisible(true);  // Muestra el modal de confirmación
             })
             .catch((info) => {
-                message.error('Por favor complete el formulario correctamente.');
+                message.error('Por favor complete el formulario correctamente.');  // Muestra un mensaje de error si el formulario no es válido
             });
     };
 
+    // Función que maneja la confirmación de apertura de caja y agrega un documento en Firestore
     const handleConfirmOk = async () => {
-        setIsConfirmModalVisible(false);
-        setIsModalVisible(false);
-        const tiempoActual = obtenerFechaHoraActual();
+        setIsConfirmModalVisible(false);  // Cierra el modal de confirmación
+        setIsModalVisible(false);  // Cierra el modal inicial
+        const tiempoActual = obtenerFechaHoraActual();  // Obtiene la fecha y hora actual
 
         try {
+            // Intenta agregar un nuevo documento en la colección "HistorialAperturaCaja" en Firestore
             const docRef = await addDoc(collection(db, "HistorialAperturaCaja"), {
                 Estado: true,
-                Fecha: tiempoActual.fecha,
-                Hora: tiempoActual.hora,
-                NombreEmpleado: nombre || 'administrador',
-                MontoInicialCaja: parseInt(montoInicial),
-                MontoActualCaja: parseInt(montoInicial),
-                MontoFinalCaja: parseInt(montoInicial),
-                TotalGanancias: 0,
-                TotalCambio: 0,
-                TotalIngresoCaja: 0,
-                TotalPagado: 0,
-                TotalRetiroCaja: 0,
-                TotalVentas: 0
+                Fecha: tiempoActual.fecha,  // Establece la fecha actual
+                Hora: tiempoActual.hora,  // Establece la hora actual
+                NombreEmpleado: nombre || 'administrador',  // Usa el nombre del empleado o 'administrador' por defecto
+                MontoInicialCaja: parseInt(montoInicial),  // Establece el monto inicial de la caja
+                MontoActualCaja: parseInt(montoInicial),  // Establece el monto actual de la caja
+                MontoFinalCaja: parseInt(montoInicial),  // Establece el monto final de la caja
+                TotalGanancias: 0,  // Inicializa el total de ganancias
+                TotalCambio: 0,  // Inicializa el total de cambio
+                TotalIngresoCaja: 0,  // Inicializa el total de ingreso en la caja
+                TotalPagado: 0,  // Inicializa el total pagado
+                TotalRetiroCaja: 0,  // Inicializa el total retirado de la caja
+                TotalVentas: 0  // Inicializa el total de ventas
             });
-            // console.log("Document written with ID: ", docRef.id);
-            confirmacion("si")
-            message.success('Caja abierta exitosamente.');
-            estadoAbrirCaja("si");
+            confirmacion("si");  // Ejecuta una función de confirmación
+            message.success('Caja abierta exitosamente.');  // Muestra un mensaje de éxito
+            estadoAbrirCaja("si");  // Actualiza el estado de la apertura de la caja
         } catch (e) {
-            console.error("Error adding document: ", e);
+            console.error("Error adding document: ", e);  // Muestra un error en caso de fallo
         }
     };
 
+    // Función que cierra el modal de confirmación si se cancela
     const handleConfirmCancel = () => {
-        setIsConfirmModalVisible(false);
+        setIsConfirmModalVisible(false);  // Cierra el modal de confirmación si se cancela
     };
 
+    // Función que obtiene la fecha y hora actual en un formato específico
     const obtenerFechaHoraActual = () => {
-        const ahora = new Date();
+        const ahora = new Date();  // Obtiene la fecha y hora actual
 
+        // Formatea la fecha y hora en el formato requerido
         const dia = ahora.getDate().toString().padStart(2, '0');
         const mes = (ahora.getMonth() + 1).toString().padStart(2, '0');
         const año = ahora.getFullYear();
@@ -68,53 +91,31 @@ const ModalAperturaCaja = ({ confirmacion, nombre }) => {
         const segundos = ahora.getSeconds().toString().padStart(2, '0');
 
         const tiempo = {
-            fecha: `${año}-${mes}-${dia}`,
-            hora: `${hora}:${minutos}:${segundos}`
+            fecha: `${año}-${mes}-${dia}`,  // Formato de la fecha (yyyy-mm-dd)
+            hora: `${hora}:${minutos}:${segundos}`  // Formato de la hora (hh:mm:ss)
         };
 
-        return tiempo;
+        return tiempo;  // Devuelve la fecha y hora actual
     };
 
+    // Función que determina el estado de apertura de la caja según las condiciones de confirmación
     const estadoAbrirCaja = (confirma) => {
         if (confirma === "si") {
-            return true;
+            return true;  // Si se confirma, devuelve verdadero
         } else {
+            // Si no se confirma, verifica si hay datos en dataCaja
             if (Object.keys(dataCaja).length > 0) {
-                return true;
+                return true;  // Si hay datos, devuelve verdadero
             } else {
-                return false;
+                return false;  // Si no hay datos, devuelve falso
             }
         }
     }
 
+    // Función que muestra el modal para la apertura de caja
     const accionApertura = () => {
-        setIsModalVisible(true);
+        setIsModalVisible(true);  // Muestra el modal de apertura de caja
     }
-
-    useEffect(() => {
-        const idCaja = sessionStorage.getItem('id');
-        if (idCaja != null) {
-            const fetchData2 = async () => {
-                const docRef = doc(db, "HistorialAperturaCaja", idCaja);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const data = { ...docSnap.data(), id: docSnap.id };
-                    setDataCaja(data)
-                } else {
-                    console.log("No such document!");
-                }
-            };
-            fetchData2();
-        }
-    }, []);
-
-    const reloadCurrentRoute = () => {
-        navigate('/sistema-ventas/recargar');
-        setTimeout(() => {
-          navigate('/sistema-ventas/estado-caja');
-        }, 50);
-      };
 
     return (
         <>
@@ -122,8 +123,6 @@ const ModalAperturaCaja = ({ confirmacion, nombre }) => {
             <Modal
                 title="Apertura de caja"
                 open={isModalVisible}
-                // onOk={handleOk}
-                // closable={false}
                 onCancel={() => { setIsModalVisible(false) }}
                 footer={[
                     <Button key="ok" type="primary" onClick={handleOk}>
@@ -139,13 +138,6 @@ const ModalAperturaCaja = ({ confirmacion, nombre }) => {
                     >
                         <Input prefix='Bs. ' type="number" />
                     </Form.Item>
-                    {/* <Form.Item
-                        name="fecha"
-                        label="Fecha"
-                        rules={[{ required: true, message: 'Por favor seleccione la fecha' }]}
-                    >
-                        <DatePicker style={{ width: '100%' }} />
-                    </Form.Item> */}
                 </Form>
             </Modal>
             <Modal

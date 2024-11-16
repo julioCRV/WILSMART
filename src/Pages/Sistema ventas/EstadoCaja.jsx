@@ -1,6 +1,6 @@
-import Reactm, { useState, useEffect } from 'react';
-import { Card, Button, Modal, message, Space } from 'antd';
-import { collection, addDoc, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
+import React, { useState, useEffect } from 'react';
+import { Button, Modal, message, Space } from 'antd';
+import { collection, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 import BottonModalIngresoRetiroCaja from './ModalRetiroIngresoCaja';
 import BottonModalAperturaCaja from './ModalAperturaCajaEstado';
@@ -15,44 +15,52 @@ const EstadoCaja = () => {
   const [respuesta, setRespuesta] = useState("");
   const [nombre, setNombre] = useState("");
 
+  // #region - - - - - - - - - - - - [ Efectos iniciales de carga y dependencias ( useEffects ) ] - - - - - - - - - - - - - - - - - -
+  // useEffect principal para cargar datos al montar el componente
   useEffect(() => {
-    const idCaja = sessionStorage.getItem('id');
+    const idCaja = sessionStorage.getItem('id'); // Obtener el ID de la caja desde el sessionStorage
 
-    setNombre(sessionStorage.getItem('nombre'));
+    setNombre(sessionStorage.getItem('nombre')); // Establecer el nombre desde sessionStorage
+
     if (idCaja != null) {
+      // Obtener datos de HistorialAperturaCaja por ID
       const fetchData2 = async () => {
         const docRef = doc(db, "HistorialAperturaCaja", idCaja);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           const data = { ...docSnap.data(), id: docSnap.id };
-          setDataCaja(data)
+          setDataCaja(data); // Establecer datos de la caja
         } else {
           console.log("No such document!");
         }
       };
       fetchData2();
 
+      // Obtener lista de cambios en caja y filtrarla
       const fetchData = async () => {
         const querySnapshot = await getDocs(collection(db, "ListaCambiosCaja"));
         const dataList = querySnapshot.docs.map(doc => ({
           ...doc.data(),
-          id: doc.id
+          id: doc.id,
         }));
-        const data = dataList.filter((item) => item.IdEmpleado === idCaja);
+
+        // Filtrar por empleado y ordenar por fecha y hora
+        const data = dataList.filter(item => item.IdEmpleado === idCaja);
         const dataF = data.sort((a, b) => {
           const horaA = new Date(`${a.Fecha}T${a.Hora}`);
           const horaB = new Date(`${b.Fecha}T${b.Hora}`);
-          return horaB - horaA;
+          return horaB - horaA; // Orden descendente
         });
-        setDataRetiroIngreso(dataF);
-        // console.log(dataF);
+        setDataRetiroIngreso(dataF); // Establecer datos filtrados y ordenados
       };
       fetchData();
     }
-    estadoCerrarCaja();
-  }, []);
 
+    estadoCerrarCaja(); // Llamar a función para verificar estado de cierre de caja
+  }, []); // Ejecutar al montar el componente
+
+  // useEffect para manejar cambios en la respuesta
   useEffect(() => {
     if (respuesta === "si") {
       const fetchData = async () => {
@@ -61,82 +69,90 @@ const EstadoCaja = () => {
           ...doc.data(),
           id: doc.id,
         }));
-        const listSeleccionada = dataList.filter((item) => item.Estado === true);
-        setDataCaja(listSeleccionada);
+
+        // Filtrar cajas abiertas
+        const listSeleccionada = dataList.filter(item => item.Estado === true);
+        setDataCaja(listSeleccionada); // Establecer datos de la caja seleccionada
+
+        // Guardar ID de la caja seleccionada en sessionStorage
         sessionStorage.setItem('id', listSeleccionada[0].id);
       };
       fetchData();
-      estadoCerrarCaja();
-      reloadCurrentRoute();
-    }
-    if (respuesta === "sisi") {
-      reloadCurrentRoute();
-      // reloadCurrentRoute();
-    }
-    setRespuesta("");
-  }, [respuesta]);
 
+      estadoCerrarCaja(); // Verificar estado de cierre de caja
+      reloadCurrentRoute(); // Recargar ruta actual
+    }
+
+    if (respuesta === "sisi") {
+      reloadCurrentRoute(); // Recargar ruta actual
+    }
+
+    setRespuesta(""); // Reiniciar estado de respuesta
+  }, [respuesta]); // Ejecutar cuando cambie `respuesta`
+  // #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+  // #region + + + + + + + + + + + + + [ Métodos ] + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+  // Función para manejar confirmación de acciones
   const confirmacion = (estado) => {
-    setRespuesta(estado);
+    setRespuesta(estado); // Establece el estado de respuesta
   };
 
+  // Acción para cerrar la caja
   const accionCerrarCaja = async () => {
-    const idCliente = sessionStorage.getItem('id');
+    const idCliente = sessionStorage.getItem('id'); // Obtener el ID del cliente desde sessionStorage
+
     try {
-      // Actualizar documento en la colección "HistorialAperturaCaja"
+      // Actualizar el documento en "HistorialAperturaCaja" para establecer el estado como cerrado
       const docRefHistorial = doc(db, "HistorialAperturaCaja", idCliente);
       await updateDoc(docRefHistorial, {
-        Estado: false
+        Estado: false,
       });
-      message.success('Cierre de caja realizado exitosamente.');
-      sessionStorage.removeItem('id');
-      reloadCurrentRoute();
+
+      message.success('Cierre de caja realizado exitosamente.'); // Mensaje de éxito
+      sessionStorage.removeItem('id'); // Eliminar ID del cliente de sessionStorage
+      reloadCurrentRoute(); // Recargar la ruta actual
     } catch (e) {
-      console.error("Error processing request: ", e);
+      console.error("Error processing request: ", e); // Manejo de errores
     }
   };
 
+  // Función para confirmar el cierre de caja con un modal
   const confirmarCierreCaja = () => {
     confirm({
       title: '¿Estás seguro de cerrar caja?',
       content: 'Esta acción no se puede deshacer.',
-      okText: 'Cerrar',
-      okType: 'danger',
-      cancelText: 'Cancelar',
+      okText: 'Cerrar', // Texto del botón de confirmación
+      okType: 'danger', // Estilo del botón de confirmación
+      cancelText: 'Cancelar', // Texto del botón de cancelación
       onOk() {
-        //console.log('Eliminar:', record);
-        sessionStorage.setItem('nombre', dataCaja.NombreEmpleado);
-        setNombre(dataCaja.NombreEmpleado);
-        accionCerrarCaja();
+        sessionStorage.setItem('nombre', dataCaja.NombreEmpleado); // Guardar el nombre del empleado en sessionStorage
+        setNombre(dataCaja.NombreEmpleado); // Actualizar el estado del nombre
+        accionCerrarCaja(); // Llamar a la acción de cierre de caja
       },
-      onCancel() { },
+      onCancel() {
+        // Acción al cancelar (vacío en este caso)
+      },
     });
   };
 
+  // Verificar el estado de la caja
   const estadoCerrarCaja = () => {
-    if (Object.keys(dataCaja).length > 0) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  const reloadCurrentRoute = () => {
-    navigate('/sistema-ventas/recargar');
-    setTimeout(() => {
-      navigate('/sistema-ventas/estado-caja');
-    }, 1300);
+    // Si hay datos en la caja, significa que no está cerrada
+    return Object.keys(dataCaja).length === 0; // Devuelve true si la caja está cerrada
   };
 
+  // Recargar la ruta actual
+  const reloadCurrentRoute = () => {
+    navigate('/sistema-ventas/recargar'); // Navegar a la ruta de recarga
+    setTimeout(() => {
+      navigate('/sistema-ventas/estado-caja'); // Navegar de vuelta a la vista del estado de caja
+    }, 1300); // Esperar 1.3 segundos antes de redirigir
+  };
+  // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
+
+
   return (
-    // <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
-    //   <Card title="Resumen del Día" style={{ width: 300 }}>
-    //     <p><strong>Monto inicial en la caja:</strong> {resumenDia.montoInicial}</p>
-    //     <p><strong>Ventas Totales:</strong> {resumenDia.ventasTotales}</p>
-    //     <p><strong>Cambio dado:</strong> {resumenDia.cambioDado}</p>
-    //     <p><strong>Monto final en la caja:</strong> {resumenDia.montoFinal}</p>
-    //   </Card>
-    // </div>
     <>
       <h2 >Estado de caja</h2>
       <p><strong>Nombre encargado caja: </strong>{dataCaja.NombreEmpleado ?? nombre}</p>
@@ -168,10 +184,6 @@ const EstadoCaja = () => {
             <span>Monto inicial de caja </span>
             <span>+ Bs {dataCaja.MontoInicialCaja ?? '0'}</span>
           </div>
-          {/* <div className="row">
-            <span>Ventas totales </span>
-            <span>+ Bs {dataCaja.TotalVentas}</span>
-          </div> */}
           <div className="row">
             <span>Cambio total dado </span>
             <span>- Bs {dataCaja.TotalCambio ?? '0'}</span>
@@ -235,7 +247,6 @@ const EstadoCaja = () => {
             )
           ))}
         </div>
-
 
         <div className='div9-caja'>
           <div className='row-otro'>

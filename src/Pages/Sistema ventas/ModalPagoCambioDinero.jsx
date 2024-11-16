@@ -1,56 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Button, Select, Space, message } from 'antd';
-import { auth, db } from '../../FireBase/fireBase';
-import { doc, updateDoc} from "firebase/firestore";
+import React, { useState } from 'react';
+import { Modal, Form, Input, Button, Select, message } from 'antd';
+import { db } from '../../FireBase/fireBase';
+import { doc, updateDoc } from "firebase/firestore";
 const { Option } = Select;
 
 const ModalPagoCambioDinero = () => {
-    const [visible, setVisible] = useState(false);
-    const [form] = Form.useForm();
+    // Define el estado para controlar la visibilidad del modal
+    const [visible, setVisible] = useState(false);  // 'visible' controla si el modal está visible o no
+    // Crea una instancia del formulario usando el hook 'useForm' de Ant Design
+    const [form] = Form.useForm();  // 'form' contiene las propiedades y métodos del formulario
 
+    // Función para mostrar el modal y reiniciar los campos del formulario
     const showModal = () => {
-        form.resetFields();
-        setVisible(true);
+        form.resetFields();  // Resetea los campos del formulario a sus valores iniciales
+        setVisible(true);  // Muestra el modal
     };
 
+    // Función para cerrar el modal sin guardar cambios
     const handleCancel = () => {
-        setVisible(false);
+        setVisible(false);  // Cierra el modal
     };
 
-
-    //------------------ REGISTRAR  CREDENCIALES---------------------------
+    // Función que maneja el registro de credenciales después de validar el formulario
     const handleRegister = () => {
-        form.validateFields()
+        form.validateFields()  // Valida los campos del formulario
             .then(values => {
-                // Lógica para manejar el registro
-                actualizarCredenciales(values);
-                setVisible(false);
-                actualizar("Si");
+                // Lógica para manejar el registro de las credenciales
+                actualizarCredenciales(values);  // Llama a la función para actualizar las credenciales
+                setVisible(false);  // Cierra el modal
+                actualizar("Si");  // Llama a la función 'actualizar' con el valor "Si"
             })
             .catch(info => {
-                // console.log('Validation Failed:', info);
+                console.log('Validación fallida:', info);  // Muestra un mensaje si la validación falla
             });
     };
 
+    // Función para actualizar las credenciales en Firestore
     const actualizarCredenciales = async (values) => {
         try {
-            const docRef = doc(db, "ListaCredenciales", record.id);
+            const docRef = doc(db, "ListaCredenciales", record.id);  // Obtiene la referencia del documento de Firestore
             await updateDoc(docRef, {
-                SistemaAsignado: values.sistemaAsignado
+                SistemaAsignado: values.sistemaAsignado  // Actualiza el campo 'SistemaAsignado' con el valor del formulario
             });
-            message.success('Credenciales registradas exitosamente.');
-            // console.log("Document updated with ID: ", record.id);
+            message.success('Credenciales registradas exitosamente.');  // Muestra un mensaje de éxito
         } catch (e) {
-            console.error("Error updating document: ", e);
-            message.error('Error al registrar las credenciales.');
-
+            console.error("Error updating document: ", e);  // Muestra un error en consola si la actualización falla
+            message.error('Error al registrar las credenciales.');  // Muestra un mensaje de error
         }
     };
 
-    const initialValues = { }
+    const initialValues = {}  // Valores iniciales para el formulario (vacío en este caso)
+
     return (
         <>
-            <Button type="primary"  onClick={showModal}>
+            <Button type="primary" onClick={showModal}>
                 Registrar
             </Button>
             <Modal
@@ -100,17 +103,6 @@ const ModalPagoCambioDinero = () => {
                             <Option value="Sistema de servicios">Sistema de servicios</Option>
                         </Select>
                     </Form.Item>
-
-                    {/* <Form.Item
-                        name="contraseña"
-                        label="Contraseña"
-                        rules={[{ required: true, message: 'Por favor ingrese su contraseña' },
-                        { min: 6, message: 'La contraseña debe tener al menos 6 caracteres' }
-                        ]}
-
-                    >
-                        <Input.Password />
-                    </Form.Item> */}
                 </Form>
             </Modal>
         </>

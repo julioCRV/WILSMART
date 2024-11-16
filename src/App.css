@@ -1,46 +1,60 @@
+/* Estilos generales y específicos para el diseño de la página y sus elementos */
+
+/* Estilo para el contenedor raíz de la página */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-  background-color: white;
+  max-width: 1280px; /* Limita el ancho máximo del contenedor */
+  margin: 0 auto; /* Centra el contenedor horizontalmente */
+  padding: 2rem; /* Aplica un relleno de 2 rem alrededor del contenedor */
+  text-align: center; /* Centra el texto dentro del contenedor */
+  background-color: white; /* Establece el color de fondo como blanco */
 }
+
+/* Estilo para el fondo de la página */
 body {
-  background-color: white;
+  background-color: white; /* Establece el color de fondo del cuerpo de la página como blanco */
 }
 
+/* Estilo para el logo */
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  height: 6em; /* Define la altura del logo */
+  padding: 1.5em; /* Aplica un relleno de 1.5 em alrededor del logo */
+  will-change: filter; /* Optimiza el rendimiento del filtro de la imagen */
+  transition: filter 300ms; /* Aplica una transición suave al filtro cuando cambie */
 }
 
+/* Efecto de sombra al pasar el mouse sobre el logo */
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa); /* Aplica una sombra de 2em de radio con color azul */
+}
+
+/* Efecto de sombra específico para el logo de React */
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa); /* Aplica una sombra de 2em de radio con color verde React */
+}
+
+/* Animación de rotación para el logo */
 @keyframes logo-spin {
   from {
-    transform: rotate(0deg);
+    transform: rotate(0deg); /* Comienza sin rotación */
   }
   to {
-    transform: rotate(360deg);
+    transform: rotate(360deg); /* Termina con una rotación completa */
   }
 }
 
+/* Estilo para el logo cuando el usuario tiene preferencia por movimiento */
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+    animation: logo-spin infinite 20s linear; /* Aplica una animación de rotación infinita al logo */
   }
 }
 
+/* Estilo para las tarjetas */
 .card {
-  padding: 2em;
+  padding: 2em; /* Aplica un relleno de 2em dentro de las tarjetas */
 }
 
+/* Estilo para el texto de "leer la documentación" */
 .read-the-docs {
-  color: #888;
+  color: #888; /* Define el color del texto como gris claro */
 }

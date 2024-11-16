@@ -1,6 +1,5 @@
+/* Estilo para alinear un ítem de menú a la derecha con margen específico */
 .menu-item-right {
-    float: right;
-    margin-right: 222px;
+    float: right; /* Hace que el elemento se alinee a la derecha de su contenedor */
+    margin-right: 222px; /* Aplica un margen de 222px a la derecha del elemento */
 }
-
-

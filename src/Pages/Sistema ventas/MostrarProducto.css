@@ -1,79 +1,80 @@
+/* .BotIncrementar: Estilo para un botón u otro elemento, alineado a la derecha con márgenes y ancho ajustado */
 .BotIncrementar {
-    text-align: right;
-    margin-top: 10px;
-    margin-bottom: 15px;
-    width: 90.1%;
+    text-align: right; /* Alinea el texto o el contenido del botón a la derecha */
+    margin-top: 10px; /* Añade un margen superior de 10px */
+    margin-bottom: 15px; /* Añade un margen inferior de 15px */
+    width: 90.1%; /* Define el ancho del elemento al 90.1% del contenedor */
 }
 
+/* .parentMostrarIncre: Contenedor de tipo grid para organizar los elementos en filas y columnas con un fondo claro */
 .parentMostrarIncre {
-    display: grid;
-    grid-column-gap: 10px;
-    grid-row-gap: 10px;
+    display: grid; /* Usa el modelo de layout grid */
+    grid-column-gap: 10px; /* Añade un espacio de 10px entre las columnas */
+    grid-row-gap: 10px; /* Añade un espacio de 10px entre las filas */
 
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #f0f2f5;
-    border: 1px solid #000;
+    width: 80%; /* El contenedor ocupa el 80% del ancho del contenedor padre */
+    margin-left: auto; /* Centra el contenedor horizontalmente */
+    margin-right: auto; /* Centra el contenedor horizontalmente */
+    background-color: #f0f2f5; /* Establece un color de fondo gris claro */
+    border: 1px solid #000; /* Borde de 1px de color negro */
 }
 
+/* .form-titleIncr: Estilo para el título del formulario de incremento, alineado a la izquierda con márgenes */
 .form-titleIncr {
-    margin-top: 2%;
-    margin-bottom: 20px;
-    display: grid;
-    justify-content: left;
-    margin-left: 10%;
+    margin-top: 2%; /* Aplica un margen superior del 2% */
+    margin-bottom: 20px; /* Aplica un margen inferior de 20px */
+    display: grid; /* Usa grid para alinear los elementos dentro del título */
+    justify-content: left; /* Alinea el título a la izquierda */
+    margin-left: 10%; /* Aplica un margen izquierdo del 10% */
 }
 
+/* .TituloForm: Estilo para un título fijo, posicionado en la parte superior derecha de la pantalla */
 .TituloForm {
-    position: fixed; 
-    right: 8%; 
-    margin-top: -55px;
-    margin-bottom: 15px;
-    z-index: 1000;
-    max-width: 3.5%;
-    /* border: 1px solid #000; */
+    position: fixed; /* Fija el título en la pantalla */
+    right: 8%; /* Posiciona el título 8% desde la parte derecha de la pantalla */
+    margin-top: -55px; /* Mueve el título 55px hacia arriba */
+    margin-bottom: 15px; /* Aplica un margen inferior de 15px */
+    z-index: 1000; /* Coloca el título por encima de otros elementos */
+    max-width: 3.5%; /* Limita el ancho máximo del título al 3.5% */
 }
 
-
+/* .parentMostrarProductos: Contenedor de tipo grid para mostrar productos, similar a .parentMostrarIncre */
 .parentMostrarProductos {
-    display: grid;
-    grid-column-gap: 10px;
-    grid-row-gap: 10px;
-
-    /* width: 95%; */
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #f0f2f5;
-    border: 1px solid #000;
+    display: grid; /* Usa el modelo de layout grid */
+    grid-column-gap: 10px; /* Añade un espacio de 10px entre las columnas */
+    grid-row-gap: 10px; /* Añade un espacio de 10px entre las filas */
+    margin-left: auto; /* Centra el contenedor horizontalmente */
+    margin-right: auto; /* Centra el contenedor horizontalmente */
+    background-color: #f0f2f5; /* Establece un color de fondo gris claro */
+    border: 1px solid #000; /* Borde de 1px de color negro */
 }
 
+/* .form-titleProductos: Estilo para el título del formulario de productos, alineado a la izquierda */
 .form-titleProductos {
-    margin-top: 2%;
-    margin-bottom: 20px;
-    display: grid;
-    justify-content: left;
-    /* margin-left: 2.5%; */
+    margin-top: 2%; /* Aplica un margen superior del 2% */
+    margin-bottom: 20px; /* Aplica un margen inferior de 20px */
+    display: grid; /* Usa grid para alinear los elementos dentro del título */
+    justify-content: left; /* Alinea el título a la izquierda */
 }
 
+/* .btn-agregar: Estilo para el botón de agregar, con un fondo verde y texto blanco */
 .btn-agregar {
-    background-color: #5cd320;
-    border-color: #5cd320;
-    color: #fff;
+    background-color: #5cd320; /* Fondo verde */
+    border-color: #5cd320; /* Borde verde */
+    color: #fff; /* Color de texto blanco */
 }
 
+/* .btn-quitar: Estilo para el botón de quitar, con un fondo rojo y texto blanco */
 .btn-quitar {
-    margin-top: 5px;
-    background-color: #f84c54;
-    border-color: #f84c54;
-    color: #fff;
+    margin-top: 5px; /* Aplica un margen superior de 5px */
+    background-color: #f84c54; /* Fondo rojo */
+    border-color: #f84c54; /* Borde rojo */
+    color: #fff; /* Color de texto blanco */
 }
 
+/* .btn-realizar-venta: Estilo para el botón de realizar venta, con un fondo azul y texto blanco */
 .btn-realizar-venta {
-    background-color: #4ca4f7;
-    /* Azul */
-    border-color: #0566c0;
-    /* Misma tonalidad para el borde */
-    color: #fff;
-    /* Texto blanco para resaltar sobre el fondo */
+    background-color: #4ca4f7; /* Fondo azul */
+    border-color: #0566c0; /* Borde azul más oscuro */
+    color: #fff; /* Color de texto blanco */
 }

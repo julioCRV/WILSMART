@@ -2,9 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Typography, Row, Col } from 'antd';
 
-const { Title, Paragraph } = Typography;
-
 const HomePage = () => {
+    const { Title, Paragraph } = Typography;
     return (
         <div style={{ textAlign: 'center' }}>
             <Title level={4}>
@@ -54,16 +53,6 @@ const HomePage = () => {
                             </Card>
                         </Link>
                     </Col>
-                    {/* <Col xs={24} sm={12} md={8} lg={6}>
-                        <Link to="/sistema-servicios/registrar-ticket">
-                            <Card title="Clientes">
-                                <img src="/assets/registrarTicket.png" alt="registrarTicket" style={{ width: '50px' }} />
-                                <Paragraph>
-                                    Registrar ticket de atención
-                                </Paragraph>
-                            </Card>
-                        </Link>
-                    </Col> */}
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Link to="/sistema-servicios/mostrar-tickets">
                             <Card title="Clientes">
@@ -101,16 +90,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-
-{/* import { Link } from 'react-router-dom';
-
-// ...
-
-<Link to="/ruta-de-ventas">
-  <Card title="Sistema de Ventas" style={{ width: 300, margin: '15px', backgroundColor: '#f0f0f0' }}>
-    {/* Contenido de la card de Ventas */}
-//   </Card>
-// </Link>
-
-// ... */}

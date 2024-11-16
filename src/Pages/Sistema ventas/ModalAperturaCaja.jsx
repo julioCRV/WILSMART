@@ -1,76 +1,92 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Button, DatePicker, message } from 'antd';
+import { Modal, Form, Input, Button, message } from 'antd';
 import { collection, addDoc } from "firebase/firestore";
 import { db } from '../../FireBase/fireBase';
 
 const ModalAperturaCaja = ({ confirmacion, nombre }) => {
+    // Se inicializa el formulario con Form.useForm() para gestionar los valores y la validación del formulario.
     const [form] = Form.useForm();
+
+    // Estado que controla la visibilidad de un modal
     const [isModalVisible, setIsModalVisible] = useState(false);
+
+    // Estado que controla la visibilidad de un modal de confirmación
     const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
+
+    // Estado para almacenar el monto inicial
     const [montoInicial, setMontoInicial] = useState(0);
 
-    const showModal = () => {
-        setIsModalVisible(true);
-    };
-
-    const handleOk = () => {
-        form.validateFields()
-            .then((values) => {
-                setMontoInicial(values.montoInicial);
-                setIsConfirmModalVisible(true);
-            })
-            .catch((info) => {
-                message.error('Por favor complete el formulario correctamente.');
-            });
-    };
-
-    const handleConfirmOk = async () => {
-        setIsConfirmModalVisible(false);
-        setIsModalVisible(false);
-        const tiempoActual = obtenerFechaHoraActual();
-
-        try {
-            const docRef = await addDoc(collection(db, "HistorialAperturaCaja"), {
-                Estado: true,
-                Fecha: tiempoActual.fecha,
-                Hora: tiempoActual.hora,
-                NombreEmpleado: sessionStorage.getItem('nombre'),
-                MontoInicialCaja: parseInt(montoInicial),
-                MontoActualCaja: parseInt(montoInicial),
-                MontoFinalCaja: parseInt(montoInicial),
-                TotalGanancias: 0,
-                TotalCambio: 0,
-                TotalIngresoCaja: 0,
-                TotalPagado: 0,
-                TotalRetiroCaja: 0,
-                TotalVentas: 0
-            });
-            // console.log("Document written with ID: ", docRef.id);
-            confirmacion("si")
-            message.success('Caja abierta exitosamente.');
-        } catch (e) {
-            console.error("Error adding document: ", e);
-        }
-    };
-
-    const handleConfirmCancel = () => {
-        setIsConfirmModalVisible(false);
-    };
-
+    // useEffect que se ejecuta cuando el componente se monta. Verifica si el id de la caja está en sessionStorage y muestra un modal si no está presente.
     useEffect(() => {
         const idcaja = sessionStorage.getItem('id');
+        // Si no se encuentra un id en sessionStorage, se muestra el modal
         if (idcaja === null) {
             showModal();
         }
-
+        // Si el nombre no está vacío, se almacena en sessionStorage
         if (nombre != "") {
-            sessionStorage.setItem('nombre', nombre)
+            sessionStorage.setItem('nombre', nombre);
         }
     }, []);
 
-    const obtenerFechaHoraActual = () => {
-        const ahora = new Date();
+    // Función que muestra el modal
+    const showModal = () => {
+        setIsModalVisible(true); // Cambia el estado para mostrar el modal
+    };
 
+    // Función que maneja la acción cuando se confirma en el primer modal
+    const handleOk = () => {
+        form.validateFields()  // Valida los campos del formulario
+            .then((values) => {
+                setMontoInicial(values.montoInicial);  // Almacena el monto inicial del formulario
+                setIsConfirmModalVisible(true);  // Muestra el modal de confirmación
+            })
+            .catch((info) => {
+                message.error('Por favor complete el formulario correctamente.');  // Muestra un mensaje de error si el formulario no es válido
+            });
+    };
+
+    // Función que maneja la acción cuando se confirma en el modal de confirmación
+    const handleConfirmOk = async () => {
+        setIsConfirmModalVisible(false);  // Cierra el modal de confirmación
+        setIsModalVisible(false);  // Cierra el modal original
+
+        const tiempoActual = obtenerFechaHoraActual();  // Obtiene la fecha y hora actual
+
+        try {
+            // Intenta agregar un nuevo documento en la colección "HistorialAperturaCaja"
+            const docRef = await addDoc(collection(db, "HistorialAperturaCaja"), {
+                Estado: true,
+                Fecha: tiempoActual.fecha,  // Fecha actual
+                Hora: tiempoActual.hora,    // Hora actual
+                NombreEmpleado: sessionStorage.getItem('nombre'),  // Nombre del empleado desde sessionStorage
+                MontoInicialCaja: parseInt(montoInicial),  // Monto inicial de la caja
+                MontoActualCaja: parseInt(montoInicial),   // Monto actual de la caja
+                MontoFinalCaja: parseInt(montoInicial),    // Monto final de la caja
+                TotalGanancias: 0,           // Total de ganancias inicial
+                TotalCambio: 0,              // Total de cambio inicial
+                TotalIngresoCaja: 0,        // Total de ingresos de la caja
+                TotalPagado: 0,             // Total pagado inicialmente
+                TotalRetiroCaja: 0,         // Total de retiro de la caja
+                TotalVentas: 0              // Total de ventas inicial
+            });
+            confirmacion("si");  // Llama a la función confirmacion con el estado "si"
+            message.success('Caja abierta exitosamente.');  // Muestra un mensaje de éxito
+        } catch (e) {
+            console.error("Error adding document: ", e);  // Maneja el error si la operación falla
+        }
+    };
+
+    // Función que maneja la acción cuando se cancela el modal de confirmación
+    const handleConfirmCancel = () => {
+        setIsConfirmModalVisible(false);  // Cierra el modal de confirmación
+    };
+
+    // Función que obtiene la fecha y hora actuales en el formato adecuado
+    const obtenerFechaHoraActual = () => {
+        const ahora = new Date();  // Crea un nuevo objeto Date con la fecha y hora actuales
+
+        // Extrae y formatea la fecha y hora
         const dia = ahora.getDate().toString().padStart(2, '0');
         const mes = (ahora.getMonth() + 1).toString().padStart(2, '0');
         const año = ahora.getFullYear();
@@ -79,11 +95,11 @@ const ModalAperturaCaja = ({ confirmacion, nombre }) => {
         const segundos = ahora.getSeconds().toString().padStart(2, '0');
 
         const tiempo = {
-            fecha: `${año}-${mes}-${dia}`,
-            hora: `${hora}:${minutos}:${segundos}`
+            fecha: `${año}-${mes}-${dia}`,  // Formato YYYY-MM-DD
+            hora: `${hora}:${minutos}:${segundos}`  // Formato HH:MM:SS
         };
 
-        return tiempo;
+        return tiempo;  // Devuelve el objeto con la fecha y hora
     };
 
     return (
@@ -91,7 +107,6 @@ const ModalAperturaCaja = ({ confirmacion, nombre }) => {
             <Modal
                 title="Apertura de caja"
                 visible={isModalVisible}
-                // onOk={handleOk}
                 closable={false}
                 onCancel={() => { }}
                 footer={[
@@ -108,13 +123,6 @@ const ModalAperturaCaja = ({ confirmacion, nombre }) => {
                     >
                         <Input prefix='Bs. ' type="number" />
                     </Form.Item>
-                    {/* <Form.Item
-                        name="fecha"
-                        label="Fecha"
-                        rules={[{ required: true, message: 'Por favor seleccione la fecha' }]}
-                    >
-                        <DatePicker style={{ width: '100%' }} />
-                    </Form.Item> */}
                 </Form>
             </Modal>
             <Modal

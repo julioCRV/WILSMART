@@ -83,16 +83,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-
-{/* import { Link } from 'react-router-dom';
-
-// ...
-
-<Link to="/ruta-de-ventas">
-  <Card title="Sistema de Ventas" style={{ width: 300, margin: '15px', backgroundColor: '#f0f0f0' }}>
-    {/* Contenido de la card de Ventas */}
-//   </Card>
-// </Link>
-
-// ... */}

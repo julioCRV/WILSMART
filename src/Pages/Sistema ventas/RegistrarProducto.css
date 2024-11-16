@@ -1,76 +1,81 @@
+/* .form-title: Estilo para los títulos de los formularios, con márgenes y alineación */
+.form-title {
+  margin-top: 2%; /* Añade un margen superior del 2% */
+  margin-bottom: 20px; /* Añade un margen inferior de 20px */
+  display: grid; /* Usa grid para alinear los elementos dentro del título */
+  justify-content: left; /* Alinea el contenido hacia la izquierda */
+  margin-left: 10%; /* Añade un margen izquierdo del 10% */
+}
 
+/* input, select: Estilo para los campos de entrada de tipo texto y select (desplegables) */
+input,
+select {
+  width: 100%; /* El ancho de los elementos ocupa el 100% del contenedor */
+  padding: 8px; /* Aplica un padding de 8px en todos los lados */
+  margin-top: 5px; /* Aplica un margen superior de 5px */
+  box-sizing: border-box; /* Asegura que el padding y el borde estén incluidos en el ancho total */
+}
 
-  .form-title {
-    margin-top: 2%;
-    margin-bottom: 20px;
-    display: grid;
-    justify-content: left; 
-    margin-left: 10%;
-  }
-  
-  input,
-  select {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    box-sizing: border-box;
-  }
-  
-  button {
-    padding: 10px 20px;
-    cursor: pointer;
-  
-  }
-  
-  .full-width {
-    width: 100%;
-  }
-  
-  .button-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-right: 11px;
-    width: 100%;
-    margin-top: 20px;
-  }
-  
-  .parent2 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(0.5, 0.1fr);
+/* button: Estilo general para los botones */
+button {
+  padding: 10px 20px; /* Aplica padding de 10px arriba y abajo, y 20px a los lados */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón para indicar interactividad */
+}
 
-    
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #f0f2f5;
-    border: 1px solid #000;
-  }
-  
-  .div11 {
-    grid-area: 1 / 1 / 2 / 2;
-    padding: 5%;
-    /* border: 1px solid #000; */
-  }
-  
-  .div22 {
-    grid-area: 1 / 2 / 2 / 3;
-    padding: 5%;
-    /* border: 1px solid #000;  */
-  }
-  
-  .div33 {
-    grid-area: 2 / 1 / 3 / 3;
-    display: grid;
-    justify-content: center; 
-    align-items: center; 
-    /* border: 1px solid #000; */
-  }
+/* .full-width: Clase para asegurar que un elemento ocupe todo el ancho disponible */
+.full-width {
+  width: 100%; /* El elemento ocupa el 100% del ancho del contenedor */
+}
 
-  html,
+/* .button-container: Contenedor de botones, alineado y con márgenes */
+.button-container {
+  display: flex; /* Usa flexbox para alinear los elementos dentro del contenedor */
+  align-items: center; /* Alinea los elementos verticalmente al centro */
+  justify-content: space-between; /* Distribuye los elementos de forma que haya espacio entre ellos */
+  margin-right: 11px; /* Añade un margen derecho de 11px */
+  width: 100%; /* El contenedor ocupa el 100% del ancho disponible */
+  margin-top: 20px; /* Añade un margen superior de 20px */
+}
+
+/* .parent2: Contenedor de tipo grid con dos columnas y una fila de tamaño ajustable */
+.parent2 {
+  display: grid; /* Usa grid para organizar el contenido */
+  grid-template-columns: repeat(2, 1fr); /* Define dos columnas de igual tamaño */
+  grid-template-rows: repeat(0.5, 0.1fr); /* Define una fila con un tamaño fraccionado muy pequeño (probablemente un error) */
+  
+  width: 80%; /* El contenedor ocupa el 80% del ancho disponible */
+  margin-left: auto; /* Centra el contenedor horizontalmente */
+  margin-right: auto; /* Centra el contenedor horizontalmente */
+  background-color: #f0f2f5; /* Establece un color de fondo gris claro */
+  border: 1px solid #000; /* Borde de 1px de color negro */
+}
+
+/* .div11, .div22, .div33: Estilos para las áreas de la cuadrícula dentro de .parent2 */
+
+/* .div11: Primer div, ocupa la primera celda de la cuadrícula */
+.div11 {
+  grid-area: 1 / 1 / 2 / 2; /* Define la posición dentro de la cuadrícula (fila 1, columna 1) */
+  padding: 5%; /* Aplica padding del 5% a los lados */
+}
+
+/* .div22: Segundo div, ocupa la segunda celda de la cuadrícula */
+.div22 {
+  grid-area: 1 / 2 / 2 / 3; /* Define la posición dentro de la cuadrícula (fila 1, columna 2) */
+  padding: 5%; /* Aplica padding del 5% a los lados */
+}
+
+/* .div33: Tercer div, ocupa la celda restante de la cuadrícula, extendiéndose por 2 columnas */
+.div33 {
+  grid-area: 2 / 1 / 3 / 3; /* Define la posición dentro de la cuadrícula (fila 2, columnas 1-3) */
+  display: grid; /* Usa grid para organizar el contenido dentro de este div */
+  justify-content: center; /* Centra los elementos horizontalmente */
+  align-items: center; /* Centra los elementos verticalmente */
+}
+
+/* html, body: Estilos globales para el cuerpo y html de la página */
+html,
 body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+  height: 100%; /* Asegura que tanto html como body ocupen toda la altura disponible */
+  margin: 0; /* Elimina los márgenes predeterminados */
+  padding: 0; /* Elimina los padding predeterminados */
 }
