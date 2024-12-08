@@ -20,9 +20,9 @@ const MostrarDashboard = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Content style={{ padding: '0 50px', marginTop: '10px' }}>
+      <Content className="content-container">
         <Breadcrumb style={{ margin: '16px 0' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          <div className="dashboard-header">
             <h2>Dashboard</h2>
             <ButtonGenerador />
           </div>

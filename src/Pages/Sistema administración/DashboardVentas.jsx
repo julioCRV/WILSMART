@@ -821,8 +821,13 @@ const DashboardVentas = () => {
   // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Content style={{ padding: '0 50px', marginTop: '10px' }}>
+    <Layout>
+      <Content style={{
+        display: 'flex',
+        justifyContent: 'center', // Centrado horizontal
+        alignItems: 'center', // Centrado vertical
+        minHeight: '100vh', // Asegura que el contenedor tenga la altura completa de la ventana
+      }}>
         <div className="site-layout-content">
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8} lg={6}>
@@ -884,9 +889,16 @@ const DashboardVentas = () => {
             </Col>
           </Row>
 
+
           <Col xs={24} sm={24} md={24} lg={24}>
             <Card title="Tendencias de ventas">
-              <Line {...config} />
+              {/* Contenedor con scroll similar al de la tabla */}
+              <div style={{ width: '100%', overflowX: 'auto' }}>
+                <div style={{ minWidth: '800px' }}>
+                  {/* Aseguramos que el gráfico tiene un ancho mínimo para activar el scroll */}
+                  <Line {...config} />
+                </div>
+              </div>
             </Card>
           </Col>
 

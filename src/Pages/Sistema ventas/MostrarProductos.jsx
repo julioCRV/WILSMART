@@ -156,7 +156,7 @@ const MostrarProducto = () => {
     <>
       <div>
         <h2 className="form-titleProductos">Mostrar productos</h2>
-        <div className='parentMostrarProductos'>
+        <div className='parentMostrar'>
           <Table
             columns={columns}
             dataSource={dataFirebase}
@@ -165,7 +165,10 @@ const MostrarProducto = () => {
             showSorterTooltip={{
               target: 'sorter-icon',
             }}
-            scroll={{ x: true }}
+            scroll={{ x: 1200 }}  // Establece el ancho máximo de la tabla, ajusta según lo necesario
+            size="middle"
+            bordered
+            style={{ maxWidth: '100%' }}  // Asegura que la tabla no se desborde
           />
         </div>
       </div>

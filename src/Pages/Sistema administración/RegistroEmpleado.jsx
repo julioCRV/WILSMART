@@ -125,12 +125,25 @@ const RegistroEmpleado = () => {
       <Form
         name="registro_empleado"
         layout="horizontal"
-        labelCol={{ span: 9 }}
-        wrapperCol={{ span: 22 }}
+        labelCol={{
+          xs: { span: 24 },  // En pantallas pequeñas (ocupa toda la fila)
+          sm: { span: 10 },   // En pantallas medianas (8 columnas para etiquetas)
+          md: { span: 24 },   // En pantallas grandes (ocupa toda la fila para etiquetas)
+          lg: { span: 24 },   // En pantallas extra grandes (ocupa toda la fila para etiquetas)
+          xl: { span: 10 },   // En pantallas extra grandes (8 columnas para etiquetas)
+        }}
+
+        wrapperCol={{
+          xs: { span: 24 },  // En pantallas pequeñas (ocupa toda la fila para campos)
+          sm: { span: 14 },  // En pantallas medianas (10 columnas para campos)
+          md: { span: 24 },  // En pantallas grandes (ocupa toda la fila para campos)
+          lg: { span: 24 },  // En pantallas extra grandes (ocupa toda la fila para campos)
+          xl: { span: 14 },  // En pantallas extra grandes (10 columnas para campos)
+        }}
         onFinish={onFinish}
       >
-        <div className='parent2'>
-          <div className="div11">
+        <div className='contenedorRegistroE'>
+          <div className="divRE11">
             <Form.Item
               name="nombreCompleto"
               label="Nombre Completo"
@@ -186,7 +199,7 @@ const RegistroEmpleado = () => {
             </Form.Item>
           </div>
 
-          <div className="div22">
+          <div className="divRE22">
             <Form.Item
               name="foto"
               label="Foto de Empleado"
@@ -234,8 +247,8 @@ const RegistroEmpleado = () => {
           </div>
 
 
-          <div className='div33'>
-            <div className="button-container">
+          <div className='divRE33'>
+            <div className="button-containerRE">
               <Form.Item>
                 <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={backHome}>
                   Cancelar

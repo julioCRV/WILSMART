@@ -12,6 +12,19 @@
     background-color: #ffffff; /* Color de fondo blanco */
 }
 
+/* .parent-caja: Es el contenedor principal que utiliza grid para organizar el diseño */
+.parent-caja {
+
+    /* Hacer el contenedor desplazable horizontalmente de derecha a izquierda */
+    max-height: 80vh; /* Limita la altura máxima */
+    overflow-y: hidden; /* Evita el scroll vertical */
+    overflow-x: auto; /* Activa el scroll horizontal */
+    // direction: rtl; /* Invierte la dirección del contenido para empezar desde la derecha */
+
+    border: 1px solid #ddd; /* Opcional: Añade un borde para resaltar el contenedor */
+}
+
+
 /* .div1-caja: Ocupa la primera celda en el grid (fila 1, columna 1) */
 .div1-caja {
     grid-area: 1 / 1 / 2 / 2; /* Ocupa la primera fila y la primera columna */

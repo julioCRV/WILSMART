@@ -39,25 +39,62 @@ button {
     grid-template-rows: 1fr 0.05fr; /* Fila con tamaño dinámico */
     grid-column-gap: 0px; /* Sin espacio entre columnas */
     grid-row-gap: 0px; /* Sin espacio entre filas */
-    width: 43%; /* Ancho del 43% */
-    margin-left: auto; /* Centra el contenedor horizontalmente */
-    margin-right: auto; /* Centra el contenedor horizontalmente */
+    width: 50%; /* Ancho del 50% */
+    margin: auto; /* Centra el contenedor horizontal y verticalmente */
     background-color: #f0f2f5; /* Color de fondo */
     border: 1px solid #000; /* Borde negro */
     border-radius: 10px; /* Bordes redondeados */
+    padding: 2%;
+    box-sizing: border-box; /* Incluye padding en el tamaño total */
+    height: auto; /* Ajusta la altura automáticamente */
 }
 
 /* Estilos para la primera división dentro de parentTicket */
 .divTicket1 {
     grid-area: 1 / 1 / 2 / 2; /* Ocupa la primera fila y columna */
-    padding: 5%; /* Relleno del 5% */
+    padding: 5%; /* Relleno del 5% */  
 }
 
-/* Estilos para la segunda división dentro de parentTicket */
 .divTicket2 {
     grid-area: 2 / 1 / 3 / 2; /* Ocupa la segunda fila y columna */
-    display: grid; /* Utiliza grid para disposición */
-    justify-content: center; /* Centra el contenido horizontalmente */
-    align-items: center; /* Centra el contenido verticalmente */
-    margin-left: 30px; /* Espacio a la izquierda de 30px */
+    display: flex; /* Usa flexbox para disposición */
+    flex-direction: column; /* Alinea los botones en columna */
+    justify-content: center; /* Centra los botones verticalmente */
+    align-items: center; /* Centra los botones horizontalmente */
+    text-align: center; /* Centra texto dentro del contenido */
+    padding: 10px; /* Espacio interno */
+    gap: 10px; /* Espacio entre los botones */
+}
+
+
+@media (min-width: 468px) and (max-width: 768px) {
+    .parentTicket {
+        display: grid; /* Utiliza grid para disposición */
+        grid-template-columns: 1fr; /* Una columna de igual tamaño */
+        grid-template-rows: 1fr 0.05fr; /* Fila con tamaño dinámico */
+        grid-column-gap: 0px; /* Sin espacio entre columnas */
+        grid-row-gap: 0px; /* Sin espacio entre filas */
+        width: 80%; /* Ancho del 43% */
+        margin-left: auto; /* Centra el contenedor horizontalmente */
+        margin-right: auto; /* Centra el contenedor horizontalmente */
+        background-color: #f0f2f5; /* Color de fondo */
+        border: 1px solid #000; /* Borde negro */
+        border-radius: 10px; /* Bordes redondeados */
+    }
+}
+
+@media (min-width: 100px) and (max-width: 468px) {
+    .parentTicket {
+        display: grid; /* Utiliza grid para disposición */
+        grid-template-columns: 1fr; /* Una columna de igual tamaño */
+        grid-template-rows: 1fr 0.05fr; /* Fila con tamaño dinámico */
+        grid-column-gap: 0px; /* Sin espacio entre columnas */
+        grid-row-gap: 0px; /* Sin espacio entre filas */
+        width: 100%; /* Ancho del 43% */
+        margin-left: auto; /* Centra el contenedor horizontalmente */
+        margin-right: auto; /* Centra el contenedor horizontalmente */
+        background-color: #f0f2f5; /* Color de fondo */
+        border: 1px solid #000; /* Borde negro */
+        border-radius: 10px; /* Bordes redondeados */
+    }
 }

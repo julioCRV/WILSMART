@@ -83,7 +83,7 @@ const ReporteVentas = () => {
   // buscando los datos de una caja específica por su ID en Firestore.
   useEffect(() => {
     const fetchData2 = async () => {
-      const idCaja = 'xMFyO4kv4xDBTYOhvUsH'; // ID de la caja que se quiere consultar.
+      const idCaja = sessionStorage.getItem('id'); // ID de la caja que se quiere consultar.
       const docRef = doc(db, "HistorialAperturaCaja", idCaja); // Referencia al documento de la caja en la colección "HistorialAperturaCaja".
       const docSnap = await getDoc(docRef); // Obtención del documento desde Firestore.
 
@@ -97,43 +97,6 @@ const ReporteVentas = () => {
     };
     fetchData2(); // Se llama a la función fetchData2 para obtener los datos de la caja.
   }, []); // Solo se ejecuta una vez cuando el componente se monta.
-
-
-  // El segundo useEffect se ejecuta cuando `dataCaja` cambia (cuando se obtienen los datos de la caja),
-  // y busca los reportes de ventas asociados a esa caja.
-  useEffect(() => {
-    if (Object.keys(dataCaja).length > 0) { // Solo se ejecuta si se han cargado los datos de la caja.
-      const fetchData = async () => {
-        // Obtiene todos los documentos de la colección "ReportesVentas" desde Firestore.
-        const querySnapshot = await getDocs(collection(db, "ReportesVentas"));
-        const dataList = querySnapshot.docs.map(doc => ({
-          ...doc.data(), // Extrae los datos del documento.
-          id: doc.id, // Agrega el ID del documento.
-          FechaHora: new Date(`${doc.data().Fecha}T${doc.data().Hora}`) // Combina la fecha y hora en un solo campo Date.
-        }));
-
-        // Ordena los reportes por fecha y hora de manera ascendente.
-        dataList.sort((a, b) => new Date(a.FechaHora) - new Date(b.FechaHora));
-        // Filtra los reportes que corresponden a la caja actual.
-        const dataFiltrado = dataList.filter(item => item.IdCaja === dataCaja.id);
-
-        const montoInicial = dataCaja.MontoInicialCaja ?? 0; // Obtiene el monto inicial de la caja, si existe, o usa 0 por defecto.
-        const emptyObject = {
-          CajaActual: montoInicial, // Inicializa el valor de la caja actual con el monto inicial.
-          productos: [{
-            CantidadInicial: 90, // Inicializa una cantidad ficticia para el primer producto.
-          }]
-        };
-
-        // Se agrega el objeto vacío al inicio del listado de reportes filtrados.
-        dataFiltrado.unshift(emptyObject);
-        // Se establece el estado `reportes` con la lista de reportes filtrada.
-        setReportes(dataFiltrado);
-      };
-      fetchData(); // Llama a la función `fetchData` para obtener los reportes de ventas.
-    };
-  }, [flattenedData]); // Se ejecuta cada vez que cambia el estado `flattenedData` (probablemente relacionado con los reportes).
-
 
   // `flattenedData` transforma los datos de `reportes` en un formato más sencillo para su visualización.
   // Usa `flatMap` para aplanar la estructura de datos y organizar la información en filas.
@@ -194,15 +157,57 @@ const ReporteVentas = () => {
     })
   );
 
+  // El segundo useEffect se ejecuta cuando `dataCaja` cambia (cuando se obtienen los datos de la caja),
+  // y busca los reportes de ventas asociados a esa caja.
+  useEffect(() => {
+    if (Object.keys(dataCaja).length > 0) { // Solo se ejecuta si se han cargado los datos de la caja.
+      const fetchData = async () => {
+        // Obtiene todos los documentos de la colección "ReportesVentas" desde Firestore.
+        const querySnapshot = await getDocs(collection(db, "ReportesVentas"));
+        const dataList = querySnapshot.docs.map(doc => ({
+          ...doc.data(), // Extrae los datos del documento.
+          id: doc.id, // Agrega el ID del documento.
+          FechaHora: new Date(`${doc.data().Fecha}T${doc.data().Hora}`) // Combina la fecha y hora en un solo campo Date.
+        }));
+
+        // Ordena los reportes por fecha y hora de manera ascendente.
+        dataList.sort((a, b) => new Date(a.FechaHora) - new Date(b.FechaHora));
+        // Filtra los reportes que corresponden a la caja actual.
+        const dataFiltrado = dataList.filter(item => item.IdCaja === dataCaja.id);
+
+        const montoInicial = dataCaja.MontoInicialCaja ?? 0; // Obtiene el monto inicial de la caja, si existe, o usa 0 por defecto.
+        const emptyObject = {
+          CajaActual: montoInicial, // Inicializa el valor de la caja actual con el monto inicial.
+          productos: [{
+            CantidadInicial: 90, // Inicializa una cantidad ficticia para el primer producto.
+          }]
+        };
+
+        // Se agrega el objeto vacío al inicio del listado de reportes filtrados.
+        dataFiltrado.unshift(emptyObject);
+        // Se establece el estado `reportes` con la lista de reportes filtrada.
+        setReportes(dataFiltrado);
+      };
+      fetchData(); // Llama a la función `fetchData` para obtener los reportes de ventas.
+    };
+  }, [flattenedData]); // Se ejecuta cada vez que cambia el estado `flattenedData` (probablemente relacionado con los reportes).
+
+
+
+
   return (
     <div style={{ padding: '20px' }}>
       <h2 className="form-titleProductos">Reporte de ventas</h2>
-      <div className='parentMostrarProductos'>
+      <div className='parentMostrar'>
         <Table
           dataSource={flattenedData}
           columns={columns}
           rowKey={(record) => `${record.id}-${record.NombreProducto}`}
           pagination={{ pageSize: 10 }}
+          scroll={{ x: 1200 }}  // Establece el ancho máximo de la tabla, ajusta según lo necesario
+          size="middle"
+          bordered
+          style={{ maxWidth: '100%' }}  // Asegura que la tabla no se desborde
         />
       </div>
     </div>

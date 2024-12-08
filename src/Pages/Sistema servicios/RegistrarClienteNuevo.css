@@ -1,5 +1,5 @@
 /* Estilos para el contenedor principal con estructura de grid */
-.parentRC {
+.parentRCN {
     display: grid; /* Utiliza el modelo de diseño Grid */
     grid-template-columns: repeat(2, 1fr); /* Define 2 columnas de tamaño igual */
     grid-template-rows: 0.1fr 0.5fr 0.1fr 0.5fr 0.11fr 0.5fr 0.1fr 0.2fr 0.2fr; /* Define las alturas de las filas */

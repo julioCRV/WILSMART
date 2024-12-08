@@ -96,7 +96,9 @@ const NavigationBar = ({ logout }) => {
             label: 'Cerrar sesión',  // Título del ítem de menú "Cerrar sesión"
             key: 'cerrar',  // Clave única para este ítem
             icon: <LogoutOutlined />, // Ícono para el ítem de cerrar sesión
-            style: { margin: isMobile ? '0' : '0 63%' }, // Estilo condicional según si el dispositivo es móvil
+            style: {
+                marginLeft: isMobile ? '0' : 'auto', // Condicional: marginLeft 'auto' solo si no es móvil
+            },
             onClick: () => { salir() }, // Acción para cerrar sesión al hacer clic
         },
     ];
@@ -104,12 +106,14 @@ const NavigationBar = ({ logout }) => {
     return (
         <>
             <h2 style={{ top: 0, width: '100%', color: '#black' }}>Sistema de ventas</h2>
-            <Menu
-                mode={isMobile ? "inline" : "horizontal"}
-                selectedKeys={[selectedKey]}
-                style={{ top: 50, width: '100%', border: '1px solid #000' }}
-                items={items}
-            />
+            <div style={{ width: isMobile ? '90%' : '100%', margin: '0 auto' }}>
+                <Menu
+                    mode={isMobile ? "inline" : "horizontal"}
+                    selectedKeys={[selectedKey]}
+                    style={{ top: 50, width: '100%', border: '1px solid #000' }}
+                    items={items}
+                />
+            </div>
         </>
     );
 };

@@ -88,7 +88,9 @@ const NavigationBar = ({ logout }) => {
             label: <Link to="/">Cerrar sesión</Link>, // Subenlace para cerrar sesión
             key: 'cerrar',  // Clave única para este ítem
             icon: <LogoutOutlined />, // Ícono para este ítem
-            style: { margin: isMobile ? '0' : '0 63%' }, // Ajusta el margen según si el dispositivo es móvil o no
+            style: {
+                marginLeft: isMobile ? '0' : 'auto', // Condicional: marginLeft 'auto' solo si no es móvil
+            },
             onClick: () => { salir() }, // Función que se ejecuta al hacer clic para salir
         },
     ];
@@ -96,12 +98,14 @@ const NavigationBar = ({ logout }) => {
     return (
         <>
             <h2 style={{ top: 0, width: '100%' }}>Sistema de servicios</h2>
-            <Menu
-                mode={isMobile ? "inline" : "horizontal"}
-                selectedKeys={[selectedKey]}
-                style={{ top: 50, width: '100%', border: '1px solid #000' }}
-                items={items}
-            />
+            <div style={{ width: isMobile ? '90%' : '100%', margin: '0 auto' }}>
+                <Menu
+                    mode={isMobile ? "inline" : "horizontal"}
+                    selectedKeys={[selectedKey]}
+                    style={{ top: 50, width: '100%', border: '1px solid #000' }}
+                    items={items}
+                />
+            </div>
         </>
     );
 };

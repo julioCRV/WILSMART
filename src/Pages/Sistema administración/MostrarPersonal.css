@@ -1,12 +1,7 @@
 /* Estilos para el contenedor principal que usa grid */
 .parentMostrar {
-  display: grid; /* Establece el contenedor como un grid */
   grid-column-gap: 10px;   /* Espaciado entre las columnas del grid */
   grid-row-gap: 10px;  /* Espaciado entre las filas del grid */
-  width: 80%; /* Establece el ancho del contenedor al 80% del ancho de su contenedor padre */
-  /* Centra el contenedor horizontalmente */
-  margin-left: auto; 
-  margin-right: auto; 
   background-color: #f0f2f5; /* Color de fondo del contenedor, tono gris claro */
   border: 1px solid #000; /* Borde de 1px de color negro */
 }

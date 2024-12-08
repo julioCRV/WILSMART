@@ -3,7 +3,8 @@
   background: #fff; /* Fondo blanco */
   padding: 24px; /* Espaciado interno de 24px */
   margin: 0; /* Sin márgenes exteriores */
-  min-height: 280px; /* Altura mínima de 280px para el contenido */
+  width: 100%;
+  // border: 1px solid #000
 }
 
 /* Estilos para el encabezado, que debe quedar fijo en la parte superior */
@@ -20,4 +21,46 @@
   height: 31px; /* Altura del logo */
   margin: 16px 24px 16px 0; /* Espaciado alrededor del logo */
   background: rgba(255, 255, 255, 0.3); /* Fondo semi-transparente en blanco */
+}
+
+/* Contenedor principal */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Estilo para el contenedor Content */
+.content-container {
+  padding: 0 50px;
+  margin-top: 10px;
+}
+
+/* Media Query para pantallas más pequeñas */
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column; /* Cambia la dirección del flex para apilar los elementos */
+    align-items: flex-start; /* Alinea los elementos al inicio */
+  }
+
+  .dashboard-header h2 {
+    margin-bottom: 10px; /* Espacio entre el título y el botón */
+  }
+
+  .content-container {
+    padding: 0 20px;  /* Reducir el padding lateral */
+    margin-top: 5px;   /* Ajustar el margen superior */
+  }
+}
+
+
+@media (min-width: 100px) and (max-width: 768px){
+  .site-layout-content {
+    background: #fff; /* Fondo blanco */
+    padding: 24px; /* Espaciado interno de 24px */
+    margin: 0; /* Sin márgenes exteriores */
+    width: 130%;
+    // border: 1px solid #000
+  }
 }

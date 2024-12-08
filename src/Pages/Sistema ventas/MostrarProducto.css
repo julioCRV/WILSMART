@@ -78,3 +78,15 @@
     border-color: #0566c0; /* Borde azul más oscuro */
     color: #fff; /* Color de texto blanco */
 }
+
+@media (min-width: 100px) and (max-width: 768px) {
+    /* .TituloForm: Estilo para un título fijo, posicionado en la parte superior derecha de la pantalla */
+.TituloForm {
+    position: fixed; /* Fija el título en la pantalla */
+    right: 28%; /* Posiciona el título 8% desde la parte derecha de la pantalla */
+    margin-top: -55px; /* Mueve el título 55px hacia arriba */
+    margin-bottom: 15px; /* Aplica un margen inferior de 15px */
+    z-index: 1000; /* Coloca el título por encima de otros elementos */
+    max-width: 3.5%; /* Limita el ancho máximo del título al 3.5% */
+}
+}

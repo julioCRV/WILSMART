@@ -24,71 +24,73 @@ const NavigationBar = ({ logout }) => {
         logout({ rol: "none" }); // Llama a la función logout, pasando "none" como rol
     };
 
-    // Array de items que representan las opciones del menú
+    // Verificación condicional para el estilo en el ítem de "Cerrar sesión"
     const items = [
         {
-            // Opción para "Inicio" en el menú
-            label: 'Inicio', // Título de la opción
-            key: 'inicio', // Clave única para esta opción
-            icon: <HomeOutlined />, // Icono de inicio
-            children: [ // Subopciones dentro de "Inicio"
+            label: 'Inicio',
+            key: 'inicio',
+            icon: <HomeOutlined />,
+            children: [
                 {
-                    label: <Link to="/sistema-administración">Inicio</Link>, // Enlace para ir al inicio del sistema de administración
-                    key: '/sistema-administración', // Clave para la subopción
+                    label: <Link to="/sistema-administración">Inicio</Link>,
+                    key: '/sistema-administración',
                 },
                 {
-                    label: <Link to="/">Pagina principal</Link>, // Enlace para ir a la página principal
-                    key: 'inicio-general', // Clave para la subopción
-                },
-            ],
-        },
-        {
-            // Opción para "Personal" en el menú
-            label: 'Personal', // Título de la opción
-            key: 'personal', // Clave única para esta opción
-            icon: <SolutionOutlined />, // Icono para personal
-            children: [ // Subopciones dentro de "Personal"
-                {
-                    label: <Link to="/sistema-administración/registro-empleado">Registrar empleado</Link>, // Enlace para registrar empleados
-                    key: '/sistema-administración/registro-empleado', // Clave para la subopción
-                },
-                {
-                    label: <Link to="/sistema-administración/mostrar-empleados">Mostrar empleados</Link>, // Enlace para mostrar empleados
-                    key: '/sistema-administración/mostrar-empleados', // Clave para la subopción
-                },
-                {
-                    label: <Link to="/sistema-administración/generar-credenciales">Gestión de cuentas y credenciales</Link>, // Enlace para gestionar cuentas y credenciales
-                    key: '/sistema-administración/generar-credenciales', // Clave para la subopción
+                    label: <Link to="/">Pagina principal</Link>,
+                    key: 'inicio-general',
                 },
             ],
         },
         {
-            // Opción para "Dashboard" en el menú
-            label: <Link to="/sistema-administración/mostrar-dashboard">Dashboard</Link>, // Enlace para ver el dashboard
-            key: '/sistema-administración/mostrar-dashboard', // Clave para el dashboard
-            icon: <BarChartOutlined />, // Icono para el dashboard
+            label: 'Personal',
+            key: 'personal',
+            icon: <SolutionOutlined />,
+            children: [
+                {
+                    label: <Link to="/sistema-administración/registro-empleado">Registrar empleado</Link>,
+                    key: '/sistema-administración/registro-empleado',
+                },
+                {
+                    label: <Link to="/sistema-administración/mostrar-empleados">Mostrar empleados</Link>,
+                    key: '/sistema-administración/mostrar-empleados',
+                },
+                {
+                    label: <Link to="/sistema-administración/generar-credenciales">Gestión de cuentas y credenciales</Link>,
+                    key: '/sistema-administración/generar-credenciales',
+                },
+            ],
         },
         {
-            // Opción para "Cerrar sesión" en el menú
-            label: <Link to="/">Cerrar sesión</Link>, // Enlace para cerrar sesión
-            key: 'cerrar', // Clave para la opción de cerrar sesión
-            icon: <LogoutOutlined />, // Icono para cerrar sesión
-            style: { margin: isMobile ? '0' : '0 63%' }, // Estilo condicional según si es móvil o no
-            onClick: () => { salir() } // Llama a la función salir cuando se haga clic
+            label: <Link to="/sistema-administración/mostrar-dashboard">Dashboard</Link>,
+            key: '/sistema-administración/mostrar-dashboard',
+            icon: <BarChartOutlined />,
+        },
+        {
+            label: <Link to="/">Cerrar sesión</Link>,
+            key: 'cerrar',
+            icon: <LogoutOutlined />,
+            style: {
+                marginLeft: isMobile ? '0' : 'auto', // Condicional: marginLeft 'auto' solo si no es móvil
+            },
+            onClick: () => { salir() },
         },
     ];
 
+
+
     return (
         <>
-            <h2 style={{ top: 0, width: '100%', color: '#black' }}>Sistema de administración</h2>
-            <Menu
-                mode={isMobile ? "inline" : "horizontal"}
-                selectedKeys={[selectedKey]}
-                style={{ top: 50, width: '100%', border: '1px solid #000' }}
-                items={items}
-            />
-
+            <h2 style={{ textAlign: 'center', color: '#000' }}>Sistema de administración</h2>
+            <div style={{ width: isMobile ? '90%' : '100%', margin: '0 auto' }}>
+                <Menu
+                    mode={isMobile ? "inline" : "horizontal"}
+                    selectedKeys={[selectedKey]}
+                    style={{ top: 50, width: '100%', border: '1px solid #000' }}
+                    items={items}
+                />
+            </div>
         </>
+
     );
 };
 

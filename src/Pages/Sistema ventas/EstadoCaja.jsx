@@ -157,7 +157,7 @@ const EstadoCaja = () => {
       <h2 >Estado de caja</h2>
       <p><strong>Nombre encargado caja: </strong>{dataCaja.NombreEmpleado ?? nombre}</p>
       <BottonModalIngresoRetiroCaja confirmacion={confirmacion} dataCaja={dataCaja} />
-      <div style={{ textAlign: 'Right', paddingRight: '10%' }}>
+      <div style={{ textAlign: 'Right', paddingRight: '10%',paddingTop: '10px' }}>
         <Space style={{ paddingBottom: '10px' }}>
           <BottonModalAperturaCaja confirmacion={confirmacion} nombre={nombre} />
           <Button onClick={confirmarCierreCaja} disabled={estadoCerrarCaja()} type='primary'>Cerrar caja</Button>
@@ -202,7 +202,6 @@ const EstadoCaja = () => {
           </div>
         </div>
         <div className="div3-caja">{dataCaja.MontoActualCaja ?? '0'}</div>
-
 
         <div className='div4-caja'>
           <div className='row-otro'>

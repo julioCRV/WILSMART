@@ -495,7 +495,7 @@ const MostrarProducto = () => {
           </div>
         </div>
 
-        <div className='parentMostrarIncre'>
+        <div className='parentMostrar'>
           <Table
             columns={columns}
             dataSource={dataProductos}
@@ -504,7 +504,10 @@ const MostrarProducto = () => {
             showSorterTooltip={{
               target: 'sorter-icon',
             }}
-            scroll={{ x: true }}
+            scroll={{ x: 1200 }}  // Establece el ancho máximo de la tabla, ajusta según lo necesario
+            size="middle"
+            bordered
+            style={{ maxWidth: '100%' }}  // Asegura que la tabla no se desborde
           />
         </div>
       </div>

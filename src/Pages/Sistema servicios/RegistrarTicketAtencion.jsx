@@ -147,8 +147,21 @@ const RegistrarTicketAtencion = () => {
                 name="generarTicket"
                 layout="horizontal"
                 initialValues={dataCliente !== null && initialValues}
-                labelCol={{ span: 9 }}
-                wrapperCol={{ span: 22 }}
+                labelCol={{
+                    xs: { span: 24 },  // En pantallas pequeñas (ocupa toda la fila)
+                    sm: { span: 24 },   // En pantallas medianas (8 columnas para etiquetas)
+                    md: { span: 24 },   // En pantallas grandes (ocupa toda la fila para etiquetas)
+                    lg: { span: 24 },   // En pantallas extra grandes (ocupa toda la fila para etiquetas)
+                    xl: { span: 10 },   // En pantallas extra grandes (8 columnas para etiquetas)
+                  }}
+          
+                  wrapperCol={{
+                    xs: { span: 24 },  // En pantallas pequeñas (ocupa toda la fila para campos)
+                    sm: { span: 24 },  // En pantallas medianas (10 columnas para campos)
+                    md: { span: 24 },  // En pantallas grandes (ocupa toda la fila para campos)
+                    lg: { span: 24 },  // En pantallas extra grandes (ocupa toda la fila para campos)
+                    xl: { span: 14 },  // En pantallas extra grandes (10 columnas para campos)
+                  }}
                 form={form}
                 onFinish={(values) => onFinish(values, 'save')}
                 onFinishFailed={onFinishFailed}
@@ -231,14 +244,14 @@ const RegistrarTicketAtencion = () => {
                     </div>
 
                     <div className='divTicket2'>
-                        <Form.Item>
+                       
                             <Button style={{ width: '150px' }} type="default" htmlType="button" onClick={() => form.validateFields().then(values => onFinish(values, 'generate'))}>
                                 Imprimir ticket
                             </Button>
                             <Button style={{ width: '150px', marginTop: '10px' }} type="primary" htmlType="submit">
                                 Guardar
                             </Button>
-                        </Form.Item>
+                     
                     </div>
 
                 </div>
