@@ -44,7 +44,6 @@ const columnsCaja = [
       }
       return `${index + 1}`;
     },
-
   },
   {
     title: 'Nombre encargado',
@@ -78,6 +77,7 @@ const columnsCaja = [
   {
     title: 'Monto caja final',
     dataIndex: 'MontoActualCaja',
+    width: '100px',
     render: (text, record, index) => {
       if (record.NombreEmpleado === "") {
         return text;
@@ -89,6 +89,7 @@ const columnsCaja = [
   {
     title: 'Total retiros',
     dataIndex: 'TotalRetiroCaja',
+    width: '100px',
     render: (text, record, index) => {
       if (record.NombreEmpleado === "") {
         return text;
@@ -100,6 +101,7 @@ const columnsCaja = [
   {
     title: 'Total ingresos',
     dataIndex: 'TotalIngresoCaja',
+    width: '100px',
     render: (text, record, index) => {
       if (record.NombreEmpleado === "") {
         return text;
@@ -111,6 +113,7 @@ const columnsCaja = [
   {
     title: 'Total ventas',
     dataIndex: 'TotalVentas',
+    width: '100px',
     render: (text) => `Bs   ${text}`,
     key: 'totalVentas',
   },
@@ -121,16 +124,24 @@ const columnsProducto = [
     title: 'Fecha',
     dataIndex: 'Fecha',
     defaultSortOrder: 'descend',
+    width: '120px',
     sorter: (a, b) => dayjs(a.Fecha).unix() - dayjs(b.Fecha).unix(),
+  },
+  {
+    title: 'Hora',
+    dataIndex: 'Hora',
+    key: 'hora',
   },
   {
     title: 'Nombre del producto',
     dataIndex: 'NombreProducto',
+    width: '150px',
     sorter: (a, b) => a.NombreProducto.localeCompare(b.NombreProducto),
   },
   {
     title: 'Cantidad',
     dataIndex: 'Cantidad',
+    width: '100px',
     width: '100px',
     sorter: (a, b) => a.Cantidad - b.Cantidad,
   },
@@ -138,32 +149,58 @@ const columnsProducto = [
     title: 'Precio de compra unitario',
     dataIndex: 'PrecioCompra',
     width: '150px',
-    render: (text) => `Bs ${text}`,
+    render: (text, record) => {      
+    if (record.NombreEmpleado === "") {
+      return text;
+    }
+    return `Bs ${text}`;
+  },
     sorter: (a, b) => a.PrecioCompra - b.PrecioCompra,
   },
-  {
-    title: 'Total de compra',
-    render: (text, record) => `Bs ${(record.Cantidad * record.PrecioCompra).toFixed(2)}`,
-    sorter: (a, b) => (a.Cantidad * a.PrecioCompra) - (b.Cantidad * b.PrecioCompra),
-  },
+  // {
+  //   title: 'Total de compra',
+  //   width: '100px',
+  //   render: (text, record) => `Bs ${(record.Cantidad * record.PrecioCompra).toFixed(2)}`,
+  //   sorter: (a, b) => (a.Cantidad * a.PrecioCompra) - (b.Cantidad * b.PrecioCompra),
+  // },
   {
     title: 'Precio de venta unitario',
     dataIndex: 'Precio',
     width: '150px',
-    render: (text) => `Bs ${text}`,
+    render: (text, record) => {      
+      if (record.NombreEmpleado === "") {
+        return text;
+      }
+      return `Bs ${text}`;
+    },
     sorter: (a, b) => a.PrecioVenta - b.PrecioVenta,
   },
   {
     title: 'Total de venta',
     width: '100px',
-    render: (text, record) => `Bs ${record.Cantidad * record.Precio}`,
+    dataIndex: 'TotalVentas',
+    render: (text, record) => {      
+      if (record.NombreEmpleado === "") {
+        return text;
+      }
+      return  `Bs ${record.Cantidad * record.Precio}`;
+    },
     sorter: (a, b) => (a.Cantidad * a.PrecioVenta) - (b.Cantidad * b.Precio),
   },
   {
     title: 'Ganancia',
-    render: (text, record) => `Bs ${(record.Precio - record.PrecioCompra) * record.Cantidad}`,
-    sorter: (a, b) => ((a.Precio - a.PrecioCompra) * a.Cantidad) - ((b.Precio - b.PrecioCompra) * b.Cantidad),
+    width: '100px',
+    dataIndex: 'TotalGanancias',
+    render: (text, record) => {      
+      if (record.NombreEmpleado === "") {
+        return text;
+      }
+      return  `Bs ${((record.Precio - record.PrecioCompra) * record.Cantidad).toFixed(2)}`;
+    },
+    sorter: (a, b) =>
+      ((a.Precio - a.PrecioCompra) * a.Cantidad) - ((b.Precio - b.PrecioCompra) * b.Cantidad),
   },
+
   // {
   //   title: 'Proveedor',
   //   dataIndex: 'Proveedor',
@@ -177,6 +214,7 @@ const DashboardVentas = () => {
   const [dataCajaControlOriginal, setDataCajaControlOriginal] = useState([]);
   const [dataRankingProductos, setDataRankingProductos] = useState([]);
   const [data, setData] = useState([]);
+  const [dataReporteVentas, setDataReporteVentas] = useState([]);
   const [numeroVentas, setNumeroVentas] = useState(0);
   const [numeroProductosVendidos, setNumeroProductosVendidods] = useState(0);
   const [dataProductos, setDataProductos] = useState([]);
@@ -207,7 +245,7 @@ const DashboardVentas = () => {
       dataList.push(getTotalVentas(dataList));
 
       // Actualiza el estado con los datos de control de caja (incluyendo los totales).
-      setDataCajaControl(dataList);
+      // setDataCajaControl(dataList);
       setDataCajaControlOriginal(dataList);
     };
 
@@ -221,6 +259,9 @@ const DashboardVentas = () => {
         ...doc.data(),
         id: doc.id
       }));
+
+      //Almacena la infroamción del reporte de ventas
+      setDataReporteVentas(dataList);
 
       // Actualiza el estado con el número total de ventas.
       setNumeroVentas(dataList.length);
@@ -279,7 +320,7 @@ const DashboardVentas = () => {
       }));
 
       // Actualiza el estado con los datos de los productos obtenidos.
-      setDataProductos(dataList);
+      // setDataProductos(dataList);
 
       // Guarda una copia original de los productos.
       setDataProductosOriginal(dataList);
@@ -289,11 +330,10 @@ const DashboardVentas = () => {
     fetchProductos();
     fetchCaja();
     fetchReportesVentas();
-
   }, []);
   // #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  // #region + + + + + + + + + + + + + [ Métodos ] + + + + + + + + + + + + + + + + + + + +
+  // #region + + + + + + + + + + + + + + + + + + + + +  [ Métodos ]  + + + + + + + + + + + + + + + + + + + + + + + + + + 
   // Procesa los datos para crear el gráfico de línea
   const lineData = data.reduce((acc, producto) => {
     // Busca si ya existe una entrada con la misma fecha
@@ -359,8 +399,33 @@ const DashboardVentas = () => {
     return filaTotal;
   }
 
+  // Función para obtener el total de ventas
+  const getTotalVentasProducto = (listaDatos) => {
+    // Suma el total de ventas de todos los elementos en listaDatos
+    const totalVentasSumado = listaDatos.reduce((acumulador, item) => acumulador + parseFloat(item.Precio)*item.Cantidad, 0);
+    const totalGananciasSumado = listaDatos.reduce((acumulador, item) => acumulador + item.Cantidad*(item.Precio - item.PrecioCompra), 0);
+    // Crea una fila con los totales, dejando los demás campos vacíos
+    const filaTotal = {
+      Estado: "",
+      Fecha: "",
+      Hora: "",
+      MontoActualCaja: "",
+      MontoFinalCaja: "",
+      MontoInicialCaja: "",
+      NombreEmpleado: "",
+      TotalCambio: "",
+      TotalIngresoCaja: "",
+      TotalPagado: "",
+      TotalGanancias: totalGananciasSumado,
+      TotalVentas: totalVentasSumado, // Asigna el total calculado
+      id: "total" // Id personalizado para identificar esta fila como total
+    };
 
-  // *** ------- ANALISIS DE DATOS DE CAJA Y PRODUCTOS --------- ****
+    // Devuelve la fila con los totales
+    return filaTotal;
+  }
+
+  // #region + + + + + + + + + + + + + + + + + + + + +  ANALISIS DE DATOS DE CAJA Y PRODUCTOS   + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
   // Estados para controlar la frecuencia y los valores de filtrado
   const [frecuencia, setFrecuencia] = useState('mensual'); // Frecuencia seleccionada: mensual, trimestral, etc.
@@ -368,6 +433,52 @@ const DashboardVentas = () => {
   const [trimestre, setTrimestre] = useState(null); // Estado para el trimestre
   const [semestre, setSemestre] = useState(null); // Estado para el semestre
   const [anio, setAnio] = useState(null); // Estado para el año
+
+  const getProductosPorTiempo = (dataActual) => {
+    const transformedData = dataActual.flatMap(item => {
+      // Verificar si 'productos' existe y tiene datos
+      if (Array.isArray(item.productos) && item.productos.length > 0) {
+        return item.productos.map(producto => ({
+          ...item, // Copiar las propiedades del objeto principal
+          ...producto, // Fusionar las propiedades del producto actual
+          productos: undefined, // Eliminar 'productos' del resultado
+        }));
+      }
+      // Si no hay productos, devolver el objeto original
+      return item;
+    });
+
+    // Opcional: eliminar completamente la propiedad 'productos'
+    const cleanedData = transformedData.map(({ productos, ...rest }) => rest);
+
+    const datosActualizados = cleanedData.map((item) => {
+      // Busca en otroData el objeto con el mismo NombreProducto
+      const productoEncontrado = dataProductosOriginal.find(
+        (otro) => otro.NombreProducto === item.NombreProducto
+      );
+
+      // Si se encuentra el producto, actualiza Precio y PrecioCompra
+      if (productoEncontrado) {
+        return {
+          ...item,
+          Precio: productoEncontrado.Precio,
+          PrecioCompra: productoEncontrado.PrecioCompra,
+        };
+      }
+
+      // Si no se encuentra, devuelve el objeto original
+      return item;
+    });
+
+    const datosActualizados2 = datosActualizados.map(obj => ({
+      ...obj,
+      Cantidad: obj.CantidadVendida,
+    }));
+
+    datosActualizados2.push(getTotalVentasProducto(datosActualizados2));
+
+    return datosActualizados2; // Agregar total de ventas;
+  }
 
   // Función para manejar el cambio de frecuencia de filtrado
   const handleFrecuenciaChange = (value) => {
@@ -391,7 +502,7 @@ const DashboardVentas = () => {
     });
 
     // Filtrar los productos por mes y año 2024
-    const datosFiltradoMesProduct = dataProductosOriginal.filter(item => {
+    const datosFiltradoMesProduct = dataReporteVentas.filter(item => {
       const fecha = dayjs(item.Fecha, "YYYY/MM/DD");
       const mes = fecha.month();
       const anio = fecha.year();
@@ -399,8 +510,10 @@ const DashboardVentas = () => {
     });
 
     // Actualizar los estados con los datos filtrados
-    setDataProductos(datosFiltradoMesProduct);
+    setDataProductos(getProductosPorTiempo(datosFiltradoMesProduct));
+
     datosFiltradoMes.push(getTotalVentas(datosFiltradoMes)); // Agregar total de ventas
+
     setDataCajaControl(datosFiltradoMes); // Actualizar los datos de caja
   };
 
@@ -427,7 +540,7 @@ const DashboardVentas = () => {
     });
 
     // Filtrar los productos por los meses del trimestre y año 2024
-    const datosFiltradoProductos = dataProductosOriginal.filter(item => {
+    const datosFiltradoProductos = dataReporteVentas.filter(item => {
       const fecha = dayjs(item.Fecha, "YYYY/MM/DD");
       const mes = fecha.month();
       const anio = fecha.year();
@@ -435,7 +548,7 @@ const DashboardVentas = () => {
     });
 
     // Actualizar los estados con los datos filtrados
-    setDataProductos(datosFiltradoProductos);
+    setDataProductos(getProductosPorTiempo(datosFiltradoProductos));
     datosFiltradoCaja.push(getTotalVentas(datosFiltradoCaja)); // Agregar total de ventas
     setDataCajaControl(datosFiltradoCaja); // Actualizar los datos de caja
   };
@@ -461,7 +574,7 @@ const DashboardVentas = () => {
     });
 
     // Filtrar los productos por los meses del semestre y año 2024
-    const datosFiltradoProductos = dataProductosOriginal.filter(item => {
+    const datosFiltradoProductos = dataReporteVentas.filter(item => {
       const fecha = dayjs(item.Fecha, "YYYY/MM/DD");
       const mes = fecha.month();
       const anio = fecha.year();
@@ -469,7 +582,7 @@ const DashboardVentas = () => {
     });
 
     // Actualizar los estados con los datos filtrados
-    setDataProductos(datosFiltradoProductos);
+    setDataProductos(getProductosPorTiempo(datosFiltradoProductos));
     datosFiltradoCaja.push(getTotalVentas(datosFiltradoCaja)); // Agregar total de ventas
     setDataCajaControl(datosFiltradoCaja); // Actualizar los datos de caja
   }
@@ -485,13 +598,13 @@ const DashboardVentas = () => {
     });
 
     // Filtrar los productos por el año seleccionado
-    const datosFiltradoProductosAnual = dataProductosOriginal.filter(item => {
+    const datosFiltradoProductosAnual = dataReporteVentas.filter(item => {
       const anio = dayjs(item.Fecha, "YYYY/MM/DD").year();
       return anio === anioSeleccionado;
     });
 
     // Actualizar los estados con los datos filtrados
-    setDataProductos(datosFiltradoProductosAnual);
+    setDataProductos(getProductosPorTiempo(datosFiltradoProductosAnual));
     datosFiltradoCajaAnual.push(getTotalVentas(datosFiltradoCajaAnual)); // Agregar total de ventas
     setDataCajaControl(datosFiltradoCajaAnual); // Actualizar los datos de caja
   };
@@ -502,9 +615,9 @@ const DashboardVentas = () => {
   for (let i = añoActual; i >= 2020; i--) {
     añosDisponibles.push(i); // Agregar cada año al array
   }
+  // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
-
-  ////////////// -------- COMPARATIVAS DE PERIODOS ---------------- \\\\\\\\\\\\\\\\\\\\\\\\
+  // #region + + + + + + + + + + + + + + + + + + + + +  COMPARATIVAS DE PERIODOS   + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
   // Datos de ventas por semestre
   const [ventasPeriodo, setVentasPeriodo] = useState(0);
@@ -555,7 +668,7 @@ const DashboardVentas = () => {
     ],
     xField: 'periodo',
     yField: 'tasa',
-    label: { visible: true, position: 'middle' },
+    label: { visible: true, position: 'top' },
     point: { size: 5, shape: 'diamond' },
     // Configuración de responsividad
     responsive: true,
@@ -816,7 +929,7 @@ const DashboardVentas = () => {
     setGanancia1(" ");
     setGanancia2(" ");
   };
-
+  // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
   // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
