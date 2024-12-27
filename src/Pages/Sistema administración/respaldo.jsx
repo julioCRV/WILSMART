@@ -260,7 +260,6 @@ const DashboardServicios = () => {
     // Ordena los datos del gráfico por fecha para asegurar una secuencia cronológica.
     lineData.sort((a, b) => new Date(a.Fecha) - new Date(b.Fecha));
 
-
     // Configuración del gráfico de líneas.
     const config = {
         data: lineData, // Datos procesados para el gráfico.

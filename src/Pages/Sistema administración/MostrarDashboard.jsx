@@ -21,12 +21,18 @@ const MostrarDashboard = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Content className="content-container">
-        <Breadcrumb style={{ margin: '16px 0' }}>
-          <div className="dashboard-header">
-            <h2>Dashboard</h2>
-            <ButtonGenerador />
-          </div>
-        </Breadcrumb>
+        {/* Uso del nuevo enfoque con items */}
+        <Breadcrumb
+          style={{ margin: '16px 0' }}
+          items={[
+            { title: 'Inicio' },
+            { title: 'Dashboard' },
+          ]}
+        />
+        <div className="dashboard-header">
+          <h2>Dashboard</h2>
+          <ButtonGenerador />
+        </div>
         <div className="vistas-container">
           <div className="tabs">
             <button
@@ -45,7 +51,6 @@ const MostrarDashboard = () => {
 
           {activeTab === 'Ventas' && <MostrarVentas />}
           {activeTab === 'Sistemas' && <MostrarServicios />}
-
         </div>
       </Content>
       <Footer></Footer>

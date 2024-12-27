@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ant-design/charts": "^1.4.3",
+    "@ant-design/charts": "^2.2.6",
     "antd": "^5.19.1",
     "dayjs": "^1.11.11",
     "docx": "^8.5.0",

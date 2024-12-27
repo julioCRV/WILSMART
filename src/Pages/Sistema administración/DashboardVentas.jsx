@@ -142,7 +142,6 @@ const columnsProducto = [
     title: 'Cantidad',
     dataIndex: 'Cantidad',
     width: '100px',
-    width: '100px',
     sorter: (a, b) => a.Cantidad - b.Cantidad,
   },
   {
