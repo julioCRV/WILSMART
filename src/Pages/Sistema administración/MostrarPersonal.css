@@ -5,3 +5,7 @@
   background-color: #f0f2f5; /* Color de fondo del contenedor, tono gris claro */
   border: 1px solid #000; /* Borde de 1px de color negro */
 }
+
+.titulo {
+  text-align: left;
+}

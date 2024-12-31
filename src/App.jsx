@@ -30,7 +30,7 @@ import InicioSisAdministracion from './components/InicioAdministracion';
 import RegistroEmpleado from './Pages/Sistema administración/RegistroEmpleado';
 import EditarEmpleado from './Pages/Sistema administración/EditarEmpleado';
 import MostrarEmpleado from './Pages/Sistema administración/MostrarPersonal';
-import MostrarDashboard from './Pages/Sistema administración/MostrarDashboard';
+import MostrarDashboard from './Pages/Sistema administración/ComponentesDashboard/MostrarDashboard';
 import GenerarCredenciales from './Pages/Sistema administración/GenerarCredenciales';
 
 //  R U T A S    D E    S  E  R  V  I  C  I  O  S
@@ -166,9 +166,9 @@ function App() {
             <>
               <Routes>
                 <Route path='/' element={<InicioAdmi />}></Route>
-                <Route path='/sistema-ventas/*' element={<SistemaVentas logout={handleLogout} />}></Route>
+                {/* <Route path='/sistema-ventas/*' element={<SistemaVentas logout={handleLogout} />}></Route> */}
                 <Route path='/sistema-administración/*' element={<SistemaAdministracion logout={handleLogout} />}></Route>
-                <Route path='/sistema-servicios/*' element={<SistemaServicios logout={handleLogout} />}></Route>
+                {/* <Route path='/sistema-servicios/*' element={<SistemaServicios logout={handleLogout} />}></Route> */}
                 <Route path='*' element={<Navigate to="/"></Navigate>}></Route>
               </Routes>
             </>

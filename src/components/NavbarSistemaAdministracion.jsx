@@ -35,10 +35,10 @@ const NavigationBar = ({ logout }) => {
                     label: <Link to="/sistema-administración">Inicio</Link>,
                     key: '/sistema-administración',
                 },
-                {
-                    label: <Link to="/">Pagina principal</Link>,
-                    key: 'inicio-general',
-                },
+                // {
+                //     label: <Link to="/">Pagina principal</Link>,
+                //     key: 'inicio-general',
+                // },
             ],
         },
         {

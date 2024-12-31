@@ -1,6 +1,6 @@
 import { Layout, Breadcrumb } from 'antd';
 import React, { useState } from 'react';
-import ButtonGenerador from './GeneradorCVS';
+import ButtonGenerador from '../GeneradorCVS';
 import MostrarVentas from './DashboardVentas';
 import MostrarServicios from './DashboardServicios'
 import './MostrarDashboard.css';

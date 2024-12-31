@@ -176,7 +176,7 @@ const MostrarEmpleado = () => {
   return (
     <>
       <div>
-        <h2 className="form-title">Mostrar empleados</h2>
+        <h2 className="titulo">Mostrar empleados</h2>
         <div className='parentMostrar'>
           <Table
             columns={columns}

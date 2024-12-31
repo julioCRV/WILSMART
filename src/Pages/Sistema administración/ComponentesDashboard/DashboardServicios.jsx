@@ -3,8 +3,8 @@ import { Line } from '@ant-design/charts';
 import { DollarOutlined, ProfileOutlined, UserOutlined, BarChartOutlined, RiseOutlined, UserDeleteOutlined, StockOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
-import { db } from '../../FireBase/fireBase';
-import ButtonGenerador from './GeneradorCVS';
+import { db } from '../../../FireBase/fireBase';
+import ButtonGenerador from '../GeneradorCVS';
 import dayjs from 'dayjs';
 import './MostrarDashboard.css';
 
