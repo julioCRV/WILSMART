@@ -124,7 +124,7 @@ const GeneradorCVS = () => {
       <p>Datos: </p>
       <AutoComplete
         style={{ width: '100px' }} // Ajusta el ancho según tus necesidades
-        options={[{ value: 'Ventas' }, { value: 'Cajas' }]}
+        options={[{ value: 'Clientes' }, { value: 'Ventas' }, { value: 'Cajas' }]}
         placeholder="seleccione..."
         value={seleccionOpciones}
         onChange={handleAutoCompleteChange} // Función que se ejecuta al cambiar el valor

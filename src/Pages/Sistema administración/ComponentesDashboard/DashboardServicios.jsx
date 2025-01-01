@@ -129,7 +129,8 @@ const DashboardServicios = () => {
 
             // Convierte el objeto con el conteo de productos en un arreglo y lo ordena por cantidad vendida de mayor a menor.
             const ranking = Object.entries(productCount)
-                .map(([NombreRepuesto, data]) => ({
+                .map(([NombreRepuesto, data], index) => ({
+                    id: index + 1,
                     NombreRepuesto,
                     cantidad: data.cantidadSeleccionada,
                     PrecioRepuesto: parseInt(data.PrecioRepuesto) * data.cantidadSeleccionada
@@ -138,7 +139,6 @@ const DashboardServicios = () => {
 
             // Actualiza el estado con el ranking de productos según la cantidad vendida.
             setDataRankingProductos(ranking);
-
         };
 
         // Define una función asíncrona para obtener los datos relacionados con las órdenes de servicio y sus repuestos.
@@ -273,7 +273,6 @@ const DashboardServicios = () => {
         height: 400, // Define la altura inicial del gráfico.
         padding: 'auto', // Aplica un espaciado automático alrededor del gráfico.
     };
-
     // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
     return (
@@ -391,13 +390,20 @@ const DashboardServicios = () => {
 
                     <Col xs={24} sm={24} md={24} lg={24}>
                         <Card title="Repuestos por demanda">
-                            <Table columns={columns} dataSource={dataRankingProductos} pagination={false} scroll={{ x: 'max-content' }} />
+                            <Table columns={columns}
+                                dataSource={dataRankingProductos.map((producto, index) => ({
+                                    ...producto,
+                                    key: producto.id || index,
+                                }))} pagination={false} scroll={{ x: 'max-content' }} />
                         </Card>
                     </Col>
 
                     <Col xs={24} sm={24} md={24} lg={24}>
                         <Card title="Estados de orden de servicios">
-                            <Table columns={columnsCaja} dataSource={dataOrden} pagination={false} scroll={{ x: 'max-content' }} />
+                            <Table columns={columnsCaja} dataSource={dataOrden.map((orden, index) => ({
+                                ...orden,
+                                key: orden.id || index,
+                            }))} pagination={false} scroll={{ x: 'max-content' }} />
                         </Card>
                     </Col>
                 </div>

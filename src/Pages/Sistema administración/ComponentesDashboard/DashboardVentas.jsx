@@ -120,7 +120,8 @@ const DashboardVentas = () => {
 
       // Convierte el objeto en un array de objetos y los ordena según la cantidad vendida.
       const ranking = Object.entries(productCount)
-        .map(([NombreProducto, data]) => ({
+        .map(([NombreProducto, data], index) => ({
+          id: index + 1, // Asigna un ID único basado en el índice.
           NombreProducto,
           cantidad: data.cantidad,
           PrecioUnitario: parseInt(data.PrecioUnitario) * data.cantidad // Calcula el precio total por cantidad.
@@ -129,6 +130,7 @@ const DashboardVentas = () => {
 
       // Actualiza el estado con el ranking de productos.
       setDataRankingProductos(ranking);
+
     };
 
 
@@ -184,6 +186,7 @@ const DashboardVentas = () => {
     xField: 'Fecha', // Campo para el eje X (fecha)
     yField: 'CantidadVendida', // Campo para el eje Y (cantidad vendida)
     smooth: true, // Hace que la línea sea suave
+    point: { shape: 'circle' },
     meta: {
       CantidadVendida: {
         alias: 'Cantidad Vendida', // Nombre personalizado para el eje Y
@@ -222,7 +225,6 @@ const DashboardVentas = () => {
     // Devuelve la fila con los totales
     return filaTotal;
   }
-
   // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
   return (
@@ -307,9 +309,24 @@ const DashboardVentas = () => {
             </Card>
           </Col>
 
+          <Card title="Ventas por producto">
+            <Table
+              columns={columns}
+
+              pagination={false}
+              scroll={{ x: 'max-content', y: '200px' }}
+            />
+          </Card>
+
+
           <Col xs={24} sm={24} md={24} lg={24}>
             <Card title="Ventas por producto">
-              <Table columns={columns} dataSource={dataRankingProductos} pagination={false} scroll={{ x: 'max-content', y: '200px' }} />
+              <Table columns={columns}
+                dataSource={dataRankingProductos.map((producto, index) => ({
+                  ...producto,
+                  key: producto.id || index,
+                }))}
+                pagination={false} scroll={{ x: 'max-content', y: '200px' }} />
             </Card>
           </Col>
 

@@ -7,7 +7,7 @@ const { Option } = Select;
 
 
 
-const DashboardVentas = ({dataCajaControlOriginal}) => {
+const DashboardVentas = ({ dataCajaControlOriginal }) => {
     // #region + + + + + + + + + + + + + + + + + + + + +  [ Métodos ]  + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
     // #region + + + + + + + + + + + + + + + + + + + + +  COMPARATIVAS DE PERIODOS   + + + + + + + + + + + + + + + + + + + + + + + + + + 
@@ -76,18 +76,15 @@ const DashboardVentas = ({dataCajaControlOriginal}) => {
             { type: nombre1, value: ganancia1 },
             { type: nombre2, value: ganancia2 },
         ],
+
         angleField: 'value',
         colorField: 'type',
-        label: {
-            visible: true,
-            type: 'spider',
-            content: (data) => `Ganancias: Bs ${data.value}`, // Cambiamos `formatter` a `content`
-        },
         responsive: true,
         autoFit: true,
         height: 300,
         padding: 'auto',
     };
+
 
     // Estado para almacenar la frecuencia, mes, trimestre, semestre y año del segundo conjunto de filtros.
     const [frecuencia2, setFrecuencia2] = useState('mensual');
@@ -509,7 +506,13 @@ const DashboardVentas = ({dataCajaControlOriginal}) => {
             <Row gutter={16}>
                 {/* Comparativa de ventas por semestre */}
                 <Col xs={24} sm={24} md={8} lg={8}>
-                    <Card title="Comparativa de ventas por semestre">
+                    <Card
+                        title={
+                            <div style={{ wordWrap: 'break-word', whiteSpace: 'normal', paddingTop: '15px' }}>
+                                Comparativa de ventas por periodos
+                            </div>
+                        }
+                    >
                         <Column {...configColumn} />
                         <Statistic
                             title="Diferencia en ventas"
@@ -522,7 +525,12 @@ const DashboardVentas = ({dataCajaControlOriginal}) => {
 
                 {/* Tasa de crecimiento de ventas */}
                 <Col xs={24} sm={24} md={8} lg={8}>
-                    <Card title="Tasa de crecimiento de Ventas">
+                    <Card title={
+                        <div style={{ wordWrap: 'break-word', whiteSpace: 'normal', paddingTop: '15px' }}>
+                            Tasa de creminiento de ventas
+                        </div>
+                    }
+                    >
                         <Line {...configLine} />
                         <Statistic
                             title="Tasa de crecimiento"
@@ -536,9 +544,16 @@ const DashboardVentas = ({dataCajaControlOriginal}) => {
                 {/* Ganancias por semestre */}
 
                 <Col xs={24} sm={24} md={8} lg={8}>
-                    <Card title="Comparativa de Ganancias por Semestre">
+                    <Card
+                        title={
+                            <div style={{ wordWrap: 'break-word', whiteSpace: 'normal', paddingTop: '15px' }}>
+                                Comparativa de ganancias por periodos
+                            </div>
+                        }
+                    >
                         <Pie {...configPie} />
                     </Card>
+
                 </Col>
             </Row>
         </>

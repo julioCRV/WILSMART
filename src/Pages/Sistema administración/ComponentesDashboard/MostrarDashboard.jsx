@@ -22,13 +22,6 @@ const MostrarDashboard = () => {
     <Layout style={{ minHeight: '100vh' }}>
       <Content className="content-container">
         {/* Uso del nuevo enfoque con items */}
-        <Breadcrumb
-          style={{ margin: '16px 0' }}
-          items={[
-            { title: 'Inicio' },
-            { title: 'Dashboard' },
-          ]}
-        />
         <div className="dashboard-header">
           <h2>Dashboard</h2>
           <ButtonGenerador />

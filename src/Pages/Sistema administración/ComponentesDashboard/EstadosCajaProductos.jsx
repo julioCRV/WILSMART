@@ -152,7 +152,7 @@ const columnsProducto = [
         dataIndex: 'TotalVentas',
         render: (text, record) => {
             if (record.NombreEmpleado === "") {
-                return text;
+                return `Bs   ${text}`;
             }
             return `Bs ${record.Cantidad * record.Precio}`;
         },
@@ -164,7 +164,7 @@ const columnsProducto = [
         dataIndex: 'TotalGanancias',
         render: (text, record) => {
             if (record.NombreEmpleado === "") {
-                return text;
+                return `Bs   ${text}`;
             }
             return `Bs ${((record.Precio - record.PrecioCompra) * record.Cantidad).toFixed(2)}`;
         },
