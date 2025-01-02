@@ -309,16 +309,6 @@ const DashboardVentas = () => {
             </Card>
           </Col>
 
-          <Card title="Ventas por producto">
-            <Table
-              columns={columns}
-
-              pagination={false}
-              scroll={{ x: 'max-content', y: '200px' }}
-            />
-          </Card>
-
-
           <Col xs={24} sm={24} md={24} lg={24}>
             <Card title="Ventas por producto">
               <Table columns={columns}

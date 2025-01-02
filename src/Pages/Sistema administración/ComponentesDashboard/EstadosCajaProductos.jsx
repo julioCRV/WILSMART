@@ -179,7 +179,7 @@ const columnsProducto = [
     // },
 ];
 
-const EstadoCajaProductos = ({dataCajaControlOriginal, dataReporteVentas, dataProductosOriginal}) => {
+const EstadoCajaProductos = ({ dataCajaControlOriginal, dataReporteVentas, dataProductosOriginal }) => {
     const [dataCajaControl, setDataCajaControl] = useState([]);
     const [dataProductos, setDataProductos] = useState([]);
 
@@ -246,6 +246,7 @@ const EstadoCajaProductos = ({dataCajaControlOriginal, dataReporteVentas, dataPr
     const [trimestre, setTrimestre] = useState(null); // Estado para el trimestre
     const [semestre, setSemestre] = useState(null); // Estado para el semestre
     const [anio, setAnio] = useState(null); // Estado para el año
+    const [anioActual, setAnioActual] = useState(new Date().getFullYear());
 
     const getProductosPorTiempo = (dataActual) => {
         const transformedData = dataActual.flatMap(item => {
@@ -307,11 +308,11 @@ const EstadoCajaProductos = ({dataCajaControlOriginal, dataReporteVentas, dataPr
         setMes(value); // Asignar el mes seleccionado
         let mesActual = parseInt(value); // Convertir a número entero
 
-        // Filtrar los datos de caja por mes y año 2024
+        // Filtrar los datos de caja por mes y año actual
         const datosFiltradoMes = dataCajaControlOriginal.filter(item => {
             const mes = dayjs(item.Fecha).month();
             const anio = dayjs(item.Fecha).year();
-            return mes === mesActual && anio === 2024;
+            return mes === mesActual && anio === anioActual;
         });
 
         // Filtrar los productos por mes y año 2024
@@ -319,7 +320,7 @@ const EstadoCajaProductos = ({dataCajaControlOriginal, dataReporteVentas, dataPr
             const fecha = dayjs(item.Fecha, "YYYY/MM/DD");
             const mes = fecha.month();
             const anio = fecha.year();
-            return mes === mesActual && anio === 2024;
+            return mes === mesActual && anio === anioActual;
         });
 
         // Actualizar los estados con los datos filtrados
@@ -345,19 +346,19 @@ const EstadoCajaProductos = ({dataCajaControlOriginal, dataReporteVentas, dataPr
         // Obtener los meses del trimestre seleccionado
         const mesesTrimestre = trimestres[value];
 
-        // Filtrar los datos de caja por los meses del trimestre y año 2024
+        // Filtrar los datos de caja por los meses del trimestre y año actual
         const datosFiltradoCaja = dataCajaControlOriginal.filter(item => {
             const mes = dayjs(item.Fecha).month();
             const anio = dayjs(item.Fecha).year();
-            return mesesTrimestre.includes(mes) && anio === 2024;
+            return mesesTrimestre.includes(mes) && anio === anioActual;
         });
 
-        // Filtrar los productos por los meses del trimestre y año 2024
+        // Filtrar los productos por los meses del trimestre y año actual
         const datosFiltradoProductos = dataReporteVentas.filter(item => {
             const fecha = dayjs(item.Fecha, "YYYY/MM/DD");
             const mes = fecha.month();
             const anio = fecha.year();
-            return mesesTrimestre.includes(mes) && anio === 2024;
+            return mesesTrimestre.includes(mes) && anio === anioActual;
         });
 
         // Actualizar los estados con los datos filtrados
@@ -379,19 +380,19 @@ const EstadoCajaProductos = ({dataCajaControlOriginal, dataReporteVentas, dataPr
         // Obtener los meses del semestre seleccionado
         const mesesSemestre = semestres[value];
 
-        // Filtrar los datos de caja por los meses del semestre y año 2024
+        // Filtrar los datos de caja por los meses del semestre y año actual
         const datosFiltradoCaja = dataCajaControlOriginal.filter(item => {
             const mes = dayjs(item.Fecha).month();
             const anio = dayjs(item.Fecha).year();
-            return mesesSemestre.includes(mes) && anio === 2024;
+            return mesesSemestre.includes(mes) && anio === anioActual;
         });
 
-        // Filtrar los productos por los meses del semestre y año 2024
+        // Filtrar los productos por los meses del semestre y año actual
         const datosFiltradoProductos = dataReporteVentas.filter(item => {
             const fecha = dayjs(item.Fecha, "YYYY/MM/DD");
             const mes = fecha.month();
             const anio = fecha.year();
-            return mesesSemestre.includes(mes) && anio === 2024;
+            return mesesSemestre.includes(mes) && anio === anioActual;
         });
 
         // Actualizar los estados con los datos filtrados
@@ -420,6 +421,16 @@ const EstadoCajaProductos = ({dataCajaControlOriginal, dataReporteVentas, dataPr
         setDataProductos(getProductosPorTiempo(datosFiltradoProductosAnual));
         datosFiltradoCajaAnual.push(getTotalVentas(datosFiltradoCajaAnual)); // Agregar total de ventas
         setDataCajaControl(datosFiltradoCajaAnual); // Actualizar los datos de caja
+    };
+
+    const handleAnualChangeActual = (anioSeleccionado) => {
+        // Asignar el año seleccionado
+        setAnioActual(anioSeleccionado);
+        setSemestre(null);
+        setMes(null);
+        setTrimestre(null);
+        setDataCajaControl([]);
+        setDataProductos([]);
     };
 
     // Generación de los años disponibles para seleccionar (del año actual hacia atrás)
@@ -453,53 +464,92 @@ const EstadoCajaProductos = ({dataCajaControlOriginal, dataReporteVentas, dataPr
 
                         {/* Mostrar selector de mes si la opción es mensual */}
                         {frecuencia === 'mensual' && (
-                            <Select
-                                placeholder="Selecciona el mes"
-                                style={{ width: 200, marginTop: 10 }}
-                                onChange={handleMesChange}
-                                value={mes}
-                            >
-                                <Option value="0">Enero</Option>
-                                <Option value="1">Febrero</Option>
-                                <Option value="2">Marzo</Option>
-                                <Option value="3">Abril</Option>
-                                <Option value="4">Mayo</Option>
-                                <Option value="5">Junio</Option>
-                                <Option value="6">Julio</Option>
-                                <Option value="7">Agosto</Option>
-                                <Option value="8">Septiembre</Option>
-                                <Option value="9">Octubre</Option>
-                                <Option value="10">Noviembre</Option>
-                                <Option value="11">Diciembre</Option>
-                            </Select>
+                            <>
+                                <Select
+                                    placeholder="Selecciona el mes"
+                                    style={{ width: 200, marginTop: 10 }}
+                                    onChange={handleMesChange}
+                                    value={mes}
+                                >
+                                    <Option value="0">Enero</Option>
+                                    <Option value="1">Febrero</Option>
+                                    <Option value="2">Marzo</Option>
+                                    <Option value="3">Abril</Option>
+                                    <Option value="4">Mayo</Option>
+                                    <Option value="5">Junio</Option>
+                                    <Option value="6">Julio</Option>
+                                    <Option value="7">Agosto</Option>
+                                    <Option value="8">Septiembre</Option>
+                                    <Option value="9">Octubre</Option>
+                                    <Option value="10">Noviembre</Option>
+                                    <Option value="11">Diciembre</Option>
+                                </Select>
+                                <Select
+                                    style={{ width: 100, marginTop: 10 }}
+                                    onChange={handleAnualChangeActual}
+                                    value={anioActual}
+                                >
+                                    {añosDisponibles.map((year) => (
+                                        <Option key={year} value={year}>
+                                            {year}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </>
                         )}
 
                         {/* Mostrar selector de trimestre si la opción es trimestral */}
                         {frecuencia === 'trimestral' && (
-                            <Select
-                                placeholder="Selecciona el trimestre"
-                                style={{ width: 200, marginTop: 10 }}
-                                onChange={handleTrimestreChange}
-                                value={trimestre}
-                            >
-                                <Option value="1">Primer Trimestre</Option>
-                                <Option value="2">Segundo Trimestre</Option>
-                                <Option value="3">Tercer Trimestre</Option>
-                                <Option value="4">Cuarto Trimestre</Option>
-                            </Select>
+                            <>
+                                <Select
+                                    placeholder="Selecciona el trimestre"
+                                    style={{ width: 200, marginTop: 10 }}
+                                    onChange={handleTrimestreChange}
+                                    value={trimestre}
+                                >
+                                    <Option value="1">Primer Trimestre</Option>
+                                    <Option value="2">Segundo Trimestre</Option>
+                                    <Option value="3">Tercer Trimestre</Option>
+                                    <Option value="4">Cuarto Trimestre</Option>
+                                </Select>
+                                <Select
+                                    style={{ width: 100, marginTop: 10 }}
+                                    onChange={handleAnualChangeActual}
+                                    value={anioActual}
+                                >
+                                    {añosDisponibles.map((year) => (
+                                        <Option key={year} value={year}>
+                                            {year}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </>
                         )}
 
                         {/* Mostrar selector de semestre si la opción es semestral */}
                         {frecuencia === 'semestral' && (
-                            <Select
-                                placeholder="Selecciona el semestre"
-                                style={{ width: 200, marginTop: 10 }}
-                                onChange={handleSemestreChange}
-                                value={semestre}
-                            >
-                                <Option value="1">Primer Semestre</Option>
-                                <Option value="2">Segundo Semestre</Option>
-                            </Select>
+                            <>
+                                <Select
+                                    placeholder="Selecciona el semestre"
+                                    style={{ width: 200, marginTop: 10 }}
+                                    onChange={handleSemestreChange}
+                                    value={semestre}
+                                >
+                                    <Option value="1">Primer Semestre</Option>
+                                    <Option value="2">Segundo Semestre</Option>
+                                </Select>
+                                <Select
+                                    style={{ width: 100, marginTop: 10 }}
+                                    onChange={handleAnualChangeActual}
+                                    value={anioActual}
+                                >
+                                    {añosDisponibles.map((year) => (
+                                        <Option key={year} value={year}>
+                                            {year}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </>
                         )}
 
                         {/* Mostrar selector de año si la opción es anual */}
