@@ -291,7 +291,10 @@ const GenerarCredenciales = () => {
                 <div className='parentMostrar'>
                     <Table
                         columns={columns}
-                        dataSource={dataUnificada}
+                        dataSource={dataUnificada.map((usuario, index) => ({
+                            ...usuario,
+                            key: index,
+                        }))}
                         pagination={false}
                         onChange={onChange}
                         showSorterTooltip={{

@@ -86,12 +86,14 @@ const DashboardVentas = ({ dataCajaControlOriginal }) => {
     };
 
 
+
     // Estado para almacenar la frecuencia, mes, trimestre, semestre y año del segundo conjunto de filtros.
     const [frecuencia2, setFrecuencia2] = useState('mensual');
     const [mes2, setMes2] = useState(null);
     const [trimestre2, setTrimestre2] = useState(null);
     const [semestre2, setSemestre2] = useState(null);
     const [anio2, setAnio2] = useState(null);
+    const [anioActual2, setAnioActual2] = useState(new Date().getFullYear());
 
     // Estado para almacenar la frecuencia, mes, trimestre, semestre y año del tercer conjunto de filtros.
     const [frecuencia3, setFrecuencia3] = useState('mensual');
@@ -99,6 +101,7 @@ const DashboardVentas = ({ dataCajaControlOriginal }) => {
     const [trimestre3, setTrimestre3] = useState(null);
     const [semestre3, setSemestre3] = useState(null);
     const [anio3, setAnio3] = useState(null);
+    const [anioActual3, setAnioActual3] = useState(new Date().getFullYear());
 
 
     // handleFrecuenciaChange2: Actualiza la frecuencia seleccionada y restablece los valores de mes, trimestre, semestre y año para el segundo conjunto de filtros.
@@ -126,7 +129,7 @@ const DashboardVentas = ({ dataCajaControlOriginal }) => {
         const datosFiltradoMes = dataCajaControlOriginal.filter(item => {
             const mes = dayjs(item.Fecha).month();
             const anio = dayjs(item.Fecha).year();
-            return mes === mesActual && anio === 2024;
+            return mes === mesActual && anio === anioActual2;
         });
 
         // Actualiza el nombre del mes, el valor de ventas y ganancias para el primer periodo
@@ -145,7 +148,7 @@ const DashboardVentas = ({ dataCajaControlOriginal }) => {
         const datosFiltradoMes = dataCajaControlOriginal.filter(item => {
             const mes = dayjs(item.Fecha).month();
             const anio = dayjs(item.Fecha).year();
-            return mes === mesActual && anio === 2024;
+            return mes === mesActual && anio === anioActual3;
         });
 
         // Actualiza el nombre del mes, el valor de ventas y ganancias para el segundo periodo
@@ -174,7 +177,7 @@ const DashboardVentas = ({ dataCajaControlOriginal }) => {
         const datosFiltradoCaja = dataCajaControlOriginal.filter(item => {
             const mes = dayjs(item.Fecha).month();
             const anio = dayjs(item.Fecha).year();
-            return mesesTrimestre.includes(mes) && anio === 2024;
+            return mesesTrimestre.includes(mes) && anio === anioActual2;
         });
 
         // Actualiza el nombre del trimestre, el valor de ventas y ganancias para el primer periodo
@@ -203,7 +206,7 @@ const DashboardVentas = ({ dataCajaControlOriginal }) => {
         const datosFiltradoCaja = dataCajaControlOriginal.filter(item => {
             const mes = dayjs(item.Fecha).month();
             const anio = dayjs(item.Fecha).year();
-            return mesesTrimestre.includes(mes) && anio === 2024;
+            return mesesTrimestre.includes(mes) && anio === anioActual3;
         });
 
         // Actualiza el nombre del trimestre, el valor de ventas y ganancias para el segundo periodo
@@ -230,7 +233,7 @@ const DashboardVentas = ({ dataCajaControlOriginal }) => {
         const datosFiltradoCaja = dataCajaControlOriginal.filter(item => {
             const mes = dayjs(item.Fecha).month();
             const anio = dayjs(item.Fecha).year();
-            return mesesSemestre.includes(mes) && anio === 2024;
+            return mesesSemestre.includes(mes) && anio === anioActual2;
         });
 
         // Actualiza el nombre del semestre, el valor de ventas y ganancias para el primer periodo
@@ -257,7 +260,7 @@ const DashboardVentas = ({ dataCajaControlOriginal }) => {
         const datosFiltradoCaja = dataCajaControlOriginal.filter(item => {
             const mes = dayjs(item.Fecha).month();
             const anio = dayjs(item.Fecha).year();
-            return mesesSemestre.includes(mes) && anio === 2024;
+            return mesesSemestre.includes(mes) && anio === anioActual3;
         });
 
         // Actualiza el nombre del semestre, el valor de ventas y ganancias para el segundo periodo
@@ -320,7 +323,41 @@ const DashboardVentas = ({ dataCajaControlOriginal }) => {
         setGanancia2(" ");
     };
     // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
+    // Función para manejar el cambio de año actual
+    const handleAnualChangeActual = (anioSeleccionado) => {
+        // Asignar el año seleccionado
+        setAnioActual2(anioSeleccionado);
+        setSemestre2(null);
+        setMes2(null);
+        setTrimestre2(null);
+        // Restaura las ventas y ganancias a 0
+        setVentasPeriodo(0);
 
+        // Restaura los nombres y las ganancias a un valor vacío
+        setNombre1(" ");
+        setGanancia1(" ");
+    };
+
+    // Función para manejar el cambio de año actual
+    const handleAnualChangeActual2 = (anioSeleccionado) => {
+        // Asignar el año seleccionado
+        setAnioActual3(anioSeleccionado);
+        setSemestre3(null);
+        setMes3(null);
+        setTrimestre3(null);
+        // Restaura las ventas y ganancias a 0
+        setVentas2periodo(0);
+        // Restaura los nombres y las ganancias a un valor vacío
+        setNombre2(" ");
+        setGanancia2(" ");
+    };
+
+    // Generación de los años disponibles para seleccionar (del año actual hacia atrás)
+    const añosDisponibles = [];
+    const añoActual = new Date().getFullYear();
+    for (let i = añoActual; i >= 2020; i--) {
+        añosDisponibles.push(i); // Agregar cada año al array
+    }
     // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
     return (
@@ -343,6 +380,7 @@ const DashboardVentas = ({ dataCajaControlOriginal }) => {
                                 <Option value="semestral">Semestral</Option>
                                 <Option value="anual">Anual</Option>
                             </Select>
+
 
                             {/* Mostrar selector de mes si la opción es mensual */}
                             {frecuencia2 === 'mensual' && (
@@ -411,6 +449,21 @@ const DashboardVentas = ({ dataCajaControlOriginal }) => {
                                     ))}
                                 </Select>
                             )}
+
+                            {frecuencia2 != 'anual' && (
+                                <Select
+                                    style={{ width: 100, marginTop: 10 }}
+                                    onChange={handleAnualChangeActual}
+                                    value={anioActual2}
+                                >
+                                    {añosDisponibles.map((year) => (
+                                        <Option key={year} value={year}>
+                                            {year}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            )}
+
                         </div>
                     </Card>
                 </Col>
@@ -498,7 +551,23 @@ const DashboardVentas = ({ dataCajaControlOriginal }) => {
                                     ))}
                                 </Select>
                             )}
+
+                            {frecuencia3 != 'anual' && (
+                                <Select
+                                    style={{ width: 100, marginTop: 10 }}
+                                    onChange={handleAnualChangeActual2}
+                                    value={anioActual3}
+                                >
+                                    {añosDisponibles.map((year) => (
+                                        <Option key={year} value={year}>
+                                            {year}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            )}
+
                         </div>
+
                     </Card>
                 </Col>
             </Row>

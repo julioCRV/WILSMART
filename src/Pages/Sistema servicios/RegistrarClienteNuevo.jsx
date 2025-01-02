@@ -83,12 +83,12 @@ const RegistrarCliente = () => {
 
     // Valores iniciales del formulario.
     const initialValues = {
-        correo: '', // Inicializa los campos del formulario con valores vacíos.
+        correo: ' ', // Inicializa los campos del formulario con valores vacíos.
         estado: 'Activo', // Por defecto, el estado del cliente es 'Activo'.
 
         otrosDatosRelevantes: ' ', // Valor por defecto para otros datos relevantes.
         diagnostico: ' ', // Valor por defecto para diagnóstico.
-        NotasAdicionales: '', // Valor por defecto para notas adicionales.
+        notasAdicionales: ' ', // Valor por defecto para notas adicionales.
 
         pendienteRepuestos: false, // Inicializa los campos de pendientes en falso.
         pendienteReparar: false,

@@ -464,92 +464,53 @@ const EstadoCajaProductos = ({ dataCajaControlOriginal, dataReporteVentas, dataP
 
                         {/* Mostrar selector de mes si la opción es mensual */}
                         {frecuencia === 'mensual' && (
-                            <>
-                                <Select
-                                    placeholder="Selecciona el mes"
-                                    style={{ width: 200, marginTop: 10 }}
-                                    onChange={handleMesChange}
-                                    value={mes}
-                                >
-                                    <Option value="0">Enero</Option>
-                                    <Option value="1">Febrero</Option>
-                                    <Option value="2">Marzo</Option>
-                                    <Option value="3">Abril</Option>
-                                    <Option value="4">Mayo</Option>
-                                    <Option value="5">Junio</Option>
-                                    <Option value="6">Julio</Option>
-                                    <Option value="7">Agosto</Option>
-                                    <Option value="8">Septiembre</Option>
-                                    <Option value="9">Octubre</Option>
-                                    <Option value="10">Noviembre</Option>
-                                    <Option value="11">Diciembre</Option>
-                                </Select>
-                                <Select
-                                    style={{ width: 100, marginTop: 10 }}
-                                    onChange={handleAnualChangeActual}
-                                    value={anioActual}
-                                >
-                                    {añosDisponibles.map((year) => (
-                                        <Option key={year} value={year}>
-                                            {year}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </>
+                            <Select
+                                placeholder="Selecciona el mes"
+                                style={{ width: 200, marginTop: 10 }}
+                                onChange={handleMesChange}
+                                value={mes}
+                            >
+                                <Option value="0">Enero</Option>
+                                <Option value="1">Febrero</Option>
+                                <Option value="2">Marzo</Option>
+                                <Option value="3">Abril</Option>
+                                <Option value="4">Mayo</Option>
+                                <Option value="5">Junio</Option>
+                                <Option value="6">Julio</Option>
+                                <Option value="7">Agosto</Option>
+                                <Option value="8">Septiembre</Option>
+                                <Option value="9">Octubre</Option>
+                                <Option value="10">Noviembre</Option>
+                                <Option value="11">Diciembre</Option>
+                            </Select>
                         )}
 
                         {/* Mostrar selector de trimestre si la opción es trimestral */}
                         {frecuencia === 'trimestral' && (
-                            <>
-                                <Select
-                                    placeholder="Selecciona el trimestre"
-                                    style={{ width: 200, marginTop: 10 }}
-                                    onChange={handleTrimestreChange}
-                                    value={trimestre}
-                                >
-                                    <Option value="1">Primer Trimestre</Option>
-                                    <Option value="2">Segundo Trimestre</Option>
-                                    <Option value="3">Tercer Trimestre</Option>
-                                    <Option value="4">Cuarto Trimestre</Option>
-                                </Select>
-                                <Select
-                                    style={{ width: 100, marginTop: 10 }}
-                                    onChange={handleAnualChangeActual}
-                                    value={anioActual}
-                                >
-                                    {añosDisponibles.map((year) => (
-                                        <Option key={year} value={year}>
-                                            {year}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </>
+                            <Select
+                                placeholder="Selecciona el trimestre"
+                                style={{ width: 200, marginTop: 10 }}
+                                onChange={handleTrimestreChange}
+                                value={trimestre}
+                            >
+                                <Option value="1">Primer Trimestre</Option>
+                                <Option value="2">Segundo Trimestre</Option>
+                                <Option value="3">Tercer Trimestre</Option>
+                                <Option value="4">Cuarto Trimestre</Option>
+                            </Select>
                         )}
 
                         {/* Mostrar selector de semestre si la opción es semestral */}
                         {frecuencia === 'semestral' && (
-                            <>
-                                <Select
-                                    placeholder="Selecciona el semestre"
-                                    style={{ width: 200, marginTop: 10 }}
-                                    onChange={handleSemestreChange}
-                                    value={semestre}
-                                >
-                                    <Option value="1">Primer Semestre</Option>
-                                    <Option value="2">Segundo Semestre</Option>
-                                </Select>
-                                <Select
-                                    style={{ width: 100, marginTop: 10 }}
-                                    onChange={handleAnualChangeActual}
-                                    value={anioActual}
-                                >
-                                    {añosDisponibles.map((year) => (
-                                        <Option key={year} value={year}>
-                                            {year}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </>
+                            <Select
+                                placeholder="Selecciona el semestre"
+                                style={{ width: 200, marginTop: 10 }}
+                                onChange={handleSemestreChange}
+                                value={semestre}
+                            >
+                                <Option value="1">Primer Semestre</Option>
+                                <Option value="2">Segundo Semestre</Option>
+                            </Select>
                         )}
 
                         {/* Mostrar selector de año si la opción es anual */}
@@ -567,10 +528,34 @@ const EstadoCajaProductos = ({ dataCajaControlOriginal, dataReporteVentas, dataP
                                 ))}
                             </Select>
                         )}
+
+                        {frecuencia != 'anual' && (
+                            <Select
+                                style={{ width: 100, marginTop: 10 }}
+                                onChange={handleAnualChangeActual}
+                                value={anioActual}
+                            >
+                                {añosDisponibles.map((year) => (
+                                    <Option key={year} value={year}>
+                                        {year}
+                                    </Option>
+                                ))}
+                            </Select>)}
+
                     </div>
-                    <Table columns={columnsCaja} dataSource={dataCajaControl} pagination={false} scroll={{ x: 'max-content', y: '300px' }} />
+                    <Table columns={columnsCaja}
+                        dataSource={dataCajaControl.map((caja, index) => ({
+                            ...caja,
+                            key: index,
+                        }))}
+                        pagination={false} scroll={{ x: 'max-content', y: '300px' }} />
                     <h1> </h1>
-                    <Table columns={columnsProducto} dataSource={dataProductos} pagination={false} scroll={{ x: 'max-content', y: '300px' }} />
+                    <Table columns={columnsProducto}
+                        dataSource={dataProductos.map((producto, index) => ({
+                            ...producto,
+                            key: index,
+                        }))}
+                        pagination={false} scroll={{ x: 'max-content', y: '300px' }} />
                 </Card>
             </Col>
         </>
