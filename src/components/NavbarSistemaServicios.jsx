@@ -33,10 +33,10 @@ const NavigationBar = ({ logout }) => {
                     label: <Link to="/sistema-servicios">Inicio</Link>, // Subenlace hacia la página "Inicio"
                     key: '/sistema-servicios',  // Clave única para este subenlace
                 },
-                {
-                    label: <Link to="/">Página principal</Link>, // Subenlace hacia la página principal
-                    key: 'inicio-general', // Clave única para este subenlace
-                },
+                // {
+                //     label: <Link to="/">Página principal</Link>, // Subenlace hacia la página principal
+                //     key: 'inicio-general', // Clave única para este subenlace
+                // },
             ],
         },
         // Segundo ítem del menú - "Repuestos"

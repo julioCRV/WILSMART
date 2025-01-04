@@ -51,7 +51,7 @@ const MostrarEmpleado = () => {
       dataIndex: 'Salario',
       render: (text) => `Bs   ${text}`,
       defaultSortOrder: 'descend',
-        width: '100px'
+      width: '100px'
       // sorter: (a, b) => a.age - b.age,
     },
     {
@@ -180,7 +180,10 @@ const MostrarEmpleado = () => {
         <div className='parentMostrar'>
           <Table
             columns={columns}
-            dataSource={dataFirebase}
+            dataSource={dataFirebase.map((data, index) => ({
+              ...data,
+              key: index,
+            }))}
             pagination={false}
             onChange={onChange}
             showSorterTooltip={{

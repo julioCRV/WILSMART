@@ -72,7 +72,7 @@ const RegistrarCliente = () => {
         Modal.success({
             title: 'Registro de cliente', // Título del modal.
             content: 'Los datos del cliente se han guardado correctamente.', // Contenido del modal.
-            onOk: () => { navigate('/sistema-servicios/mostrar-tickets'); } // Redirige al usuario a otra vista después de cerrar el modal.
+            onOk: () => { navigate('/sistema-servicios/mostrar-clientes'); } // Redirige al usuario a otra vista después de cerrar el modal.
         });
     }
 

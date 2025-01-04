@@ -21,11 +21,13 @@ const columnsCaja = [
         title: 'Nombre encargado',
         dataIndex: 'NombreEmpleado',
         key: 'nombreEmpleado',
+        width: '100px',
     },
     {
         title: 'Fecha',
         dataIndex: 'Fecha',
         key: 'fecha',
+        width: '100px',
         defaultSortOrder: 'descend',
         sorter: (a, b) => dayjs(a.Fecha).unix() - dayjs(b.Fecha).unix(),
     },
@@ -33,6 +35,7 @@ const columnsCaja = [
         title: 'Hora',
         dataIndex: 'Hora',
         key: 'hora',
+        width: '100px',
     },
     {
         title: 'Monto caja inicial',
@@ -103,6 +106,7 @@ const columnsProducto = [
         title: 'Hora',
         dataIndex: 'Hora',
         key: 'hora',
+        width: '100px',
     },
     {
         title: 'Nombre del producto',

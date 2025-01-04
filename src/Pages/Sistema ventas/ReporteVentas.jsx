@@ -200,7 +200,10 @@ const ReporteVentas = () => {
       <h2 className="form-titleProductos">Reporte de ventas</h2>
       <div className='parentMostrar'>
         <Table
-          dataSource={flattenedData}
+          dataSource={flattenedData.map((data, index) => ({
+            ...data,
+            key: index,
+          }))}
           columns={columns}
           rowKey={(record) => `${record.id}-${record.NombreProducto}`}
           pagination={{ pageSize: 10 }}

@@ -542,7 +542,10 @@ const RegistrarOrdenServicio = ({ record }) => {
                             <BotonOrdenServicio nombre={record.NombreCliente} actualizar={recibirRespuesta} />
                             <Table
                                 columns={columns}
-                                dataSource={dataFirebase}
+                                dataSource={dataFirebase.map((data, index) => ({
+                                    ...data,
+                                    key: index,
+                                  }))}
                                 pagination={false}
                                 onChange={onChange}
                                 showSorterTooltip={{

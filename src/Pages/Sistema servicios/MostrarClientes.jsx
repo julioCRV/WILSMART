@@ -215,7 +215,10 @@ const MostrarClientes = () => {
                 <div className='parentMostrar'>
                     <Table
                         columns={columns}
-                        dataSource={dataFirebase}
+                        dataSource={dataFirebase.map((data, index) => ({
+                            ...data,
+                            key: index,
+                          }))}
                         pagination={false}
                         onChange={onChange}
                         showSorterTooltip={{

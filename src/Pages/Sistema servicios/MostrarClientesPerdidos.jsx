@@ -177,7 +177,7 @@ const MostrarClientesPerdidos = () => {
         setDataFirebase(dataList); // Actualiza el estado con la lista de clientes perdidos
     };
     // #endregion + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
-    
+
     return (
         <>
             <div>
@@ -185,7 +185,10 @@ const MostrarClientesPerdidos = () => {
                 <div className='parentMostrar'>
                     <Table
                         columns={columns}
-                        dataSource={dataFirebase}
+                        dataSource={dataFirebase.map((data, index) => ({
+                            ...data,
+                            key: index,
+                        }))}
                         pagination={false}
                         onChange={onChange}
                         showSorterTooltip={{
@@ -195,7 +198,7 @@ const MostrarClientesPerdidos = () => {
                         size="middle"
                         bordered
                         style={{ maxWidth: '100%' }}  // Asegura que la tabla no se desborde
-                     
+
                     />
                 </div>
             </div>

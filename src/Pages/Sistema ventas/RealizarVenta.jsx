@@ -498,7 +498,10 @@ const MostrarProducto = () => {
         <div className='parentMostrar'>
           <Table
             columns={columns}
-            dataSource={dataProductos}
+            dataSource={dataProductos.map((data, index) => ({
+              ...data,
+              key: index,
+            }))}
             pagination={false}
             onChange={onChange}
             showSorterTooltip={{

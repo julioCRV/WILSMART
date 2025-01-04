@@ -395,7 +395,10 @@ const EditarOrdenServicio = ({ nombre, actualizar, record }) => {
 
                             <Table
                                 columns={columns}
-                                dataSource={dataOrdenServicio}
+                                dataSource={dataOrdenServicio.map((data, index) => ({
+                                    ...data,
+                                    key: index,
+                                  }))}
                                 pagination={false}
                                 onChange={onChange}
                                 showSorterTooltip={{

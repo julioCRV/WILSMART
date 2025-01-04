@@ -179,7 +179,7 @@ function App() {
                   <ModalAperturaCaja confirmacion={confirmacion} nombre={nombre} />
                   {mostrarRutas && (
                     <Routes>
-                      <Route path='/' element={<InicioAdmi />}></Route>
+                      <Route path='/' element={<SistemaVentas />}></Route>
                       <Route path='/sistema-ventas/*' element={<SistemaVentas logout={handleLogout} />}></Route>
                       <Route path='*' element={<Navigate to="/"></Navigate>}></Route>
                     </Routes>
@@ -190,7 +190,7 @@ function App() {
                   {rol === 'Sistema de servicios' ? (
                     <>
                       <Routes>
-                        <Route path='/' element={<InicioAdmi />}></Route>
+                        <Route path='/' element={<SistemaServicios />}></Route>
                         <Route path='/sistema-servicios/*' element={<SistemaServicios logout={handleLogout} />}></Route>
                         <Route path='*' element={<Navigate to="/"></Navigate>}></Route>
                       </Routes>

@@ -48,10 +48,10 @@ const NavigationBar = ({ logout }) => {
                     label: <Link to="/sistema-ventas">Inicio</Link>,  // Enlace al submenú "Inicio"
                     key: '/sistema-ventas',  // Clave única para el submenú
                 },
-                {
-                    label: <Link to="/">Pagina principal</Link>,  // Enlace al submenú "Página principal"
-                    key: 'inicio-general',  // Clave única para este submenú
-                },
+                // {
+                //     label: <Link to="/">Pagina principal</Link>,  // Enlace al submenú "Página principal"
+                //     key: 'inicio-general',  // Clave única para este submenú
+                // },
             ],
         },
         {
