@@ -99,12 +99,12 @@ function InicarSesion({ login }) {
 
   return (
     <div className='parent-login'>
-      <div class="div1-logo">
+      <div className="div1-logo">
         <Button onClick={backHome} shape="circle" icon={<ArrowLeftOutlined />} size="large" aria-label="back" />
         <img src="/assets/logoW1.jpg" alt="Imagen de bienvenida" style={{ width: '40px' }} />
       </div>
 
-      <div class="div2-login">
+      <div className="div2-login">
         <h1>Iniciar sesión</h1>
         <h2 style={{ marginTop: '-30px' }}>Hola, bienvenido</h2>
         <Form
@@ -137,7 +137,7 @@ function InicarSesion({ login }) {
         </Form>
       </div>
 
-      <div class="div3-card">
+      <div className="div3-card">
         <Card
           hoverable
           className='cardLogin'

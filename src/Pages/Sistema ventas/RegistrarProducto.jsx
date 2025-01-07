@@ -104,8 +104,8 @@ const RegistrarProducto = () => {
   // Función que muestra un modal de éxito cuando el registro se realiza correctamente
   const ModalExito = () => {
     Modal.success({
-      title: 'Registro de Empleado',
-      content: 'Los datos del empleado se han guardado correctamente.', // Mensaje del modal
+      title: 'Registro de producto',
+      content: 'Los datos del producto se han guardado correctamente.', // Mensaje del modal
       onOk: () => { navigate('/sistema-ventas/mostrar-productos'); } // Al hacer clic en "OK", navega a la página de productos
     });
   }
