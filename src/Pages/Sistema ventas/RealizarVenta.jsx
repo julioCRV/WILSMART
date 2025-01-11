@@ -104,7 +104,7 @@ const MostrarProducto = () => {
       // Si es administrador, no hace nada en este bloque
     } else if (idCajaActual === null) {
       // Si no es administrador y el idCajaActual es null, recarga la página
-      window.location.reload();
+      // window.location.reload();
     }
 
     // Función asíncrona para obtener los productos desde Firestore y actualizar el estado
@@ -127,17 +127,28 @@ const MostrarProducto = () => {
 
     // Función asíncrona para obtener los datos de la caja actual desde Firestore
     const fetchData2 = async () => {
-      const docRef = doc(db, "HistorialAperturaCaja", idCajaActual); // Referencia al documento de la caja
-      const dataCajaActual = await getDoc(docRef); // Obtiene los datos de la caja
-
-      if (dataCajaActual.exists()) {
-        const data = { ...dataCajaActual.data(), id: dataCajaActual.id }; // Extrae los datos y agrega el id
-        setDataCaja(data); // Actualiza el estado con los datos de la caja
-      } else {
-        console.log("No such document!"); // Si no existe el documento, muestra mensaje de error
+      if (!idCajaActual) {
+        // console.log("El ID de la caja actual es nulo o indefinido.");
+        return; // Detener la ejecución si idCajaActual no es válido
+      }
+    
+      try {
+        const docRef = doc(db, "HistorialAperturaCaja", idCajaActual); // Referencia al documento de la caja
+        const dataCajaActual = await getDoc(docRef); // Obtiene los datos de la caja
+    
+        if (dataCajaActual.exists()) {
+          const data = { ...dataCajaActual.data(), id: dataCajaActual.id }; // Extrae los datos y agrega el id
+          setDataCaja(data); // Actualiza el estado con los datos de la caja
+        } else {
+          console.log("No existe ningún documento con el ID proporcionado.");
+        }
+      } catch (error) {
+        console.error("Error al obtener los datos de la caja:", error);
       }
     };
-    fetchData2(); // Llama la función para obtener los datos de la caja
+    
+    // Llamar a la función
+    fetchData2();
 
     // Llama la función para actualizar el estado del carrito
     estadoCarrito();
@@ -459,7 +470,7 @@ const MostrarProducto = () => {
       form.resetFields(); // Resetea los campos del formulario
       setModalVisible(true); // Muestra el modal con el reporte
     } else {
-      message.info("No se realizo la apertura de caja"); // Muestra un mensaje si no se ha realizado la apertura de caja
+      message.info("Operación no permitida: Es necesario realizar la apertura de caja antes de continuar con las ventas."); // Muestra un mensaje si no se ha realizado la apertura de caja
     }
   };
 

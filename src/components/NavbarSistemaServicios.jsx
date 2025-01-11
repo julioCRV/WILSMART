@@ -25,19 +25,9 @@ const NavigationBar = ({ logout }) => {
     const items = [
         // Primer ítem del menú - "Inicio"
         {
-            label: 'Inicio',  // Etiqueta que se muestra en el menú
-            key: 'inicio',    // Clave única para este ítem
-            icon: <HomeOutlined />, // Ícono que representa este ítem en el menú
-            children: [ // Elementos secundarios (submenú)
-                {
-                    label: <Link to="/sistema-servicios">Inicio</Link>, // Subenlace hacia la página "Inicio"
-                    key: '/sistema-servicios',  // Clave única para este subenlace
-                },
-                // {
-                //     label: <Link to="/">Página principal</Link>, // Subenlace hacia la página principal
-                //     key: 'inicio-general', // Clave única para este subenlace
-                // },
-            ],
+            label: <Link to="/sistema-servicios">Inicio</Link>, // Enlace directo al elemento
+            key: '/sistema-servicios', // Clave única
+            icon: <HomeOutlined />, // Ícono asociado con este ítem
         },
         // Segundo ítem del menú - "Repuestos"
         {

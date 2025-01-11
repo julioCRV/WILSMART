@@ -40,19 +40,9 @@ const NavigationBar = ({ logout }) => {
     // Menú de navegación con sus respectivos ítems y submenús
     const items = [
         {
-            label: 'Inicio',  // Título del ítem de menú
-            key: 'inicio',    // Clave única para este ítem
+            label: <Link to="/sistema-ventas">Inicio</Link>, // Enlace directo al elemento
+            key: '/sistema-ventas', // Clave única
             icon: <HomeOutlined />, // Ícono asociado con este ítem
-            children: [ // Submenú con opciones de navegación relacionadas
-                {
-                    label: <Link to="/sistema-ventas">Inicio</Link>,  // Enlace al submenú "Inicio"
-                    key: '/sistema-ventas',  // Clave única para el submenú
-                },
-                // {
-                //     label: <Link to="/">Pagina principal</Link>,  // Enlace al submenú "Página principal"
-                //     key: 'inicio-general',  // Clave única para este submenú
-                // },
-            ],
         },
         {
             label: 'Inventario', // Título del ítem de menú "Inventario"

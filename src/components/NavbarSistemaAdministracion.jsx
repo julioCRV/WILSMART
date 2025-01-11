@@ -27,19 +27,9 @@ const NavigationBar = ({ logout }) => {
     // Verificación condicional para el estilo en el ítem de "Cerrar sesión"
     const items = [
         {
-            label: 'Inicio',
-            key: 'inicio',
-            icon: <HomeOutlined />,
-            children: [
-                {
-                    label: <Link to="/sistema-administración">Inicio</Link>,
-                    key: '/sistema-administración',
-                },
-                // {
-                //     label: <Link to="/">Pagina principal</Link>,
-                //     key: 'inicio-general',
-                // },
-            ],
+            label: <Link to="/sistema-administración">Inicio</Link>, // Enlace directo al elemento
+            key: '/sistema-administración', // Clave única
+            icon: <HomeOutlined />, // Ícono asociado con este ítem
         },
         {
             label: 'Personal',

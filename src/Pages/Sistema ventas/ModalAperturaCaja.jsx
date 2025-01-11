@@ -106,7 +106,7 @@ const ModalAperturaCaja = ({ confirmacion, nombre }) => {
         <>
             <Modal
                 title="Apertura de caja"
-                visible={isModalVisible}
+                open={isModalVisible}
                 closable={false}
                 onCancel={() => { }}
                 footer={[
@@ -127,7 +127,7 @@ const ModalAperturaCaja = ({ confirmacion, nombre }) => {
             </Modal>
             <Modal
                 title="Confirmación"
-                visible={isConfirmModalVisible}
+                open={isConfirmModalVisible}
                 onOk={handleConfirmOk}
                 onCancel={handleConfirmCancel}
             >
